@@ -123,10 +123,10 @@ trait Helpers
     /**
      * Add a subscription trial pricing tier.
      *
-     * @param string    $interval_type
-     * @param int       $interval_count
-     * @param float     $price
-     * @param int       $total_cycles
+     * @param string $interval_type
+     * @param int    $interval_count
+     * @param float  $price
+     * @param int    $total_cycles
      *
      * @return PayPalClient
      */
@@ -140,10 +140,10 @@ trait Helpers
     /**
      * Create a recurring daily billing plan.
      *
-     * @param string    $name
-     * @param string    $description
-     * @param float     $price
-     * @param int       $total_cycles
+     * @param string $name
+     * @param string $description
+     * @param float  $price
+     * @param int    $total_cycles
      *
      * @throws Throwable
      *
@@ -166,10 +166,10 @@ trait Helpers
     /**
      * Create a recurring weekly billing plan.
      *
-     * @param string    $name
-     * @param string    $description
-     * @param float     $price
-     * @param int       $total_cycles
+     * @param string $name
+     * @param string $description
+     * @param float  $price
+     * @param int    $total_cycles
      *
      * @throws Throwable
      *
@@ -192,10 +192,10 @@ trait Helpers
     /**
      * Create a recurring monthly billing plan.
      *
-     * @param string    $name
-     * @param string    $description
-     * @param float     $price
-     * @param int       $total_cycles
+     * @param string $name
+     * @param string $description
+     * @param float  $price
+     * @param int    $total_cycles
      *
      * @throws Throwable
      *
@@ -218,10 +218,10 @@ trait Helpers
     /**
      * Create a recurring annual billing plan.
      *
-     * @param string    $name
-     * @param string    $description
-     * @param float     $price
-     * @param int       $total_cycles
+     * @param string $name
+     * @param string $description
+     * @param float  $price
+     * @param int    $total_cycles
      *
      * @throws Throwable
      *
@@ -244,12 +244,12 @@ trait Helpers
     /**
      * Create a recurring billing plan with custom intervals.
      *
-     * @param string    $name
-     * @param string    $description
-     * @param float     $price
-     * @param string    $interval_unit
-     * @param int       $interval_count
-     * @param int       $total_cycles
+     * @param string $name
+     * @param string $description
+     * @param float  $price
+     * @param string $interval_unit
+     * @param int    $interval_count
+     * @param int    $total_cycles
      *
      * @throws Throwable
      *

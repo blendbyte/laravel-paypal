@@ -202,13 +202,13 @@ trait Subscriptions
     /**
      * List transactions for an existing subscription.
      *
-     * @param string                    $subscription_id
+     * @param string                   $subscription_id
      * @param DateTimeInterface|string $start_date
      * @param DateTimeInterface|string $end_date
      *
-     * @return array|StreamInterface|string
-     *
      * @throws Throwable
+     *
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_transactions
      */

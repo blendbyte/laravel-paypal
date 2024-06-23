@@ -34,9 +34,9 @@ trait PayPalAPI
     /**
      * Login through PayPal API to get access token.
      *
-     * @return array|StreamInterface|string
-     *
      * @throws \Throwable
+     *
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/get-an-access-token-curl/
      * @see https://developer.paypal.com/docs/api/get-an-access-token-postman/

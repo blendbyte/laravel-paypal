@@ -110,7 +110,6 @@ trait Helpers
      * @throws \Throwable
      *
      * @return array|StreamInterface|string
-     *
      */
     public function sendPaymentMethodRequest(bool $create_source = false): StreamInterface|array|string
     {
