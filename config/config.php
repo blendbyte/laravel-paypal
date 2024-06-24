@@ -23,7 +23,7 @@ return [
             'funding-eligibility'   => env('PAYPAL_COMPONENT_FUNDING', true),
         ],
         'funding_sources'       => env('PAYPAL_FUNDING_SOURCES', 'card,venmo'),
-        'transactions' => [
+        'transactions'          => [
             'intent' => env('PAYPAL_TRANSACTION_INTENT', 'capture'),
             'commit' => env('PAYPAL_COMMIT_TRANSACTION', true),
         ],

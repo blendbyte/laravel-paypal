@@ -84,7 +84,7 @@ class PayPalServiceProvider extends ServiceProvider
     private function registerCommands(): void
     {
         $this->commands([
-            PublishAssetsCommand::class
+            PublishAssetsCommand::class,
         ]);
     }
 }

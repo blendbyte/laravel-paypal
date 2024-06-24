@@ -26,15 +26,15 @@ class PublishAssetsCommand extends Command
      */
     public function handle(): void
     {
-        $this->comment("Installing the PayPal JS SDK through npm");
+        $this->comment('Installing the PayPal JS SDK through npm');
 
-        $result = Process::run("npm install --save @paypal/paypal-js");
+        $result = Process::run('npm install --save @paypal/paypal-js');
         if ($result->successful()) {
             echo $result->output();
-            $this->comment("Installed the PayPal JS SDK.");
+            $this->comment('Installed the PayPal JS SDK.');
         } else {
             echo $result->errorOutput();
-            $this->error("Unable to install the PayPal JS SDK.");
+            $this->error('Unable to install the PayPal JS SDK.');
         }
     }
 }
