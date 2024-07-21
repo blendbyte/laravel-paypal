@@ -137,4 +137,27 @@ trait Orders
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Add tracking information for an Order.
+     *
+     * @param string $order_id
+     * @param array  $data
+     *
+     * @throws \Throwable
+     *
+     * @return array|\Psr\Http\Message\StreamInterface|string
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_track_create
+     */
+    public function addTrackingForOrder(string $order_id, array $data)
+    {
+        $this->apiEndPoint = "v2/checkout/orders/{$order_id}/track";
+
+        $this->options['json'] = $data;
+
+        $this->verb = 'post';
+
+        return $this->doPayPalRequest();
+    }
 }
