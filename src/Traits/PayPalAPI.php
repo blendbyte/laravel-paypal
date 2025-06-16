@@ -21,6 +21,7 @@ trait PayPalAPI
     use PayPalAPI\PaymentRefunds;
     use PayPalAPI\Payouts;
     use PayPalAPI\ReferencedPayouts;
+    use PayPalAPI\BillingAgreements;
     use PayPalAPI\BillingPlans;
     use PayPalAPI\Subscriptions;
     use PayPalAPI\Reporting;

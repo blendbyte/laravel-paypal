@@ -62,6 +62,142 @@ class AdapterFeatureTest extends TestCase
     }
 
     #[Test]
+    public function it_can_create_a_billing_agreement_token(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockCreateBillingAgreementTokenResponse()
+            )
+        );
+
+        $expectedParams = $this->createBillingAgreementTokenParams();
+
+        try {
+            $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreementToken($expectedParams);
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertNotEmpty($response);
+        $this->assertArrayHasKey('token_id', $response);
+    }
+
+    #[Test]
+    public function it_can_show_billing_agreement_token_details(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockGetBillingAgreementTokenResponse()
+            )
+        );
+
+        try {
+            $response = $this->client->getBillingAgreementTokenDetails('BA-8A802366G0648845Y');
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertNotEmpty($response);
+        $this->assertArrayHasKey('token_id', $response);
+    }
+
+    #[Test]
+    public function it_can_create_a_billing_agreement(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockCreateBillingAgreementResponse()
+            )
+        );
+
+        try {
+            $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreement('BA-8A802366G0648845Y');
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertNotEmpty($response);
+        $this->assertArrayHasKey('id', $response);
+    }
+
+    #[Test]
+    public function it_can_update_a_billing_agreement(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(false)
+        );
+
+        $expectedParams = $this->updateBillingAgreementParams();
+
+        try {
+            $response = $this->client->updateBillingAgreement('BA-8A802366G0648845Y', $expectedParams);
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertEmpty($response);
+    }
+
+    #[Test]
+    public function it_can_show_billing_agreement_details(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockShowBillingAgreementResponse()
+            )
+        );
+
+        try {
+            $response = $this->client->showBillingAgreementDetails('BA-8A802366G0648845Y');
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertNotEmpty($response);
+        $this->assertArrayHasKey('id', $response);
+    }
+
+    #[Test]
+    public function it_can_cancel_a_billing_agreement(): void
+    {
+        $this->client->setAccessToken([
+            'access_token'  => self::$access_token,
+            'token_type'    => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(false)
+        );
+
+        try {
+            $response = $this->client->cancelBillingAgreement('BA-8A802366G0648845Y');
+        } catch (\Throwable $e) {
+        }
+
+        $this->assertEmpty($response);
+    }
+
+    #[Test]
     public function it_can_create_a_billing_plan(): void
     {
         $this->client->setAccessToken([

@@ -4,6 +4,7 @@ namespace Srmklive\PayPal\Tests;
 
 trait MockResponsePayloads
 {
+    use Mocks\Responses\BillingAgreements;
     use Mocks\Responses\BillingPlans;
     use Mocks\Responses\CatalogProducts;
     use Mocks\Responses\Disputes;
