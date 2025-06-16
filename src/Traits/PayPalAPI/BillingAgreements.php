@@ -25,7 +25,7 @@ trait BillingAgreements
      */
     public function createBillingAgreementToken(array $data)
     {
-        $this->apiEndPoint = '/v1/billing-agreements/agreement-tokens';
+        $this->apiEndPoint = 'v1/billing-agreements/agreement-tokens';
 
         $this->options['json'] = $data;
 
@@ -47,7 +47,7 @@ trait BillingAgreements
      */
     public function getBillingAgreementTokenDetails(string $token_id)
     {
-        $this->apiEndPoint = "/v1/billing-agreements/agreement-tokens/{$token_id}";
+        $this->apiEndPoint = "v1/billing-agreements/agreement-tokens/{$token_id}";
 
         $this->verb = 'get';
 
@@ -67,7 +67,7 @@ trait BillingAgreements
      */
     public function createBillingAgreement(string $token_id)
     {
-        $this->apiEndPoint = '/v1/billing-agreements/agreements';
+        $this->apiEndPoint = 'v1/billing-agreements/agreements';
 
         $this->options['json'] = [
             'token_id' => $token_id,
@@ -92,7 +92,7 @@ trait BillingAgreements
      */
     public function updateBillingAgreement(string $agreement_id, array $data)
     {
-        $this->apiEndPoint = "/v1/billing-agreements/agreements/{$agreement_id}";
+        $this->apiEndPoint = "v1/billing-agreements/agreements/{$agreement_id}";
 
         $this->options['json'] = $data;
 
@@ -114,7 +114,7 @@ trait BillingAgreements
      */
     public function showBillingAgreementDetails(string $agreement_id)
     {
-        $this->apiEndPoint = "/v1/billing-agreements/agreements/{$agreement_id}";
+        $this->apiEndPoint = "v1/billing-agreements/agreements/{$agreement_id}";
 
         $this->verb = 'get';
 
@@ -134,7 +134,7 @@ trait BillingAgreements
      */
     public function cancelBillingAgreement(string $agreement_id)
     {
-        $this->apiEndPoint = "/v1/billing-agreements/agreements/{$agreement_id}/cancel";
+        $this->apiEndPoint = "v1/billing-agreements/agreements/{$agreement_id}/cancel";
 
         $this->verb = 'post';
 
