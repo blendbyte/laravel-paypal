@@ -17,9 +17,9 @@ trait BillingAgreements
      *
      * @param array $data
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
-     *
      * @throws \Throwable
+     *
+     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreement-tokens_post
      */
@@ -65,7 +65,8 @@ trait BillingAgreements
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreements_create
      */
-    public function createBillingAgreement(string $token_id) {
+    public function createBillingAgreement(string $token_id)
+    {
         $this->apiEndPoint = '/v1/billing-agreements/agreements';
 
         $this->options['json'] = [
@@ -81,8 +82,7 @@ trait BillingAgreements
      * Update an existing billing agreement.
      *
      * @param string $agreement_id
-     *
-     * @param array $data
+     * @param array  $data
      *
      * @throws \Throwable
      *
