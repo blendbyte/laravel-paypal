@@ -55,7 +55,7 @@ trait PayPalRequest
     /**
      * Set the current page for list resources API calls.
      *
-     * @var bool
+     * @var int
      */
     protected $current_page = 1;
 

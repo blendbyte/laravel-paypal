@@ -1,9 +1,9 @@
 parameters:
   paths:
     - src
-  level: 0
+  level: 5
   ignoreErrors:
     - "#Parameter#"
     - "#Call to static method error\\(\\)\\ on an unknown class Log.#"
   excludePaths:
-    - "src/Providers/PayPalServiceProvider.php" 
+    - "src/Providers/PayPalServiceProvider.php"

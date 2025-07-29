@@ -149,7 +149,15 @@ trait Filters
      */
     public function addInvoiceFilterByCurrencyCode(string $currency_code = ''): \Srmklive\PayPal\Services\PayPal
     {
-        $currency = !isset($currency_code) ? $this->getCurrency() : $currency_code;
+        if (!empty($currency_code)) {
+            $currency = $currency_code;
+        } else {
+            try {
+                $currency = $this->getCurrency();
+            } catch (\Throwable $e) {
+                $currency = 'USD';
+            }
+        }
 
         $this->invoice_search_filters['currency_code'] = $currency;
 
@@ -171,7 +179,15 @@ trait Filters
             throw new \Exception('Starting amount should always be less than end amount!');
         }
 
-        $currency = !isset($amount_currency) ? $this->getCurrency() : $amount_currency;
+        if (!empty($amount_currency)) {
+            $currency = $amount_currency;
+        } else {
+            try {
+                $currency = $this->getCurrency();
+            } catch (\Throwable $e) {
+                $currency = 'USD';
+            }
+        }
 
         $this->invoice_search_filters['total_amount_range'] = [
             'lower_amount' => [

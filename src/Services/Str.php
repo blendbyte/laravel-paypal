@@ -20,14 +20,10 @@ class Str extends \Illuminate\Support\Str
         }
 
         if (function_exists('json_validate')) {
-            return json_validate($value, 512);
+            return json_validate($value);
         }
 
-        try {
-            Utils::jsonDecode($value, true, 512, 4194304);
-        } catch (\JsonException $jsonException) {
-            return false;
-        }
+        Utils::jsonDecode($value, true, 512, JSON_THROW_ON_ERROR);
 
         return true;
     }

@@ -7,7 +7,7 @@ trait PayPalExperienceContext
     /**
      * @var array
      */
-    protected $experience_context = [];
+    protected ?array $experience_context = [];
 
     /**
      * Set Brand Name when setting experience context for payment.

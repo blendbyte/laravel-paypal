@@ -117,14 +117,7 @@ trait MockClientClasses
 
     protected function setMethodsFunction(): bool
     {
-        $useOnlyMethods = false;
-
-        foreach (['8.1', '8.2', '8.3'] as $php_version) {
-            if (strpos(phpversion(), $php_version) !== false) {
-                $useOnlyMethods = true;
-            }
-        }
-
-        return $useOnlyMethods;
+        // Always use onlyMethods as setMethods is deprecated in PHPUnit 8 and removed in PHPUnit 10
+        return true;
     }
 }

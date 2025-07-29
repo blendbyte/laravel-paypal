@@ -19,19 +19,19 @@ trait Helpers
     protected $payment_failure_threshold = 3;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $product;
+    protected ?array $product = null;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $billing_plan;
+    protected ?array $billing_plan = null;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $shipping_address;
+    protected ?array $shipping_address = null;
 
     /**
      * @var array
@@ -44,14 +44,19 @@ trait Helpers
     protected $has_setup_fee = false;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $taxes;
+    protected ?array $taxes = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $custom_id;
+    protected ?string $custom_id = null;
+
+    /**
+     * @var array
+     */
+    protected ?array $experience_context = [];
 
     /**
      * Setup a subscription.
@@ -121,7 +126,7 @@ trait Helpers
      *
      * @param string    $interval_type
      * @param int       $interval_count
-     * @param float|int $price
+     * @param float     $price
      * @param int       $total_cycles
      *
      * @return \Srmklive\PayPal\Services\PayPal
@@ -138,7 +143,7 @@ trait Helpers
      *
      * @param string    $name
      * @param string    $description
-     * @param float|int $price
+     * @param float     $price
      * @param int       $total_cycles
      *
      * @throws Throwable
@@ -164,7 +169,7 @@ trait Helpers
      *
      * @param string    $name
      * @param string    $description
-     * @param float|int $price
+     * @param float     $price
      * @param int       $total_cycles
      *
      * @throws Throwable
@@ -190,7 +195,7 @@ trait Helpers
      *
      * @param string    $name
      * @param string    $description
-     * @param float|int $price
+     * @param float     $price
      * @param int       $total_cycles
      *
      * @throws Throwable
@@ -216,7 +221,7 @@ trait Helpers
      *
      * @param string    $name
      * @param string    $description
-     * @param float|int $price
+     * @param float     $price
      * @param int       $total_cycles
      *
      * @throws Throwable
@@ -242,7 +247,7 @@ trait Helpers
      *
      * @param string    $name
      * @param string    $description
-     * @param float|int $price
+     * @param float     $price
      * @param string    $interval_unit
      * @param int       $interval_count
      * @param int       $total_cycles
@@ -327,14 +332,12 @@ trait Helpers
             return $this;
         }
 
-        $request_id = Str::random();
-
         $product = $this->createProduct([
             'name'        => $name,
             'description' => $description,
             'type'        => $type,
             'category'    => $category,
-        ], $request_id);
+        ]);
 
         if ($error = data_get($product, 'error', false)) {
             throw new \RuntimeException(data_get($error, 'details.0.description', 'Failed to add product'));
@@ -389,8 +392,6 @@ trait Helpers
      */
     protected function addBillingPlan(string $name, string $description, array $billing_cycles): void
     {
-        $request_id = Str::random();
-
         $plan_params = [
             'product_id'          => $this->product['id'],
             'name'                => $name,
@@ -404,7 +405,7 @@ trait Helpers
             ],
         ];
 
-        $billingPlan = $this->createPlan($plan_params, $request_id);
+        $billingPlan = $this->createPlan($plan_params);
         if ($error = data_get($billingPlan, 'error', false)) {
             throw new \RuntimeException(data_get($error, 'details.0.description', 'Failed to add billing plan'));
         }

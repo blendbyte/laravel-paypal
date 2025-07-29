@@ -2,6 +2,8 @@
 
 namespace Srmklive\PayPal\Traits;
 
+use Illuminate\Http\Request;
+
 trait PayPalVerifyIPN
 {
     protected $webhook_id;
@@ -16,12 +18,16 @@ trait PayPalVerifyIPN
     /**
      * Verify incoming IPN through a web hook id.
      *
+     * @param \Illuminate\Http\Request $request Laravel HTTP request object
      * @throws \Throwable
      *
      * @return array|\Psr\Http\Message\StreamInterface|string
+     *
+     * @phpstan-ignore-next-line
      */
-    public function verifyIPN(\Illuminate\Http\Request $request)
+    public function verifyIPN(Request $request)
     {
+        /** @phpstan-ignore-next-line */
         $headers = array_change_key_case($request->headers->all(), CASE_UPPER);
 
         if (!isset($headers['PAYPAL-AUTH-ALGO'][0]) ||
@@ -36,6 +42,7 @@ trait PayPalVerifyIPN
             return ['error' => 'Invalid headers or webhook id provided'];
         }
 
+        /** @phpstan-ignore-next-line */
         $params = json_decode($request->getContent());
 
         $payload = [

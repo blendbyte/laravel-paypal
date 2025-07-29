@@ -17,12 +17,12 @@ class VerifyDocuments
     ];
 
     /**
-     * @var string
+     * @var int
      */
     protected static $dispute_evidence_file_size = 10;
 
     /**
-     * @var string
+     * @var int
      */
     protected static $dispute_evidences_size = 50;
 
