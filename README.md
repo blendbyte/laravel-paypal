@@ -5,7 +5,7 @@
 [![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-A PayPal REST API package for Laravel 12+. This is a maintained fork of [srmklive/laravel-paypal](https://github.com/srmklive/laravel-paypal), modernized for current PHP and Laravel versions. It is a **drop-in replacement** — the API is identical, only the package name and root namespace change.
+A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP client without any framework. This is a maintained fork of [srmklive/laravel-paypal](https://github.com/srmklive/laravel-paypal), modernized for current PHP and Laravel versions. It is a **drop-in replacement** — the API is identical, only the package name and root namespace change.
 
 **Supports:** PHP 8.2–8.5 · Laravel 12 / 13
 
@@ -13,6 +13,7 @@ A PayPal REST API package for Laravel 12+. This is a maintained fork of [srmkliv
 
 - [Migrating from srmklive/laravel-paypal](#migrating-from-srmklivelaravel-paypal)
 - [Installation](#installation)
+- [Standalone Usage (without Laravel)](#standalone-usage-without-laravel)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Subscription Helpers](#subscription-helpers)
@@ -89,6 +90,50 @@ Publish the config file:
 ```bash
 php artisan vendor:publish --provider "Blendbyte\PayPal\Providers\PayPalServiceProvider"
 ```
+
+---
+
+## Standalone Usage (without Laravel)
+
+The package has no hard dependency on Laravel — you can use it in any PHP project:
+
+```bash
+composer require blendbyte/paypal
+```
+
+Instantiate the client and pass your credentials directly via `setApiCredentials()`. No service provider or `.env` file needed:
+
+```php
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+
+$provider = new PayPalClient;
+
+$provider->setApiCredentials([
+    'mode' => 'sandbox', // or 'live'
+    'sandbox' => [
+        'client_id'     => 'YOUR_SANDBOX_CLIENT_ID',
+        'client_secret' => 'YOUR_SANDBOX_CLIENT_SECRET',
+        'app_id'        => 'APP-80W284485P519543T',
+    ],
+    'live' => [
+        'client_id'     => 'YOUR_LIVE_CLIENT_ID',
+        'client_secret' => 'YOUR_LIVE_CLIENT_SECRET',
+        'app_id'        => 'YOUR_LIVE_APP_ID',
+    ],
+    'payment_action' => 'Sale',
+    'currency'       => 'USD',
+    'notify_url'     => '',
+    'locale'         => 'en_US',
+    'validate_ssl'   => true,
+]);
+
+$provider->getAccessToken();
+
+// All API methods are now available
+$order = $provider->createOrder([...]);
+```
+
+The facade and `php artisan vendor:publish` are Laravel-only conveniences; everything else works identically.
 
 ---
 
