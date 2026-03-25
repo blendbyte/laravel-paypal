@@ -1,8 +1,8 @@
 # Laravel PayPal
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/blendbyte/paypal.svg?style=flat-square)](https://packagist.org/packages/blendbyte/paypal)
-[![Tests](https://github.com/blendbyte/paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/paypal/actions/workflows/tests.yml)
-[![Static Analysis](https://github.com/blendbyte/paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/paypal/actions/workflows/static-analysis.yml)
+[![Tests](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml)
+[![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 A PayPal REST API package for Laravel 12+. This is a maintained fork of [srmklive/laravel-paypal](https://github.com/srmklive/laravel-paypal), modernized for current PHP and Laravel versions. It is a **drop-in replacement** — the API is identical, only the package name and root namespace change.
@@ -621,10 +621,3 @@ $provider->patchWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER', $patchData);
 $provider->deleteWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER');
 ```
 
----
-
-## Contributing
-
-1. Fork the repository
-2. Implement your feature or fix
-3. Submit a pull request
