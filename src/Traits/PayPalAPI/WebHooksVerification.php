@@ -2,16 +2,18 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait WebHooksVerification
 {
     /**
      * Verify a web hook from PayPal.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#verify-webhook-signature_post
      */

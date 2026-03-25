@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait WebHooks
 {
-    /**
-     * @return array
-     */
     private function mockCreateWebHookParams(): array
     {
         return Utils::jsonDecode('{
@@ -24,9 +21,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockUpdateWebHookParams(): array
     {
         return Utils::jsonDecode('[
@@ -47,9 +41,6 @@ trait WebHooks
 ]', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockResendWebHookEventNotificationParams(): array
     {
         return Utils::jsonDecode('{
@@ -59,9 +50,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockVerifyWebHookSignatureParams(): array
     {
         return Utils::jsonDecode('{

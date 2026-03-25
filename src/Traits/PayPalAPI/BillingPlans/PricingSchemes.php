@@ -2,6 +2,8 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI\BillingPlans;
 
+use Blendbyte\PayPal\Services\PayPal;
+use Psr\Http\Message\StreamInterface;
 use Throwable;
 
 trait PricingSchemes
@@ -11,16 +13,10 @@ trait PricingSchemes
     /**
      * Add pricing scheme for the billing plan.
      *
-     * @param string $interval_unit
-     * @param int    $interval_count
-     * @param float  $price
-     * @param bool   $trial
      *
      * @throws Throwable
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addPricingScheme(string $interval_unit, int $interval_count, float $price, bool $trial = false): \Blendbyte\PayPal\Services\PayPal
+    public function addPricingScheme(string $interval_unit, int $interval_count, float $price, bool $trial = false): PayPal
     {
         $this->pricing_schemes[] = $this->addPlanBillingCycle($interval_unit, $interval_count, $price, 0, $trial);
 
@@ -30,9 +26,10 @@ trait PricingSchemes
     /**
      * Process pricing updates for an existing billing plan.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
+     *
+     * @throws Throwable
      */
     public function processBillingPlanPricingUpdates()
     {

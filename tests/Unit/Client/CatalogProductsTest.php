@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can create a product', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->createProductParams(),
     ];
@@ -29,9 +29,9 @@ it('can list products', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products?page=1&page_size=2&total_required=true';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -46,9 +46,9 @@ it('can update a product', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->updateProductParams(),
     ];
@@ -64,9 +64,9 @@ it('can get details for a product', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 

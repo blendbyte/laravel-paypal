@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can create a web hook', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCreateWebHookParams(),
     ];
@@ -29,9 +29,9 @@ it('can list web hooks', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -46,9 +46,9 @@ it('can delete a web hook', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks/5GP028458E2496506';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -63,9 +63,9 @@ it('can update a web hook', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks/0EH40505U7160970P';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockUpdateWebHookParams(),
     ];
@@ -81,9 +81,9 @@ it('can show details for a web hook', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks/0EH40505U7160970P';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -98,9 +98,9 @@ it('can list web hooks events', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/notifications/webhooks/0EH40505U7160970P';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 

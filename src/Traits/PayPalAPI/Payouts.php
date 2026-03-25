@@ -2,16 +2,18 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait Payouts
 {
     /**
      * Create a Batch Payout.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_post
      */
@@ -29,11 +31,11 @@ trait Payouts
     /**
      * Show Batch Payout details by ID.
      *
-     * @param string $payout_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_get
      */
@@ -49,11 +51,11 @@ trait Payouts
     /**
      * Show Payout Item details by ID.
      *
-     * @param string $payout_item_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts-item_get
      */
@@ -69,11 +71,11 @@ trait Payouts
     /**
      * Show Payout Item details by ID.
      *
-     * @param string $payout_item_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts-item_cancel
      */

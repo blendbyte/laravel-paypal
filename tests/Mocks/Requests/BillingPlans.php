@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait BillingPlans
 {
-    /**
-     * @return array
-     */
     private function createPlanParams(): array
     {
         return Utils::jsonDecode('{
@@ -79,9 +76,6 @@ trait BillingPlans
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function updatePlanParams(): array
     {
         return Utils::jsonDecode('[
@@ -93,9 +87,6 @@ trait BillingPlans
 ]', true);
     }
 
-    /**
-     * @return array
-     */
     private function updatePlanPricingParams(): array
     {
         return Utils::jsonDecode('{

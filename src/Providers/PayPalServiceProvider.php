@@ -7,8 +7,8 @@ namespace Blendbyte\PayPal\Providers;
  * @package Blendbyte\PayPal
  */
 
-use Illuminate\Support\ServiceProvider;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Illuminate\Support\ServiceProvider;
 
 class PayPalServiceProvider extends ServiceProvider
 {
@@ -55,7 +55,7 @@ class PayPalServiceProvider extends ServiceProvider
     private function registerPayPal()
     {
         $this->app->singleton('paypal_client', static function () {
-            return new PayPalClient();
+            return new PayPalClient;
         });
     }
 

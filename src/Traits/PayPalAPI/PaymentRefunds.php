@@ -2,16 +2,18 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait PaymentRefunds
 {
     /**
      * Show details for authorized payment.
      *
-     * @param string $refund_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments/v2/#authorizations_get
      */

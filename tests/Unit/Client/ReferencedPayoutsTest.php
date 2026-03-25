@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,10 +11,10 @@ it('can create referenced batch payout', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/referenced-payouts';
     $expectedParams = [
         'headers' => [
-            'Accept'                        => 'application/json',
-            'Accept-Language'               => 'en_US',
-            'Authorization'                 => 'Bearer some-token',
-            'PayPal-Request-Id'             => 'some-request-id',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+            'PayPal-Request-Id' => 'some-request-id',
             'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
         ],
         'json' => $this->mockCreateReferencedBatchPayoutParams(),
@@ -31,9 +31,9 @@ it('can list items referenced in batch payout', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/referenced-payouts/KHbwO28lWlXwi2IlToJ2IYNG4juFv6kpbFx4J9oQ5Hb24RSp96Dk5FudVHd6v4E=';
     $expectedParams = [
         'headers' => [
-            'Accept'                        => 'application/json',
-            'Accept-Language'               => 'en_US',
-            'Authorization'                 => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -48,10 +48,10 @@ it('can create referenced batch payout item', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/referenced-payouts-items';
     $expectedParams = [
         'headers' => [
-            'Accept'                        => 'application/json',
-            'Accept-Language'               => 'en_US',
-            'Authorization'                 => 'Bearer some-token',
-            'PayPal-Request-Id'             => 'some-request-id',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+            'PayPal-Request-Id' => 'some-request-id',
             'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
         ],
         'json' => $this->mockCreateReferencedBatchPayoutItemParams(),
@@ -68,10 +68,10 @@ it('can show referenced payout item details', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/referenced-payouts-items/CDZEC5MJ8R5HY';
     $expectedParams = [
         'headers' => [
-            'Accept'                        => 'application/json',
-            'Accept-Language'               => 'en_US',
-            'Authorization'                 => 'Bearer some-token',
-            'PayPal-Request-Id'             => 'some-request-id',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+            'PayPal-Request-Id' => 'some-request-id',
             'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
         ],
         'json' => $this->mockCreateReferencedBatchPayoutItemParams(),

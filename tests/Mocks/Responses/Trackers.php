@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Trackers
 {
-    /**
-     * @return array
-     */
     private function mockGetTrackingDetailsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -35,9 +32,6 @@ trait Trackers
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCreateTrackinginBatchesResponse(): array
     {
         return Utils::jsonDecode('{

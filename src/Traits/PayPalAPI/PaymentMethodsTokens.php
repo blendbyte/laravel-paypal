@@ -2,6 +2,8 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait PaymentMethodsTokens
 {
     use PaymentMethodsTokens\Helpers;
@@ -9,11 +11,11 @@ trait PaymentMethodsTokens
     /**
      * Create a payment method token.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#payment-tokens_create
      */
@@ -31,11 +33,8 @@ trait PaymentMethodsTokens
     /**
      * List all the payment tokens.
      *
-     * @param int  $page
-     * @param int  $page_size
-     * @param bool $totals
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#customer_payment-tokens_get
      */
@@ -51,9 +50,8 @@ trait PaymentMethodsTokens
     /**
      * Show details for a payment method token.
      *
-     * @param string $token
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#payment-tokens_get
      */
@@ -69,9 +67,8 @@ trait PaymentMethodsTokens
     /**
      * Show details for a payment token.
      *
-     * @param string $token
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#payment-tokens_delete
      */
@@ -87,11 +84,11 @@ trait PaymentMethodsTokens
     /**
      * Create a payment setup token.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#setup-tokens_create
      */
@@ -109,9 +106,8 @@ trait PaymentMethodsTokens
     /**
      * Show details for a payment setup token.
      *
-     * @param string $token
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#setup-tokens_get
      */

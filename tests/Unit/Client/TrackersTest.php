@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can get tracking details for tracking id', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/shipping/trackers/8MC585209K746392H-443844607820';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -28,9 +28,9 @@ it('can update tracking details for tracking id', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/shipping/trackers/8MC585209K746392H-443844607820';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockUpdateTrackingDetailsParams(),
     ];
@@ -46,9 +46,9 @@ it('can create tracking in batches', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/shipping/trackers-batch';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCreateTrackinginBatchesParams(),
     ];

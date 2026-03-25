@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can create a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCreateSubscriptionParams(),
     ];
@@ -29,9 +29,9 @@ it('can update a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockUpdateSubscriptionParams(),
     ];
@@ -47,9 +47,9 @@ it('can show details for a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -64,9 +64,9 @@ it('can activate a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/activate';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockActivateSubscriptionParams(),
     ];
@@ -82,9 +82,9 @@ it('can cancel a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/cancel';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCancelSubscriptionParams(),
     ];
@@ -100,9 +100,9 @@ it('can suspend a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/suspend';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockSuspendSubscriptionParams(),
     ];
@@ -118,9 +118,9 @@ it('can capture payment for a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/capture';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCaptureSubscriptionPaymentParams(),
     ];
@@ -136,9 +136,9 @@ it('can update quantity or product for a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/revise';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockUpdateSubscriptionItemsParams(),
     ];
@@ -154,9 +154,9 @@ it('can list transactions for a subscription', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-BW452GLLEP1G/transactions?start_time=2018-01-21T07:50:20.940Z&end_time=2018-08-21T07:50:20.940Z';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 

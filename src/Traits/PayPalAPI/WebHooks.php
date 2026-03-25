@@ -2,17 +2,18 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait WebHooks
 {
     /**
      * Create a new web hook.
      *
-     * @param string $url
-     * @param array  $events
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_post
      */
@@ -35,9 +36,10 @@ trait WebHooks
     /**
      * List all web hooks.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_list
      */
@@ -53,11 +55,11 @@ trait WebHooks
     /**
      * Delete a web hook.
      *
-     * @param string $web_hook_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_delete
      */
@@ -73,12 +75,11 @@ trait WebHooks
     /**
      * Update an existing web hook.
      *
-     * @param string $web_hook_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_update
      */
@@ -96,11 +97,11 @@ trait WebHooks
     /**
      * Show details for an existing web hook.
      *
-     * @param string $web_hook_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_get
      */
@@ -116,11 +117,10 @@ trait WebHooks
     /**
      * List events for an existing web hook.
      *
-     * @param string $web_hook_id
+     * @param  string  $web_hook_id
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_get
      */

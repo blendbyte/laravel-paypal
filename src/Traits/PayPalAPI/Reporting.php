@@ -3,18 +3,18 @@
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
 use Carbon\Carbon;
+use Psr\Http\Message\StreamInterface;
 
 trait Reporting
 {
     /**
      * List all transactions.
      *
-     * @param array  $filters
-     * @param string $fields
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/transaction-search/v1/#transactions_get
      */
@@ -35,12 +35,11 @@ trait Reporting
     /**
      * List available balance.
      *
-     * @param string $date
-     * @param string $balance_currency
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/transaction-search/v1/#balances_get
      */

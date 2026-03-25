@@ -1,8 +1,8 @@
 <?php
 
-use Carbon\Carbon;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use Carbon\Carbon;
 
 uses(MockRequestPayloads::class);
 
@@ -36,8 +36,8 @@ it('can get access token', function () {
 
 it('can create a billing agreement token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -50,7 +50,7 @@ it('can create a billing agreement token', function () {
 
     try {
         $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreementToken($expectedParams);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->not->toBeEmpty();
@@ -59,8 +59,8 @@ it('can create a billing agreement token', function () {
 
 it('can show billing agreement token details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -71,7 +71,7 @@ it('can show billing agreement token details', function () {
 
     try {
         $response = $this->client->getBillingAgreementTokenDetails('BA-8A802366G0648845Y');
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->not->toBeEmpty();
@@ -80,8 +80,8 @@ it('can show billing agreement token details', function () {
 
 it('can create a billing agreement', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -92,7 +92,7 @@ it('can create a billing agreement', function () {
 
     try {
         $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreement('BA-8A802366G0648845Y');
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->not->toBeEmpty();
@@ -101,8 +101,8 @@ it('can create a billing agreement', function () {
 
 it('can update a billing agreement', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -113,7 +113,7 @@ it('can update a billing agreement', function () {
 
     try {
         $response = $this->client->updateBillingAgreement('BA-8A802366G0648845Y', $expectedParams);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->toBeEmpty();
@@ -121,8 +121,8 @@ it('can update a billing agreement', function () {
 
 it('can show billing agreement details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -133,7 +133,7 @@ it('can show billing agreement details', function () {
 
     try {
         $response = $this->client->showBillingAgreementDetails('BA-8A802366G0648845Y');
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->not->toBeEmpty();
@@ -142,8 +142,8 @@ it('can show billing agreement details', function () {
 
 it('can cancel a billing agreement', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -152,7 +152,7 @@ it('can cancel a billing agreement', function () {
 
     try {
         $response = $this->client->cancelBillingAgreement('BA-8A802366G0648845Y');
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->toBeEmpty();
@@ -160,8 +160,8 @@ it('can cancel a billing agreement', function () {
 
 it('can create a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -174,7 +174,7 @@ it('can create a billing plan', function () {
 
     try {
         $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createPlan($expectedParams);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
     }
 
     expect($response)->not->toBeEmpty();
@@ -183,8 +183,8 @@ it('can create a billing plan', function () {
 
 it('can list billing plans', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -201,8 +201,8 @@ it('can list billing plans', function () {
 
 it('can update a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -218,8 +218,8 @@ it('can update a billing plan', function () {
 
 it('can show details for a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -236,8 +236,8 @@ it('can show details for a billing plan', function () {
 
 it('can activate a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -251,8 +251,8 @@ it('can activate a billing plan', function () {
 
 it('can deactivate a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -266,8 +266,8 @@ it('can deactivate a billing plan', function () {
 
 it('can update pricing for a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -283,8 +283,8 @@ it('can update pricing for a billing plan', function () {
 
 it('can list products', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -301,8 +301,8 @@ it('can list products', function () {
 
 it('can create a product', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -323,8 +323,8 @@ it('can create a product', function () {
 
 it('can update a product', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -340,8 +340,8 @@ it('can update a product', function () {
 
 it('can get details for a product', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -358,8 +358,8 @@ it('can get details for a product', function () {
 
 it('can acknowledge item is returned for raised dispute', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -380,8 +380,8 @@ it('can acknowledge item is returned for raised dispute', function () {
 
 it('can list disputes', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -398,8 +398,8 @@ it('can list disputes', function () {
 
 it('can partially update a dispute', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -415,8 +415,8 @@ it('can partially update a dispute', function () {
 
 it('can get details for a dispute', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -433,8 +433,8 @@ it('can get details for a dispute', function () {
 
 it('can provide evidence for a dispute claim', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -460,8 +460,8 @@ it('can provide evidence for a dispute claim', function () {
 
 it('throws exception if invalid file as evidence is provided for a dispute claim', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -475,7 +475,7 @@ it('throws exception if invalid file as evidence is provided for a dispute claim
         __DIR__.'/../Mocks/samples/sample.pdf',
     ];
 
-    expect(fn() => $this->client->provideDisputeEvidence('PP-D-27803', $mockFiles))->toThrow(\Exception::class);
+    expect(fn () => $this->client->provideDisputeEvidence('PP-D-27803', $mockFiles))->toThrow(Exception::class);
 });
 
 it('throws exception if file size as evidence exceeds per file limit for a dispute claim')
@@ -486,8 +486,8 @@ it('throws exception if file size as evidence exceeds overall limit for a disput
 
 it('can offer to resolve dispute claim', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -509,8 +509,8 @@ it('can offer to resolve dispute claim', function () {
 
 it('can escalate dispute claim', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -530,8 +530,8 @@ it('can escalate dispute claim', function () {
 
 it('can accept dispute claim', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -551,8 +551,8 @@ it('can accept dispute claim', function () {
 
 it('can accept dispute offer resolution', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -572,8 +572,8 @@ it('can accept dispute offer resolution', function () {
 
 it('can update dispute status', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -593,8 +593,8 @@ it('can update dispute status', function () {
 
 it('can settle dispute', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -614,8 +614,8 @@ it('can settle dispute', function () {
 
 it('can decline dispute offer resolution', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -635,8 +635,8 @@ it('can decline dispute offer resolution', function () {
 
 it('can generate unique invoice number', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -653,8 +653,8 @@ it('can generate unique invoice number', function () {
 
 it('can create a draft invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -673,8 +673,8 @@ it('can create a draft invoice', function () {
 
 it('can list invoices', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -691,8 +691,8 @@ it('can list invoices', function () {
 
 it('can delete an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -706,8 +706,8 @@ it('can delete an invoice', function () {
 
 it('can update an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -726,8 +726,8 @@ it('can update an invoice', function () {
 
 it('can show details for an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -744,8 +744,8 @@ it('can show details for an invoice', function () {
 
 it('can cancel an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -771,8 +771,8 @@ it('can cancel an invoice', function () {
 
 it('can generate qr code for invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -788,8 +788,8 @@ it('can generate qr code for invoice', function () {
 
 it('can register payment for invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -806,8 +806,8 @@ it('can register payment for invoice', function () {
 
 it('can delete payment for invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -821,8 +821,8 @@ it('can delete payment for invoice', function () {
 
 it('can refund payment for invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -839,8 +839,8 @@ it('can refund payment for invoice', function () {
 
 it('can delete refund for invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -854,8 +854,8 @@ it('can delete refund for invoice', function () {
 
 it('can send an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -879,8 +879,8 @@ it('can send an invoice', function () {
 
 it('can send reminder for an invoice', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -904,8 +904,8 @@ it('can send reminder for an invoice', function () {
 
 it('can create invoice template', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -924,8 +924,8 @@ it('can create invoice template', function () {
 
 it('can list invoice templates', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -942,8 +942,8 @@ it('can list invoice templates', function () {
 
 it('can delete an invoice template', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -957,8 +957,8 @@ it('can delete an invoice template', function () {
 
 it('can update an invoice template', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -977,8 +977,8 @@ it('can update an invoice template', function () {
 
 it('can get details for an invoice template', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -995,8 +995,8 @@ it('can get details for an invoice template', function () {
 
 it('can search invoices', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1013,8 +1013,8 @@ it('can search invoices', function () {
 
 it('can search invoices with custom filters', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1045,8 +1045,8 @@ it('can search invoices with custom filters', function () {
 
 it('throws exception on search invoices with invalid status', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1055,13 +1055,13 @@ it('throws exception on search invoices with invalid status', function () {
         )
     );
 
-    expect(fn() => $this->client->addInvoiceFilterByInvoiceStatus(['DECLINED'])->searchInvoices())->toThrow(\Exception::class);
+    expect(fn () => $this->client->addInvoiceFilterByInvoiceStatus(['DECLINED'])->searchInvoices())->toThrow(Exception::class);
 });
 
 it('throws exception on search invoices with invalid amount ranges', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1072,13 +1072,13 @@ it('throws exception on search invoices with invalid amount ranges', function ()
 
     $filters = $this->invoiceSearchParams();
 
-    expect(fn() => $this->client->addInvoiceFilterByAmountRange(50, 30)->searchInvoices())->toThrow(\Exception::class);
+    expect(fn () => $this->client->addInvoiceFilterByAmountRange(50, 30)->searchInvoices())->toThrow(Exception::class);
 });
 
 it('throws exception on search invoices with invalid date ranges', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1089,13 +1089,13 @@ it('throws exception on search invoices with invalid date ranges', function () {
 
     $filters = $this->invoiceSearchParams();
 
-    expect(fn() => $this->client->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')->searchInvoices())->toThrow(\Exception::class);
+    expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')->searchInvoices())->toThrow(Exception::class);
 });
 
 it('throws exception on search invoices with invalid date range type', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1106,13 +1106,13 @@ it('throws exception on search invoices with invalid date range type', function 
 
     $filters = $this->invoiceSearchParams();
 
-    expect(fn() => $this->client->addInvoiceFilterByDateRange('2018-06-01', '2018-06-21', 'declined_date')->searchInvoices())->toThrow(\Exception::class);
+    expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-06-01', '2018-06-21', 'declined_date')->searchInvoices())->toThrow(Exception::class);
 });
 
 it('can get user profile details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1128,8 +1128,8 @@ it('can get user profile details', function () {
 
 it('can get list users', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1145,8 +1145,8 @@ it('can get list users', function () {
 
 it('can get user details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1164,8 +1164,8 @@ it('can get user details', function () {
 
 it('can deleta a user', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1181,8 +1181,8 @@ it('can deleta a user', function () {
 
 it('can create merchant applications', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1212,8 +1212,8 @@ it('can create merchant applications', function () {
 
 it('can set account properties', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1227,8 +1227,8 @@ it('can set account properties', function () {
 
 it('can disable account properties', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1244,8 +1244,8 @@ it('can disable account properties', function () {
 
 it('can get client token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1261,8 +1261,8 @@ it('can get client token', function () {
 
 it('can create orders', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1282,8 +1282,8 @@ it('can create orders', function () {
 
 it('can update orders', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1302,8 +1302,8 @@ it('can update orders', function () {
 
 it('can get order details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1326,8 +1326,8 @@ it('can get order details', function () {
 
 it('can authorize payment for an order', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1348,8 +1348,8 @@ it('can authorize payment for an order', function () {
 
 it('can create partner referral', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1367,8 +1367,8 @@ it('can create partner referral', function () {
 
 it('can get referral details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1387,8 +1387,8 @@ it('can get referral details', function () {
 
 it('can list seller tracking information', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1408,8 +1408,8 @@ it('can list seller tracking information', function () {
 
 it('can show seller status', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1428,8 +1428,8 @@ it('can show seller status', function () {
 
 it('can list merchant credentials', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1448,8 +1448,8 @@ it('can list merchant credentials', function () {
 
 it('can list web experience profiles', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1466,8 +1466,8 @@ it('can list web experience profiles', function () {
 
 it('can create web experience profile', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1488,8 +1488,8 @@ it('can delete web experience profile', function () {
     $expectedResponse = '';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1509,8 +1509,8 @@ it('can partially update web experience profile', function () {
     $expectedParams = $this->partiallyUpdateWebProfileParams();
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1528,8 +1528,8 @@ it('can fully update web experience profile', function () {
     $expectedParams = $this->updateWebProfileParams();
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1547,8 +1547,8 @@ it('can get web experience profile details', function () {
     $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1563,8 +1563,8 @@ it('can get web experience profile details', function () {
 
 it('can capture payment for an order', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1585,8 +1585,8 @@ it('can capture payment for an order', function () {
 
 it('can show details for an authorized payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1603,8 +1603,8 @@ it('can show details for an authorized payment', function () {
 
 it('can capture an authorized payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1626,8 +1626,8 @@ it('can capture an authorized payment', function () {
 
 it('can reauthorize an authorized payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1644,8 +1644,8 @@ it('can reauthorize an authorized payment', function () {
 
 it('can void an authorized payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1659,8 +1659,8 @@ it('can void an authorized payment', function () {
 
 it('can show details for a captured payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1677,8 +1677,8 @@ it('can show details for a captured payment', function () {
 
 it('can refund a captured payment', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1700,8 +1700,8 @@ it('can refund a captured payment', function () {
 
 it('can show details for a refund', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1722,8 +1722,8 @@ it('can create batch payout', function () {
     $expectedParams = $this->mockCreateBatchPayoutParams();
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1742,8 +1742,8 @@ it('can show batch payout details', function () {
     $expectedParams = 'FYXMPQTX4JC9N';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1763,8 +1763,8 @@ it('can show batch payout item details', function () {
     $expectedParams = '8AELMXH8UB2P8';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1785,8 +1785,8 @@ it('can cancel unclaimed batch payout item', function () {
     $expectedParams = '8AELMXH8UB2P8';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1807,8 +1807,8 @@ it('can create referenced batch payout', function () {
     $expectedParams = $this->mockCreateReferencedBatchPayoutParams();
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1816,7 +1816,7 @@ it('can create referenced batch payout', function () {
     );
 
     $response = $this->client->setRequestHeaders([
-        'PayPal-Request-Id'             => 'some-request-id',
+        'PayPal-Request-Id' => 'some-request-id',
         'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
     ])->createReferencedBatchPayout($expectedParams);
 
@@ -1830,8 +1830,8 @@ it('can list items referenced in batch payout', function () {
     $expectedParams = 'KHbwO28lWlXwi2IlToJ2IYNG4juFv6kpbFx4J9oQ5Hb24RSp96Dk5FudVHd6v4E=';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1850,8 +1850,8 @@ it('can create referenced batch payout item', function () {
     $expectedParams = $this->mockCreateReferencedBatchPayoutItemParams();
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1859,7 +1859,7 @@ it('can create referenced batch payout item', function () {
     );
 
     $response = $this->client->setRequestHeaders([
-        'PayPal-Request-Id'             => 'some-request-id',
+        'PayPal-Request-Id' => 'some-request-id',
         'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
     ])->createReferencedBatchPayoutItem($expectedParams);
 
@@ -1873,8 +1873,8 @@ it('can show referenced payout item details', function () {
     $expectedParams = 'CDZEC5MJ8R5HY';
 
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1882,7 +1882,7 @@ it('can show referenced payout item details', function () {
     );
 
     $response = $this->client->setRequestHeader('PayPal-Partner-Attribution-Id', 'some-attribution-id')
-    ->showReferencedPayoutItemDetails($expectedParams);
+        ->showReferencedPayoutItemDetails($expectedParams);
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('item_id');
@@ -1891,8 +1891,8 @@ it('can show referenced payout item details', function () {
 
 it('can list transactions', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1902,20 +1902,20 @@ it('can list transactions', function () {
     );
 
     $filters = [
-        'start_date'    => Carbon::now()->toIso8601String(),
-        'end_date'      => Carbon::now()->subDays(30)->toIso8601String(),
+        'start_date' => Carbon::now()->toIso8601String(),
+        'end_date' => Carbon::now()->subDays(30)->toIso8601String(),
     ];
 
     $response = $this->client->listTransactions($filters);
 
     expect($response)->toHaveKey('transaction_details');
-    expect(sizeof($response['transaction_details']))->toBeGreaterThan(0);
+    expect(count($response['transaction_details']))->toBeGreaterThan(0);
 });
 
 it('can list account balances', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1933,8 +1933,8 @@ it('can list account balances', function () {
 
 it('can list account balances for a different currency', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1952,8 +1952,8 @@ it('can list account balances for a different currency', function () {
 
 it('can create a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1972,8 +1972,8 @@ it('can create a subscription', function () {
 
 it('can update a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -1989,8 +1989,8 @@ it('can update a subscription', function () {
 
 it('can show details for a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2007,8 +2007,8 @@ it('can show details for a subscription', function () {
 
 it('can activate a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2022,8 +2022,8 @@ it('can activate a subscription', function () {
 
 it('can cancel a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2037,8 +2037,8 @@ it('can cancel a subscription', function () {
 
 it('can suspend a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2052,8 +2052,8 @@ it('can suspend a subscription', function () {
 
 it('can capture payment for a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2067,8 +2067,8 @@ it('can capture payment for a subscription', function () {
 
 it('can update quantity or product for a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2087,8 +2087,8 @@ it('can update quantity or product for a subscription', function () {
 
 it('can list transactions for a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2105,8 +2105,8 @@ it('can list transactions for a subscription', function () {
 
 it('can list tracking details', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2125,8 +2125,8 @@ it('can list tracking details', function () {
 
 it('can get tracking details for tracking id', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2144,8 +2144,8 @@ it('can get tracking details for tracking id', function () {
 
 it('can update tracking details for tracking id', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2162,8 +2162,8 @@ it('can update tracking details for tracking id', function () {
 
 it('can create tracking in batches', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2182,8 +2182,8 @@ it('can create tracking in batches', function () {
 
 it('can create single tracking for single transaction', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2202,8 +2202,8 @@ it('can create single tracking for single transaction', function () {
 
 it('can list web hooks event types', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2220,8 +2220,8 @@ it('can list web hooks event types', function () {
 
 it('can list web hooks events', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2238,8 +2238,8 @@ it('can list web hooks events', function () {
 
 it('can show details for a web hooks event', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2256,8 +2256,8 @@ it('can show details for a web hooks event', function () {
 
 it('can resend notification for a web hooks event', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2276,8 +2276,8 @@ it('can resend notification for a web hooks event', function () {
 
 it('can create a web hook', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2297,8 +2297,8 @@ it('can create a web hook', function () {
 
 it('can list web hooks', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2315,8 +2315,8 @@ it('can list web hooks', function () {
 
 it('can delete a web hook', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2330,8 +2330,8 @@ it('can delete a web hook', function () {
 
 it('can update a web hook', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2350,8 +2350,8 @@ it('can update a web hook', function () {
 
 it('can show details for a web hook', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2368,8 +2368,8 @@ it('can show details for a web hook', function () {
 
 it('can list events for web hooks', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2386,8 +2386,8 @@ it('can list events for web hooks', function () {
 
 it('can verify web hook signature', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2406,8 +2406,8 @@ it('can verify web hook signature', function () {
 
 it('can list payment methods source tokens', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2417,7 +2417,7 @@ it('can list payment methods source tokens', function () {
     );
 
     $response = $this->client->setCustomerSource('customer_4029352050')
-    ->listPaymentSourceTokens();
+        ->listPaymentSourceTokens();
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('payment_tokens');
@@ -2425,8 +2425,8 @@ it('can list payment methods source tokens', function () {
 
 it('can show details for payment method source token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2445,8 +2445,8 @@ it('can show details for payment method source token', function () {
 
 it('can delete a payment method source token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -2460,8 +2460,8 @@ it('can delete a payment method source token', function () {
 
 it('can show details for payment setup token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(

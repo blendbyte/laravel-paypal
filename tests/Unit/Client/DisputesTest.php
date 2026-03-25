@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can list disputes', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -28,9 +28,9 @@ it('can partially update a dispute', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-D-27803';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->updateDisputeParams(),
     ];
@@ -46,9 +46,9 @@ it('can get details for a dispute', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-D-4012';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 

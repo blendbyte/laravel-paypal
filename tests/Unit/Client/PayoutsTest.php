@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can create batch payout', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->mockCreateBatchPayoutParams(),
     ];
@@ -29,9 +29,9 @@ it('can show batch payout details', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts/FYXMPQTX4JC9N';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -46,9 +46,9 @@ it('can show batch payout item details', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -63,9 +63,9 @@ it('can cancel unclaimed batch payout item', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8/cancel';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 

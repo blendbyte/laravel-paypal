@@ -29,8 +29,7 @@ class VerifyDocuments
     /**
      * Get Mime type from filename.
      *
-     * @param string $file
-     *
+     * @param  string  $file
      * @return string
      */
     public static function getMimeType($file)
@@ -41,7 +40,6 @@ class VerifyDocuments
     /**
      * Check if the evidence file being submitted mime type is valid.
      *
-     * @param array $files
      *
      * @return bool
      */
@@ -58,7 +56,7 @@ class VerifyDocuments
         foreach ($files as $file) {
             $mime_type = self::getMimeType($file);
 
-            if (!in_array($mime_type, self::$dispute_evidence_types)) {
+            if (! in_array($mime_type, self::$dispute_evidence_types)) {
                 $validFile = false;
                 break;
             }

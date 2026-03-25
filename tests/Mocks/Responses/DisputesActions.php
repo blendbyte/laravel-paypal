@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait DisputesActions
 {
-    /**
-     * @return array
-     */
     private function mockAcceptDisputesClaimResponse(): array
     {
         return Utils::jsonDecode('{
@@ -22,9 +19,6 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockAcceptDisputesOfferResolutionResponse(): array
     {
         return Utils::jsonDecode('{
@@ -38,9 +32,6 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockAcknowledgeItemReturnedResponse(): array
     {
         return Utils::jsonDecode('{

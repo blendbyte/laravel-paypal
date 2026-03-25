@@ -2,6 +2,8 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait Orders
 {
     use Orders\Helpers;
@@ -9,11 +11,11 @@ trait Orders
     /**
      * Creates an order.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_create
      */
@@ -31,11 +33,11 @@ trait Orders
     /**
      * Shows details for an order.
      *
-     * @param string $order_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_get
      */
@@ -51,12 +53,11 @@ trait Orders
     /**
      * Update order details.
      *
-     * @param string $order_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_patch
      */
@@ -74,12 +75,11 @@ trait Orders
     /**
      * Confirm the order.
      *
-     * @param string $order_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      */
     public function confirmOrder(string $order_id, array $data)
     {
@@ -95,12 +95,11 @@ trait Orders
     /**
      * Authorizes payment for an order.
      *
-     * @param string $order_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_authorize
      */
@@ -118,12 +117,11 @@ trait Orders
     /**
      * Captures payment for an order.
      *
-     * @param string $order_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_capture
      */
@@ -141,12 +139,11 @@ trait Orders
     /**
      * Add tracking information for an Order.
      *
-     * @param string $order_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_track_create
      */

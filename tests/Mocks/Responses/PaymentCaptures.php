@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait PaymentCaptures
 {
-    /**
-     * @return array
-     */
     private function mockGetCapturedPaymentDetailsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -64,9 +61,6 @@ trait PaymentCaptures
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockRefundCapturedPaymentResponse(): array
     {
         return Utils::jsonDecode('{

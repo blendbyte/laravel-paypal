@@ -17,7 +17,7 @@ it('can create referenced batch payout', function () {
     $mockClient->setApiCredentials($this->getMockCredentials());
     $mockClient->getAccessToken();
     $mockClient->{$additionalMethod}([
-        'PayPal-Request-Id'             => 'some-request-id',
+        'PayPal-Request-Id' => 'some-request-id',
         'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
     ]);
 
@@ -52,7 +52,7 @@ it('can create referenced batch payout item', function () {
     $mockClient->setApiCredentials($this->getMockCredentials());
     $mockClient->getAccessToken();
     $mockClient->{$additionalMethod}([
-        'PayPal-Request-Id'             => 'some-request-id',
+        'PayPal-Request-Id' => 'some-request-id',
         'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
     ]);
 

@@ -2,6 +2,8 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 /**
  * This trait provides methods for the Reference Transactions API,
  * which is available on a limited-use basis.
@@ -15,11 +17,11 @@ trait BillingAgreements
     /**
      * Create a new billing agreement.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreement-tokens_post
      */
@@ -37,11 +39,11 @@ trait BillingAgreements
     /**
      * Get details of a billing agreement token.
      *
-     * @param string $token_id
+     *
+     *
+     * @return array|string|StreamInterface
      *
      * @throws \Throwable
-     *
-     * @return array|string|\Psr\Http\Message\StreamInterface
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreement-tokens_get
      */
@@ -57,11 +59,11 @@ trait BillingAgreements
     /**
      * Create a billing agreement.
      *
-     * @param string $token_id
+     *
+     *
+     * @return array|string|StreamInterface
      *
      * @throws \Throwable
-     *
-     * @return array|string|\Psr\Http\Message\StreamInterface
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreements_create
      */
@@ -81,12 +83,11 @@ trait BillingAgreements
     /**
      * Update an existing billing agreement.
      *
-     * @param string $agreement_id
-     * @param array  $data
+     *
+     *
+     * @return array|string|StreamInterface
      *
      * @throws \Throwable
-     *
-     * @return array|string|\Psr\Http\Message\StreamInterface
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreements_patch
      */
@@ -104,11 +105,11 @@ trait BillingAgreements
     /**
      * Show details for an existing billing agreement.
      *
-     * @param string $agreement_id
+     *
+     *
+     * @return array|string|StreamInterface
      *
      * @throws \Throwable
-     *
-     * @return array|string|\Psr\Http\Message\StreamInterface
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreements_get
      */
@@ -124,11 +125,11 @@ trait BillingAgreements
     /**
      * Cancel an existing billing agreement.
      *
-     * @param string $agreement_id
+     *
+     *
+     * @return array|string|StreamInterface
      *
      * @throws \Throwable
-     *
-     * @return array|string|\Psr\Http\Message\StreamInterface
      *
      * @see https://developer.paypal.com/api/limited-release/reference-transactions/v1/#agreements_cancel
      */

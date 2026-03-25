@@ -1,8 +1,8 @@
 <?php
 
-use Carbon\Carbon;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use Carbon\Carbon;
 
 uses(MockRequestPayloads::class);
 
@@ -15,8 +15,8 @@ beforeEach(function () {
 
 it('can set payment experience context before performing api call', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();

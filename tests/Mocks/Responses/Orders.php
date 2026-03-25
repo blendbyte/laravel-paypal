@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Orders
 {
-    /**
-     * @return array
-     */
     public function mockCreateOrdersResponse(): array
     {
         return Utils::jsonDecode('{
@@ -47,9 +44,6 @@ trait Orders
         return '';
     }
 
-    /**
-     * @return array
-     */
     public function mockOrderDetailsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -90,9 +84,6 @@ trait Orders
       }', true);
     }
 
-    /**
-     * @return array
-     */
     public function mockOrderPaymentAuthorizedResponse(): array
     {
         return Utils::jsonDecode('{
@@ -175,9 +166,6 @@ trait Orders
       }', true);
     }
 
-    /**
-     * @return array
-     */
     public function mockOrderPaymentCapturedResponse(): array
     {
         return Utils::jsonDecode('{

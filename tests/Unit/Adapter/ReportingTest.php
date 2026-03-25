@@ -13,8 +13,8 @@ it('can list transactions', function () {
     $mockClient->getAccessToken();
 
     $filters = [
-        'start_date'    => Carbon::now()->toIso8601String(),
-        'end_date'      => Carbon::now()->subDays(30)->toIso8601String(),
+        'start_date' => Carbon::now()->toIso8601String(),
+        'end_date' => Carbon::now()->subDays(30)->toIso8601String(),
     ];
 
     expect($mockClient->{$expectedMethod}($filters))->toBe($expectedResponse);

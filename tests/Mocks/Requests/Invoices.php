@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Invoices
 {
-    /**
-     * @return array
-     */
     private function createInvoiceParams(): array
     {
         return Utils::jsonDecode('{
@@ -170,9 +167,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function updateInvoiceParams(): array
     {
         return Utils::jsonDecode('{
@@ -370,9 +364,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function cancelInvoiceParams(): array
     {
         return Utils::jsonDecode('{
@@ -386,9 +377,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function generateQRCodeInvoiceParams(): array
     {
         return Utils::jsonDecode('{
@@ -397,9 +385,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function registerInvoicePaymentParams(): array
     {
         return Utils::jsonDecode('{
@@ -408,9 +393,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function refundInvoicePaymentParams(): array
     {
         return Utils::jsonDecode('{
@@ -423,9 +405,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function sendInvoiceParams(): array
     {
         return Utils::jsonDecode('{
@@ -439,9 +418,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function sendInvoiceReminderParams(): array
     {
         return Utils::jsonDecode('{

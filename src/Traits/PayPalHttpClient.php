@@ -2,12 +2,13 @@
 
 namespace Blendbyte\PayPal\Traits;
 
+use Blendbyte\PayPal\Services\Str;
+use GuzzleHttp\Client;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException as HttpClientException;
 use GuzzleHttp\Utils;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
-use Blendbyte\PayPal\Services\Str;
 
 trait PayPalHttpClient
 {
@@ -89,10 +90,10 @@ trait PayPalHttpClient
     protected function setCurlConstants()
     {
         $constants = [
-            'CURLOPT_SSLVERSION'        => 32,
-            'CURL_SSLVERSION_TLSv1_2'   => 6,
-            'CURLOPT_SSL_VERIFYPEER'    => 64,
-            'CURLOPT_SSLCERT'           => 10025,
+            'CURLOPT_SSLVERSION' => 32,
+            'CURL_SSLVERSION_TLSv1_2' => 6,
+            'CURLOPT_SSL_VERIFYPEER' => 64,
+            'CURLOPT_SSLCERT' => 10025,
         ];
 
         foreach ($constants as $key => $item) {
@@ -103,9 +104,7 @@ trait PayPalHttpClient
     /**
      * Declare a curl constant.
      *
-     * @param string $key
-     * @param string $value
-     *
+     * @param  string  $value
      * @return bool
      */
     protected function defineCurlConstant(string $key, string|int $value)
@@ -116,7 +115,6 @@ trait PayPalHttpClient
     /**
      * Function to initialize/override Http Client.
      *
-     * @param \GuzzleHttp\Client|null $client
      *
      * @return void
      */
@@ -143,7 +141,7 @@ trait PayPalHttpClient
         $this->setCurlConstants();
 
         $this->httpClientConfig = [
-            CURLOPT_SSLVERSION     => CURL_SSLVERSION_TLSv1_2,
+            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
             CURLOPT_SSL_VERIFYPEER => $this->validateSSL,
         ];
 
@@ -180,8 +178,6 @@ trait PayPalHttpClient
      * Perform PayPal API request & return response.
      *
      * @throws \Throwable
-     *
-     * @return StreamInterface
      */
     private function makeHttpRequest(): StreamInterface
     {
@@ -198,11 +194,11 @@ trait PayPalHttpClient
     /**
      * Function To Perform PayPal API Request.
      *
-     * @param bool $decode
      *
-     * @throws \Throwable
      *
      * @return array|StreamInterface|string
+     *
+     * @throws \Throwable
      */
     private function doPayPalRequest(bool $decode = true)
     {

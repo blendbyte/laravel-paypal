@@ -11,8 +11,8 @@ beforeEach(function () {
 
 it('can update pricing schemes for a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client = $this->client->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
@@ -30,8 +30,8 @@ it('can update pricing schemes for a billing plan', function () {
 
 it('can set custom limits when listing billing plans', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client = $this->client->setPageSize(30)

@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait CatalogProducts
 {
-    /**
-     * @return array
-     */
     private function mockCreateCatalogProductsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -36,9 +33,6 @@ trait CatalogProducts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListCatalogProductsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -92,9 +86,6 @@ trait CatalogProducts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetCatalogProductsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -122,9 +113,6 @@ trait CatalogProducts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetCatalogProductsErrorResponse(): array
     {
         return Utils::jsonDecode('{

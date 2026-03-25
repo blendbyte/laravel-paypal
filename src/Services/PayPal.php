@@ -2,9 +2,9 @@
 
 namespace Blendbyte\PayPal\Services;
 
-use Exception;
 use Blendbyte\PayPal\Traits\PayPalRequest as PayPalAPIRequest;
 use Blendbyte\PayPal\Traits\PayPalVerifyIPN;
+use Exception;
 
 class PayPal
 {
@@ -14,7 +14,6 @@ class PayPal
     /**
      * PayPal constructor.
      *
-     * @param array $config
      *
      * @throws Exception
      */
@@ -32,8 +31,6 @@ class PayPal
 
     /**
      * Set ExpressCheckout API endpoints & options.
-     *
-     * @param array $credentials
      */
     protected function setOptions(array $credentials): void
     {

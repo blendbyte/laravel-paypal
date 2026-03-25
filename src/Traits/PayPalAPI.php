@@ -2,9 +2,13 @@
 
 namespace Blendbyte\PayPal\Traits;
 
+use Blendbyte\PayPal\Services\PayPal;
+use Psr\Http\Message\StreamInterface;
+
 trait PayPalAPI
 {
-    use PayPalAPI\Trackers;
+    use PayPalAPI\BillingAgreements;
+    use PayPalAPI\BillingPlans;
     use PayPalAPI\CatalogProducts;
     use PayPalAPI\Disputes;
     use PayPalAPI\DisputesActions;
@@ -14,27 +18,27 @@ trait PayPalAPI
     use PayPalAPI\InvoicesTemplates;
     use PayPalAPI\Orders;
     use PayPalAPI\PartnerReferrals;
-    use PayPalAPI\PaymentExperienceWebProfiles;
-    use PayPalAPI\PaymentMethodsTokens;
     use PayPalAPI\PaymentAuthorizations;
     use PayPalAPI\PaymentCaptures;
+    use PayPalAPI\PaymentExperienceWebProfiles;
+    use PayPalAPI\PaymentMethodsTokens;
     use PayPalAPI\PaymentRefunds;
     use PayPalAPI\Payouts;
     use PayPalAPI\ReferencedPayouts;
-    use PayPalAPI\BillingAgreements;
-    use PayPalAPI\BillingPlans;
-    use PayPalAPI\Subscriptions;
     use PayPalAPI\Reporting;
+    use PayPalAPI\Subscriptions;
+    use PayPalAPI\Trackers;
     use PayPalAPI\WebHooks;
-    use PayPalAPI\WebHooksVerification;
     use PayPalAPI\WebHooksEvents;
+    use PayPalAPI\WebHooksVerification;
 
     /**
      * Login through PayPal API to get access token.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/get-an-access-token-curl/
      * @see https://developer.paypal.com/docs/api/get-an-access-token-postman/
@@ -63,7 +67,6 @@ trait PayPalAPI
     /**
      * Set PayPal Rest API access token.
      *
-     * @param array $response
      *
      * @return void
      */
@@ -79,7 +82,6 @@ trait PayPalAPI
     /**
      * Set PayPal App ID.
      *
-     * @param array $response
      *
      * @return void
      */
@@ -92,12 +94,8 @@ trait PayPalAPI
 
     /**
      * Set records per page for list resources API calls.
-     *
-     * @param int $size
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setPageSize(int $size): \Blendbyte\PayPal\Services\PayPal
+    public function setPageSize(int $size): PayPal
     {
         $this->page_size = $size;
 
@@ -106,12 +104,8 @@ trait PayPalAPI
 
     /**
      * Set the current page for list resources API calls.
-     *
-     * @param int $page
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setCurrentPage(int $page): \Blendbyte\PayPal\Services\PayPal
+    public function setCurrentPage(int $page): PayPal
     {
         $this->current_page = $page;
 
@@ -120,12 +114,8 @@ trait PayPalAPI
 
     /**
      * Toggle whether totals for list resources are returned after every API call.
-     *
-     * @param bool $totals
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function showTotals(bool $totals): \Blendbyte\PayPal\Services\PayPal
+    public function showTotals(bool $totals): PayPal
     {
         $this->show_totals = $totals ? 'true' : 'false';
 

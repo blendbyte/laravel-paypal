@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait PaymentAuthorizations
 {
-    /**
-     * @return array
-     */
     private function mockGetAuthorizedPaymentDetailsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -54,9 +51,6 @@ trait PaymentAuthorizations
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCaptureAuthorizedPaymentResponse(): array
     {
         return Utils::jsonDecode('{
@@ -82,9 +76,6 @@ trait PaymentAuthorizations
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockReAuthorizeAuthorizedPaymentResponse(): array
     {
         return Utils::jsonDecode('{

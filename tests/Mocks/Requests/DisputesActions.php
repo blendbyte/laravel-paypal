@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait DisputesActions
 {
-    /**
-     * @return array
-     */
     protected function acceptDisputeClaimParams(): array
     {
         return Utils::jsonDecode('{
@@ -17,9 +14,6 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     protected function acceptDisputeResolutionParams(): array
     {
         return Utils::jsonDecode('{
@@ -27,9 +21,6 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     protected function acknowledgeItemReturnedParams(): array
     {
         return Utils::jsonDecode('{

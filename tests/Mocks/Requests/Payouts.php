@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Payouts
 {
-    /**
-     * @return array
-     */
     private function mockCreateBatchPayoutParams(): array
     {
         return Utils::jsonDecode('{

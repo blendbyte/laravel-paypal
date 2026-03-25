@@ -14,8 +14,8 @@ beforeEach(function () {
 
 it('can create payment token from a vault token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -25,7 +25,7 @@ it('can create payment token from a vault token', function () {
     );
 
     $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
-    ->setCustomerSource('customer_4029352050');
+        ->setCustomerSource('customer_4029352050');
 
     $response = $this->client->sendPaymentMethodRequest();
 
@@ -35,8 +35,8 @@ it('can create payment token from a vault token', function () {
 
 it('can create payment source from a vault token', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -46,7 +46,7 @@ it('can create payment source from a vault token', function () {
     );
 
     $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
-    ->setCustomerSource('customer_4029352050');
+        ->setCustomerSource('customer_4029352050');
 
     $response = $this->client->sendPaymentMethodRequest(true);
 
@@ -55,8 +55,8 @@ it('can create payment source from a vault token', function () {
 
 it('can create payment source from a credit card', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -66,7 +66,7 @@ it('can create payment source from a credit card', function () {
     );
 
     $this->client = $this->client->setPaymentSourceCard($this->mockCreatePaymentSetupTokensParams()['payment_source']['card'])
-    ->setCustomerSource('customer_4029352050');
+        ->setCustomerSource('customer_4029352050');
 
     $response = $this->client->sendPaymentMethodRequest(true);
 
@@ -75,8 +75,8 @@ it('can create payment source from a credit card', function () {
 
 it('can create payment source from a paypal account', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $response_data = $this->mockCreatePaymentSetupTokenResponse();
@@ -88,7 +88,7 @@ it('can create payment source from a paypal account', function () {
     );
 
     $this->client = $this->client->setPaymentSourcePayPal($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
-    ->setCustomerSource('customer_4029352050');
+        ->setCustomerSource('customer_4029352050');
 
     $response = $this->client->sendPaymentMethodRequest(true);
 
@@ -97,8 +97,8 @@ it('can create payment source from a paypal account', function () {
 
 it('can create payment source from a venmo account', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $response_data = $this->mockCreatePaymentSetupTokenResponse();
@@ -110,7 +110,7 @@ it('can create payment source from a venmo account', function () {
     );
 
     $this->client = $this->client->setPaymentSourceVenmo($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
-    ->setCustomerSource('customer_4029352050');
+        ->setCustomerSource('customer_4029352050');
 
     $response = $this->client->sendPaymentMethodRequest(true);
 

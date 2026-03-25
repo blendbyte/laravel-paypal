@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait InvoicesSearch
 {
-    /**
-     * @return array
-     */
     private function mockSearchInvoicesResponse(): array
     {
         return Utils::jsonDecode('{

@@ -2,24 +2,26 @@
 
 namespace Blendbyte\PayPal;
 
-use Exception;
+use Blendbyte\PayPal\Services\PayPal;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Exception;
 
 class PayPalFacadeAccessor
 {
     /**
      * PayPal API provider object.
      *
-     * @var \Blendbyte\PayPal\Services\PayPal|null
+     * @var PayPal|null
      */
     public static $provider;
 
     /**
      * Get specific PayPal API provider object to use.
      *
-     * @throws Exception
      *
-     * @return \Blendbyte\PayPal\Services\PayPal
+     * @return PayPal
+     *
+     * @throws Exception
      */
     public static function getProvider()
     {
@@ -29,14 +31,15 @@ class PayPalFacadeAccessor
     /**
      * Set PayPal API Client to use.
      *
-     * @throws \Exception
      *
-     * @return \Blendbyte\PayPal\Services\PayPal
+     * @return PayPal
+     *
+     * @throws Exception
      */
     public static function setProvider()
     {
         // Set default provider. Defaults to ExpressCheckout
-        self::$provider = new PayPalClient();
+        self::$provider = new PayPalClient;
 
         return self::getProvider();
     }

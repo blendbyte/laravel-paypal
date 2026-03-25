@@ -6,12 +6,6 @@ use GuzzleHttp\Utils;
 
 trait BillingAgreements
 {
-    /**
-     * @return array
-     */
-    /**
-     * @return array
-     */
     private function mockCreateBillingAgreementTokenResponse(): array
     {
         return Utils::jsonDecode('{

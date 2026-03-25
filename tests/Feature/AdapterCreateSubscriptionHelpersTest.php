@@ -1,7 +1,7 @@
 <?php
 
-use Carbon\Carbon;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Carbon\Carbon;
 
 beforeEach(function () {
     $this->client = new PayPalClient($this->getApiCredentials());
@@ -12,8 +12,8 @@ beforeEach(function () {
 
 it('can create a monthly subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -51,8 +51,8 @@ it('can create a monthly subscription', function () {
 
 it('can create a daily subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -90,8 +90,8 @@ it('can create a daily subscription', function () {
 
 it('can create a weekly subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -129,8 +129,8 @@ it('can create a weekly subscription', function () {
 
 it('can create an annual subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -168,8 +168,8 @@ it('can create an annual subscription', function () {
 
 it('can create a subscription with custom defined interval', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -207,19 +207,19 @@ it('can create a subscription with custom defined interval', function () {
 
 it('throws exception when invalid interval is provided for creating a subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client = $this->client->addProductById('PROD-XYAB12ABSB7868434');
 
-    expect(fn() => $this->client->addCustomPlan('Demo Plan', 'Demo Plan', 100, 'MONTHLY', 3))->toThrow(\RuntimeException::class);
+    expect(fn () => $this->client->addCustomPlan('Demo Plan', 'Demo Plan', 100, 'MONTHLY', 3))->toThrow(RuntimeException::class);
 });
 
 it('throws exception when get error for creating a billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -236,13 +236,13 @@ it('throws exception when get error for creating a billing plan', function () {
         )
     );
 
-    expect(fn() => $this->client->addMonthlyPlan('Demo Plan', 'Demo Plan', 100))->toThrow(\RuntimeException::class);
+    expect(fn () => $this->client->addMonthlyPlan('Demo Plan', 'Demo Plan', 100))->toThrow(RuntimeException::class);
 });
 
 it('throws exception when get error for creating a product', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -251,13 +251,13 @@ it('throws exception when get error for creating a product', function () {
         )
     );
 
-    expect(fn() => $this->client->addProduct('Demo Product', 'Demo Product', 'SERVICE', 'SOFTWARE'))->toThrow(\RuntimeException::class);
+    expect(fn () => $this->client->addProduct('Demo Product', 'Demo Product', 'SERVICE', 'SOFTWARE'))->toThrow(RuntimeException::class);
 });
 
 it('can create a subscription without trial', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(
@@ -293,8 +293,8 @@ it('can create a subscription without trial', function () {
 
 it('can create a subscription by existing product and billing plan', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -316,8 +316,8 @@ it('can create a subscription by existing product and billing plan', function ()
 
 it('skips product and billing plan creation if already set when creating a daily subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -342,8 +342,8 @@ it('skips product and billing plan creation if already set when creating a daily
 
 it('skips product and billing plan creation if already set when creating a weekly subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -368,8 +368,8 @@ it('skips product and billing plan creation if already set when creating a weekl
 
 it('skips product and billing plan creation if already set when creating a monthly subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -394,8 +394,8 @@ it('skips product and billing plan creation if already set when creating a month
 
 it('skips product and billing plan creation if already set when creating an annual subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -420,8 +420,8 @@ it('skips product and billing plan creation if already set when creating an annu
 
 it('skips product and billing plan creation if already set when creating a subscription with custom intervals', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -446,8 +446,8 @@ it('skips product and billing plan creation if already set when creating a subsc
 
 it('can add setup fees when creating subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -472,8 +472,8 @@ it('can add setup fees when creating subscription', function () {
 
 it('can add shipping address when creating subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -497,8 +497,8 @@ it('can add shipping address when creating subscription', function () {
 
 it('can add custom payment failure threshold value when creating subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -523,8 +523,8 @@ it('can add custom payment failure threshold value when creating subscription', 
 
 it('can set tax percentage when creating subscription', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $start_date = Carbon::now()->addDay()->toDateString();
@@ -549,8 +549,8 @@ it('can set tax percentage when creating subscription', function () {
 
 it('can create a subscription with fixed installments', function () {
     $this->client->setAccessToken([
-        'access_token'  => $this->access_token,
-        'token_type'    => 'Bearer',
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
     ]);
 
     $this->client->setClient(

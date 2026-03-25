@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait PaymentMethodsTokens
 {
-    /**
-     * @return array
-     */
     private function mockCreatePaymentMethodsTokenResponse(): array
     {
         return Utils::jsonDecode('{
@@ -49,9 +46,6 @@ trait PaymentMethodsTokens
           }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListPaymentMethodsTokensResponse(): array
     {
         return Utils::jsonDecode('{
@@ -293,9 +287,6 @@ trait PaymentMethodsTokens
         }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCreatePaymentSetupTokenResponse(): array
     {
         return Utils::jsonDecode('{
@@ -323,9 +314,6 @@ trait PaymentMethodsTokens
         }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListPaymentSetupTokenResponse(): array
     {
         return Utils::jsonDecode('{

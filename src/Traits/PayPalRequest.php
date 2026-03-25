@@ -2,13 +2,14 @@
 
 namespace Blendbyte\PayPal\Traits;
 
+use Blendbyte\PayPal\Services\PayPal;
 use RuntimeException;
 
 trait PayPalRequest
 {
-    use PayPalHttpClient;
     use PayPalAPI;
     use PayPalExperienceContext;
+    use PayPalHttpClient;
 
     /**
      * PayPal API mode to be used.
@@ -33,8 +34,6 @@ trait PayPalRequest
 
     /**
      * Default currency for PayPal.
-     *
-     * @var string
      */
     protected string $currency = 'USD';
 
@@ -61,17 +60,14 @@ trait PayPalRequest
 
     /**
      * Toggle whether totals for list resources are returned after every API call.
-     *
-     * @var string
      */
     protected string $show_totals;
 
     /**
      * Set PayPal API Credentials.
      *
-     * @param array $credentials
      *
-     * @throws \RuntimeException|\Exception
+     * @throws RuntimeException|\Exception
      */
     public function setApiCredentials(array $credentials): void
     {
@@ -95,18 +91,15 @@ trait PayPalRequest
     /**
      * Function to set currency.
      *
-     * @param string $currency
      *
-     * @throws \RuntimeException
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
+     * @throws RuntimeException
      */
-    public function setCurrency(string $currency = 'USD'): \Blendbyte\PayPal\Services\PayPal
+    public function setCurrency(string $currency = 'USD'): PayPal
     {
         $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD', 'RUB', 'CNY'];
 
         // Check if provided currency is valid.
-        if (!in_array($currency, $allowedCurrencies, true)) {
+        if (! in_array($currency, $allowedCurrencies, true)) {
             throw new RuntimeException('Currency is not supported by PayPal.');
         }
 
@@ -125,13 +118,8 @@ trait PayPalRequest
 
     /**
      * Function to add request header.
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setRequestHeader(string $key, string $value): \Blendbyte\PayPal\Services\PayPal
+    public function setRequestHeader(string $key, string $value): PayPal
     {
         $this->options['headers'][$key] = $value;
 
@@ -140,14 +128,10 @@ trait PayPalRequest
 
     /**
      * Function to add multiple request headers.
-     *
-     * @param array $headers
-     *
-     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setRequestHeaders(array $headers): \Blendbyte\PayPal\Services\PayPal
+    public function setRequestHeaders(array $headers): PayPal
     {
-        foreach ($headers as $key=>$value) {
+        foreach ($headers as $key => $value) {
             $this->setRequestHeader($key, $value);
         }
 
@@ -157,11 +141,8 @@ trait PayPalRequest
     /**
      * Return request options header.
      *
-     * @param string $key
      *
-     * @throws \RuntimeException
-     *
-     * @return string
+     * @throws RuntimeException
      */
     public function getRequestHeader(string $key): string
     {
@@ -175,7 +156,6 @@ trait PayPalRequest
     /**
      * Function To Set PayPal API Configuration.
      *
-     * @param array $config
      *
      * @throws \Exception
      */
@@ -185,7 +165,7 @@ trait PayPalRequest
         if (empty($config) && function_exists('config')) {
             try {
                 $fromLaravel = config('paypal');
-                if (!empty($fromLaravel)) {
+                if (! empty($fromLaravel)) {
                     $api_config = $fromLaravel;
                 }
             } catch (\Throwable) {
@@ -199,14 +179,12 @@ trait PayPalRequest
 
     /**
      * Set API environment to be used by PayPal.
-     *
-     * @param array $credentials
      */
     private function setApiEnvironment(array $credentials): void
     {
         $this->mode = 'live';
 
-        if (!empty($credentials['mode'])) {
+        if (! empty($credentials['mode'])) {
             $this->setValidApiEnvironment($credentials['mode']);
         } else {
             $this->throwConfigurationException();
@@ -215,18 +193,15 @@ trait PayPalRequest
 
     /**
      * Validate & set the environment to be used by PayPal.
-     *
-     * @param string $mode
      */
     private function setValidApiEnvironment(string $mode): void
     {
-        $this->mode = !in_array($mode, ['sandbox', 'live']) ? 'live' : $mode;
+        $this->mode = ! in_array($mode, ['sandbox', 'live']) ? 'live' : $mode;
     }
 
     /**
      * Set configuration details for the provider.
      *
-     * @param array $credentials
      *
      * @throws \Exception
      */

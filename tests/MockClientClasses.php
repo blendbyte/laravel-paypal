@@ -2,6 +2,7 @@
 
 namespace Blendbyte\PayPal\Tests;
 
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler as HttpMockHandler;
 use GuzzleHttp\HandlerStack as HttpHandlerStack;
@@ -9,7 +10,6 @@ use GuzzleHttp\Psr7\Response as HttpResponse;
 use GuzzleHttp\Psr7\Stream as HttpStream;
 use GuzzleHttp\Utils;
 use Psr\Http\Message\ResponseInterface;
-use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 
 trait MockClientClasses
 {
@@ -80,34 +80,34 @@ trait MockClientClasses
     private function getMockCredentials(): array
     {
         return [
-            'mode'    => 'sandbox',
+            'mode' => 'sandbox',
             'sandbox' => [
-                'client_id'     => 'some-client-id',
+                'client_id' => 'some-client-id',
                 'client_secret' => 'some-access-token',
-                'app_id'        => 'some-app-id',
+                'app_id' => 'some-app-id',
             ],
             'payment_action' => 'Sale',
-            'currency'       => 'USD',
-            'notify_url'     => '',
-            'locale'         => 'en_US',
-            'validate_ssl'   => true,
+            'currency' => 'USD',
+            'notify_url' => '',
+            'locale' => 'en_US',
+            'validate_ssl' => true,
         ];
     }
 
     private function getApiCredentials(): array
     {
         return [
-            'mode'    => 'sandbox',
+            'mode' => 'sandbox',
             'sandbox' => [
-                'client_id'     => 'AbJgVQM6g57qPrXimGkBz1UaBOXn1dKLSdUj7BgiB3JhzJRCapzCnkPq6ycOOmgXHtnDZcjwLMJ2IdAI',
+                'client_id' => 'AbJgVQM6g57qPrXimGkBz1UaBOXn1dKLSdUj7BgiB3JhzJRCapzCnkPq6ycOOmgXHtnDZcjwLMJ2IdAI',
                 'client_secret' => 'EPd_XBNkfhU3-MlSw6gpa6EJj9x8QBdsC3o77jZZWjcFy_hrjR4kzBP8QN3MPPH4g52U_acG4-ogWUxI',
-                'app_id'        => 'APP-80W284485P519543T',
+                'app_id' => 'APP-80W284485P519543T',
             ],
             'payment_action' => 'Sale',
-            'currency'       => 'USD',
-            'notify_url'     => '',
-            'locale'         => 'en_US',
-            'validate_ssl'   => true,
+            'currency' => 'USD',
+            'notify_url' => '',
+            'locale' => 'en_US',
+            'validate_ssl' => true,
         ];
     }
 }

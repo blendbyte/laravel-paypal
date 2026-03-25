@@ -2,16 +2,18 @@
 
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait InvoicesTemplates
 {
     /**
      * Get list of invoice templates.
      *
-     * @param string $fields
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#templates_list
      */
@@ -27,11 +29,11 @@ trait InvoicesTemplates
     /**
      * Create a new invoice template.
      *
-     * @param array $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#templates_create
      */
@@ -49,11 +51,11 @@ trait InvoicesTemplates
     /**
      * Show details for an existing invoice.
      *
-     * @param string $template_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#templates_get
      */
@@ -69,12 +71,11 @@ trait InvoicesTemplates
     /**
      * Update an existing invoice template.
      *
-     * @param string $template_id
-     * @param array  $data
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#templates_update
      */
@@ -92,11 +93,11 @@ trait InvoicesTemplates
     /**
      * Delete an invoice template.
      *
-     * @param string $template_id
+     *
+     *
+     * @return array|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#templates_delete
      */

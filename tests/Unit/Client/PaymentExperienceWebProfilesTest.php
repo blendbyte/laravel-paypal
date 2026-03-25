@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Utils;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -11,9 +11,9 @@ it('can list web experience profiles', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -28,9 +28,9 @@ it('can create web experience profile', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
             'PayPal-Request-Id' => 'some-request-id',
         ],
         'json' => $this->mockCreateWebProfileParams(),
@@ -47,9 +47,9 @@ it('can delete web experience profile', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles/XP-A88A-LYLW-8Y3X-E5ER';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
@@ -64,9 +64,9 @@ it('can partially update web experience profile', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles/XP-A88A-LYLW-8Y3X-E5ER';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->partiallyUpdateWebProfileParams(),
     ];
@@ -82,9 +82,9 @@ it('can fully update web experience profile', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles/XP-A88A-LYLW-8Y3X-E5ER';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
         'json' => $this->updateWebProfileParams(),
     ];
@@ -100,9 +100,9 @@ it('can get web experience profile details', function () {
     $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payment-experience/web-profiles/XP-A88A-LYLW-8Y3X-E5ER';
     $expectedParams = [
         'headers' => [
-            'Accept'            => 'application/json',
-            'Accept-Language'   => 'en_US',
-            'Authorization'     => 'Bearer some-token',
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
         ],
     ];
 
