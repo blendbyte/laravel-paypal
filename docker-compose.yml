@@ -4,7 +4,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: srmklive/laravel-paypal
+    image: blendbyte/laravel-paypal
     restart: always
     volumes:
     - ./:/server/http

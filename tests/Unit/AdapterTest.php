@@ -1,12 +1,12 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit;
+namespace Blendbyte\PayPal\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Blendbyte\PayPal\Tests\MockClientClasses;
+use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
 class AdapterTest extends TestCase
 {
@@ -33,7 +33,7 @@ class AdapterTest extends TestCase
     public function it_throws_exception_if_invalid_mode_is_provided(): void
     {
         $this->expectException(\RuntimeException::class);
-        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
 
         $credentials = $this->getMockCredentials();
         $credentials['mode'] = '';
@@ -45,7 +45,7 @@ class AdapterTest extends TestCase
     public function it_throws_exception_if_empty_credentials_are_provided(): void
     {
         $this->expectException(\RuntimeException::class);
-        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
 
         $credentials = $this->getMockCredentials();
         $credentials['sandbox'] = [];

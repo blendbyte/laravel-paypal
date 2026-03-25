@@ -1,10 +1,10 @@
 <?php
 
-namespace Srmklive\PayPal\Services;
+namespace Blendbyte\PayPal\Services;
 
 use Exception;
-use Srmklive\PayPal\Traits\PayPalRequest as PayPalAPIRequest;
-use Srmklive\PayPal\Traits\PayPalVerifyIPN;
+use Blendbyte\PayPal\Traits\PayPalRequest as PayPalAPIRequest;
+use Blendbyte\PayPal\Traits\PayPalVerifyIPN;
 
 class PayPal
 {

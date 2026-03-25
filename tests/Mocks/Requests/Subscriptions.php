@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Mocks\Requests;
+namespace Blendbyte\PayPal\Tests\Mocks\Requests;
 
 use GuzzleHttp\Utils;
 

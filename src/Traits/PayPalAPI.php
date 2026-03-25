@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits;
+namespace Blendbyte\PayPal\Traits;
 
 trait PayPalAPI
 {
@@ -95,9 +95,9 @@ trait PayPalAPI
      *
      * @param int $size
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setPageSize(int $size): \Srmklive\PayPal\Services\PayPal
+    public function setPageSize(int $size): \Blendbyte\PayPal\Services\PayPal
     {
         $this->page_size = $size;
 
@@ -109,9 +109,9 @@ trait PayPalAPI
      *
      * @param int $size
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setCurrentPage(int $page): \Srmklive\PayPal\Services\PayPal
+    public function setCurrentPage(int $page): \Blendbyte\PayPal\Services\PayPal
     {
         $this->current_page = $page;
 
@@ -123,9 +123,9 @@ trait PayPalAPI
      *
      * @param bool $totals
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function showTotals(bool $totals): \Srmklive\PayPal\Services\PayPal
+    public function showTotals(bool $totals): \Blendbyte\PayPal\Services\PayPal
     {
         $this->show_totals = $totals ? 'true' : 'false';
 

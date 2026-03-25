@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI\Orders;
+namespace Blendbyte\PayPal\Traits\PayPalAPI\Orders;
 
 use Throwable;
 

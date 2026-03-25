@@ -1,8 +1,8 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI;
+namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
-use Srmklive\PayPal\Traits\PayPalAPI\InvoiceSearch\Filters;
+use Blendbyte\PayPal\Traits\PayPalAPI\InvoiceSearch\Filters;
 
 trait InvoicesSearch
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI\InvoiceSearch;
+namespace Blendbyte\PayPal\Traits\PayPalAPI\InvoiceSearch;
 
 use Carbon\Carbon;
 
@@ -42,9 +42,9 @@ trait Filters
     /**
      * @param string $email
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByRecipientEmail(string $email): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByRecipientEmail(string $email): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['recipient_email'] = $email;
 
@@ -54,9 +54,9 @@ trait Filters
     /**
      * @param string $name
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByRecipientFirstName(string $name): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByRecipientFirstName(string $name): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['recipient_first_name'] = $name;
 
@@ -66,9 +66,9 @@ trait Filters
     /**
      * @param string $name
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByRecipientLastName(string $name): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByRecipientLastName(string $name): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['recipient_last_name'] = $name;
 
@@ -78,9 +78,9 @@ trait Filters
     /**
      * @param string $name
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByRecipientBusinessName(string $name): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByRecipientBusinessName(string $name): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['recipient_business_name'] = $name;
 
@@ -90,9 +90,9 @@ trait Filters
     /**
      * @param string $invoice_number
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByInvoiceNumber(string $invoice_number): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByInvoiceNumber(string $invoice_number): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['invoice_number'] = $invoice_number;
 
@@ -104,11 +104,11 @@ trait Filters
      *
      * @throws \Exception
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#definition-invoice_status
      */
-    public function addInvoiceFilterByInvoiceStatus(array $status): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByInvoiceStatus(array $status): \Blendbyte\PayPal\Services\PayPal
     {
         $invalid_status = false;
 
@@ -131,9 +131,9 @@ trait Filters
      * @param string $reference
      * @param bool   $memo
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByReferenceorMemo(string $reference, bool $memo = false): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByReferenceorMemo(string $reference, bool $memo = false): \Blendbyte\PayPal\Services\PayPal
     {
         $field = ($memo === false) ? 'reference' : 'memo';
 
@@ -145,9 +145,9 @@ trait Filters
     /**
      * @param string $currency_code
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByCurrencyCode(string $currency_code = ''): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByCurrencyCode(string $currency_code = ''): \Blendbyte\PayPal\Services\PayPal
     {
         $currency = !isset($currency_code) ? $this->getCurrency() : $currency_code;
 
@@ -163,9 +163,9 @@ trait Filters
      *
      * @throws \Exception
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByAmountRange(float $start_amount, float $end_amount, string $amount_currency = ''): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByAmountRange(float $start_amount, float $end_amount, string $amount_currency = ''): \Blendbyte\PayPal\Services\PayPal
     {
         if ($start_amount > $end_amount) {
             throw new \Exception('Starting amount should always be less than end amount!');
@@ -194,9 +194,9 @@ trait Filters
      *
      * @throws \Exception
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByDateRange(string $start_date, string $end_date, string $date_type): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByDateRange(string $start_date, string $end_date, string $date_type): \Blendbyte\PayPal\Services\PayPal
     {
         $start_date_obj = Carbon::parse($start_date);
         $end_date_obj = Carbon::parse($end_date);
@@ -220,9 +220,9 @@ trait Filters
     /**
      * @param bool $archived
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByArchivedStatus(bool $archived = null): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByArchivedStatus(bool $archived = null): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['archived'] = $archived;
 
@@ -232,11 +232,11 @@ trait Filters
     /**
      * @param array $fields
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#definition-field
      */
-    public function addInvoiceFilterByFields(array $fields): \Srmklive\PayPal\Services\PayPal
+    public function addInvoiceFilterByFields(array $fields): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['status'] = $fields;
 

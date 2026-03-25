@@ -1,12 +1,12 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
+namespace Blendbyte\PayPal\Tests\Unit\Adapter;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use Blendbyte\PayPal\Tests\MockClientClasses;
+use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
 class InvoicesTemplatesTest extends TestCase
 {

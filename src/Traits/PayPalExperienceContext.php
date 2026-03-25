@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits;
+namespace Blendbyte\PayPal\Traits;
 
 trait PayPalExperienceContext
 {
@@ -14,9 +14,9 @@ trait PayPalExperienceContext
      *
      * @param string $brand
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setBrandName(string $brand): \Srmklive\PayPal\Services\PayPal
+    public function setBrandName(string $brand): \Blendbyte\PayPal\Services\PayPal
     {
         $this->experience_context = array_merge($this->experience_context, [
             'brand_name' => $brand,
@@ -31,9 +31,9 @@ trait PayPalExperienceContext
      * @param string $return_url
      * @param string $cancel_url
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setReturnAndCancelUrl(string $return_url, string $cancel_url): \Srmklive\PayPal\Services\PayPal
+    public function setReturnAndCancelUrl(string $return_url, string $cancel_url): \Blendbyte\PayPal\Services\PayPal
     {
         $this->experience_context = array_merge($this->experience_context, [
             'return_url' => $return_url,
@@ -55,9 +55,9 @@ trait PayPalExperienceContext
      * @param string|null $previous_transaction_reference_number
      * @param string|null $previous_transaction_network
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setStoredPaymentSource(string $initiator, string $type, string $usage, bool $previous_reference = false, string $previous_transaction_id = null, string $previous_transaction_date = null, string $previous_transaction_reference_number = null, string $previous_transaction_network = null): \Srmklive\PayPal\Services\PayPal
+    public function setStoredPaymentSource(string $initiator, string $type, string $usage, bool $previous_reference = false, string $previous_transaction_id = null, string $previous_transaction_date = null, string $previous_transaction_reference_number = null, string $previous_transaction_network = null): \Blendbyte\PayPal\Services\PayPal
     {
         $this->experience_context = array_merge($this->experience_context, [
             'stored_payment_source' => [

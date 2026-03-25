@@ -1,5 +1,5 @@
 {
-    "name": "srmklive/paypal",
+    "name": "blendbyte/paypal",
     "type": "library",
     "description": "Laravel plugin For Processing Payments Through Paypal Express Checkout. Can Be Used Independently With Other Applications.",
     "keywords": [
@@ -18,12 +18,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Srmklive\\PayPal\\": "src/"
+            "Blendbyte\\PayPal\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Srmklive\\PayPal\\Tests\\": "tests/"
+            "Blendbyte\\PayPal\\Tests\\": "tests/"
         }
     },
     "require": {
@@ -47,10 +47,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Srmklive\\PayPal\\Providers\\PayPalServiceProvider"
+                "Blendbyte\\PayPal\\Providers\\PayPalServiceProvider"
             ],
             "aliases": {
-                "PayPal": "Srmklive\\PayPal\\Facades\\PayPal"
+                "PayPal": "Blendbyte\\PayPal\\Facades\\PayPal"
             }
         }
     },

@@ -1,9 +1,9 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI;
+namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
 use GuzzleHttp\Psr7;
-use Srmklive\PayPal\Services\VerifyDocuments;
+use Blendbyte\PayPal\Services\VerifyDocuments;
 
 trait DisputesActions
 {

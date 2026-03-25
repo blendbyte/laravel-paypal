@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Tests;
+namespace Blendbyte\PayPal\Tests;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler as HttpMockHandler;
@@ -9,7 +9,7 @@ use GuzzleHttp\Psr7\Response as HttpResponse;
 use GuzzleHttp\Psr7\Stream as HttpStream;
 use GuzzleHttp\Utils;
 use Psr\Http\Message\ResponseInterface;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 
 trait MockClientClasses
 {

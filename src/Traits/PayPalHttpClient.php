@@ -1,13 +1,13 @@
 <?php
 
-namespace Srmklive\PayPal\Traits;
+namespace Blendbyte\PayPal\Traits;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException as HttpClientException;
 use GuzzleHttp\Utils;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
-use Srmklive\PayPal\Services\Str;
+use Blendbyte\PayPal\Services\Str;
 
 trait PayPalHttpClient
 {

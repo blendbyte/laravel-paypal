@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI\PaymentMethodsTokens;
+namespace Blendbyte\PayPal\Traits\PayPalAPI\PaymentMethodsTokens;
 
 trait Helpers
 {
@@ -20,9 +20,9 @@ trait Helpers
      * @param string $id
      * @param string $type
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setTokenSource(string $id, string $type): \Srmklive\PayPal\Services\PayPal
+    public function setTokenSource(string $id, string $type): \Blendbyte\PayPal\Services\PayPal
     {
         $token_source = [
             'id'    => $id,
@@ -37,9 +37,9 @@ trait Helpers
      *
      * @param string $id
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setCustomerSource(string $id): \Srmklive\PayPal\Services\PayPal
+    public function setCustomerSource(string $id): \Blendbyte\PayPal\Services\PayPal
     {
         $this->customer_source = [
             'id' => $id,
@@ -53,9 +53,9 @@ trait Helpers
      *
      * @param array $data
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setPaymentSourceCard(array $data): \Srmklive\PayPal\Services\PayPal
+    public function setPaymentSourceCard(array $data): \Blendbyte\PayPal\Services\PayPal
     {
         return $this->setPaymentSourceDetails('card', $data);
     }
@@ -65,9 +65,9 @@ trait Helpers
      *
      * @param array $data
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setPaymentSourcePayPal(array $data): \Srmklive\PayPal\Services\PayPal
+    public function setPaymentSourcePayPal(array $data): \Blendbyte\PayPal\Services\PayPal
     {
         return $this->setPaymentSourceDetails('paypal', $data);
     }
@@ -77,9 +77,9 @@ trait Helpers
      *
      * @param array $data
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setPaymentSourceVenmo(array $data): \Srmklive\PayPal\Services\PayPal
+    public function setPaymentSourceVenmo(array $data): \Blendbyte\PayPal\Services\PayPal
     {
         return $this->setPaymentSourceDetails('venmo', $data);
     }
@@ -90,9 +90,9 @@ trait Helpers
      * @param string $source
      * @param array  $data
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    protected function setPaymentSourceDetails(string $source, array $data): \Srmklive\PayPal\Services\PayPal
+    protected function setPaymentSourceDetails(string $source, array $data): \Blendbyte\PayPal\Services\PayPal
     {
         $this->payment_source[$source] = $data;
 

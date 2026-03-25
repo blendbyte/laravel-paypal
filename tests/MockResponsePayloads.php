@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Tests;
+namespace Blendbyte\PayPal\Tests;
 
 trait MockResponsePayloads
 {

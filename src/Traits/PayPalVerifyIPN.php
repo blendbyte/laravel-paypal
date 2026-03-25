@@ -1,12 +1,12 @@
 <?php
 
-namespace Srmklive\PayPal\Traits;
+namespace Blendbyte\PayPal\Traits;
 
 trait PayPalVerifyIPN
 {
     protected $webhook_id;
 
-    public function setWebHookID(string $webhook_id): \Srmklive\PayPal\Services\PayPal
+    public function setWebHookID(string $webhook_id): \Blendbyte\PayPal\Services\PayPal
     {
         $this->webhook_id = $webhook_id;
 

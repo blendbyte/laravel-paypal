@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits\PayPalAPI;
+namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
 trait PaymentCaptures
 {

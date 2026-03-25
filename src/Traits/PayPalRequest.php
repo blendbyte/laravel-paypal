@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Traits;
+namespace Blendbyte\PayPal\Traits;
 
 use RuntimeException;
 
@@ -99,9 +99,9 @@ trait PayPalRequest
      *
      * @throws \RuntimeException
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setCurrency(string $currency = 'USD'): \Srmklive\PayPal\Services\PayPal
+    public function setCurrency(string $currency = 'USD'): \Blendbyte\PayPal\Services\PayPal
     {
         $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD', 'RUB', 'CNY'];
 
@@ -129,9 +129,9 @@ trait PayPalRequest
      * @param string $key
      * @param string $value
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setRequestHeader(string $key, string $value): \Srmklive\PayPal\Services\PayPal
+    public function setRequestHeader(string $key, string $value): \Blendbyte\PayPal\Services\PayPal
     {
         $this->options['headers'][$key] = $value;
 
@@ -143,9 +143,9 @@ trait PayPalRequest
      *
      * @param array $headers
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function setRequestHeaders(array $headers): \Srmklive\PayPal\Services\PayPal
+    public function setRequestHeaders(array $headers): \Blendbyte\PayPal\Services\PayPal
     {
         foreach ($headers as $key=>$value) {
             $this->setRequestHeader($key, $value);
@@ -255,7 +255,7 @@ trait PayPalRequest
      */
     private function throwConfigurationException()
     {
-        throw new RuntimeException('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        throw new RuntimeException('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
     }
 
     /**

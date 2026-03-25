@@ -1,11 +1,11 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Feature;
+namespace Blendbyte\PayPal\Tests\Feature;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Blendbyte\PayPal\Tests\MockClientClasses;
 
 class AdapterConfigTest extends TestCase
 {
@@ -25,7 +25,7 @@ class AdapterConfigTest extends TestCase
     public function it_throws_exception_if_invalid_credentials_are_provided(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
 
         $this->client = new PayPalClient([]);
     }
@@ -34,7 +34,7 @@ class AdapterConfigTest extends TestCase
     public function it_throws_exception_if_invalid_mode_is_provided(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
 
         $credentials = $this->getApiCredentials();
         $credentials['mode'] = '';
@@ -46,7 +46,7 @@ class AdapterConfigTest extends TestCase
     public function it_throws_exception_if_empty_credentials_are_provided(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        $this->expectExceptionMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
 
         $credentials = $this->getApiCredentials();
         $credentials['sandbox'] = [];

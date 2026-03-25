@@ -1,14 +1,14 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Feature;
+namespace Blendbyte\PayPal\Tests\Feature;
 
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
+use Blendbyte\PayPal\Tests\MockClientClasses;
+use Blendbyte\PayPal\Tests\MockRequestPayloads;
+use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
 class AdapterFeatureTest extends TestCase
 {

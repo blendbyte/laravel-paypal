@@ -1,6 +1,6 @@
 <?php
 
-namespace Srmklive\PayPal\Services;
+namespace Blendbyte\PayPal\Services;
 
 use GuzzleHttp\Utils;
 

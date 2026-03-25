@@ -1,14 +1,14 @@
 <?php
 
-namespace Srmklive\PayPal\Providers;
+namespace Blendbyte\PayPal\Providers;
 
 /*
  * Class PayPalServiceProvider
- * @package Srmklive\PayPal
+ * @package Blendbyte\PayPal
  */
 
 use Illuminate\Support\ServiceProvider;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalServiceProvider extends ServiceProvider
 {
