@@ -1,8 +1,8 @@
 # Laravel PayPal
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/blendbyte/laravel-paypal.svg?style=flat-square)](https://packagist.org/packages/blendbyte/laravel-paypal)
-[![Tests](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml)
-[![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/blendbyte/paypal.svg?style=flat-square)](https://packagist.org/packages/blendbyte/paypal)
+[![Tests](https://github.com/blendbyte/paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/paypal/actions/workflows/tests.yml)
+[![Static Analysis](https://github.com/blendbyte/paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 A PayPal REST API package for Laravel 12+. This is a maintained fork of [srmklive/laravel-paypal](https://github.com/srmklive/laravel-paypal), modernized for current PHP and Laravel versions. It is a **drop-in replacement** — the API is identical, only the package name and root namespace change.
@@ -46,7 +46,7 @@ If you're on `srmklive/laravel-paypal` v3 and need Laravel 12+ or PHP 8.2+ suppo
 
 ```bash
 composer remove srmklive/paypal
-composer require blendbyte/laravel-paypal
+composer require blendbyte/paypal
 ```
 
 **2. Replace the namespace** in any file that references the old package:
@@ -81,7 +81,7 @@ That's it. No API changes, no method renames, no config structure changes.
 ## Installation
 
 ```bash
-composer require blendbyte/laravel-paypal
+composer require blendbyte/paypal
 ```
 
 Publish the config file:
