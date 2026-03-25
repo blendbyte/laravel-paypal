@@ -36,7 +36,7 @@ trait PayPalRequest
      *
      * @var string
      */
-    protected $currency;
+    protected string $currency = 'USD';
 
     /**
      * Additional options for PayPal API request.
@@ -181,8 +181,17 @@ trait PayPalRequest
      */
     private function setConfig(array $config): void
     {
-        $api_config = empty($config) && function_exists('config') && !empty(config('paypal')) ?
-            config('paypal') : $config;
+        $api_config = $config;
+        if (empty($config) && function_exists('config')) {
+            try {
+                $fromLaravel = config('paypal');
+                if (!empty($fromLaravel)) {
+                    $api_config = $fromLaravel;
+                }
+            } catch (\Throwable) {
+                // Not running in a full Laravel context
+            }
+        }
 
         // Set Api Credentials
         $this->setApiCredentials($api_config);
