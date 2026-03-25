@@ -187,9 +187,7 @@ trait PayPalHttpClient
                 $this->options
             )->getBody();
         } catch (HttpClientException $e) {
-            $response = $e->getResponse();
-            $body = $response !== null ? (string) $response->getBody() : $e->getMessage();
-            throw new RuntimeException($body, 0, $e);
+            throw new RuntimeException((string) $e->getResponse()->getBody(), 0, $e);
         }
     }
 
