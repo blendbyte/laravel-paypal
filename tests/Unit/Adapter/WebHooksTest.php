@@ -1,111 +1,88 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
-class WebHooksTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_a_web_hook(): void
-    {
-        $expectedResponse = $this->mockCreateWebHookResponse();
+it('can create a web hook', function () {
+    $expectedResponse = $this->mockCreateWebHookResponse();
 
-        $expectedMethod = 'createWebHook';
+    $expectedMethod = 'createWebHook';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            'https://example.com/example_webhook',
-            ['PAYMENT.AUTHORIZATION.CREATED', 'PAYMENT.AUTHORIZATION.VOIDED']
-        ));
-    }
+    expect($mockClient->{$expectedMethod}(
+        'https://example.com/example_webhook',
+        ['PAYMENT.AUTHORIZATION.CREATED', 'PAYMENT.AUTHORIZATION.VOIDED']
+    ))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_web_hooks(): void
-    {
-        $expectedResponse = $this->mockListWebHookResponse();
+it('can list web hooks', function () {
+    $expectedResponse = $this->mockListWebHookResponse();
 
-        $expectedMethod = 'listWebHooks';
+    $expectedMethod = 'listWebHooks';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_a_web_hook(): void
-    {
-        $expectedResponse = '';
+it('can delete a web hook', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'deleteWebHook';
+    $expectedMethod = 'deleteWebHook';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('5GP028458E2496506'));
-    }
+    expect($mockClient->{$expectedMethod}('5GP028458E2496506'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_a_web_hook(): void
-    {
-        $expectedResponse = $this->mockUpdateWebHookResponse();
+it('can update a web hook', function () {
+    $expectedResponse = $this->mockUpdateWebHookResponse();
 
-        $expectedParams = $this->mockUpdateWebHookParams();
+    $expectedParams = $this->mockUpdateWebHookParams();
 
-        $expectedMethod = 'updateWebHook';
+    $expectedMethod = 'updateWebHook';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0EH40505U7160970P', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('0EH40505U7160970P', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_details_for_a_web_hook(): void
-    {
-        $expectedResponse = $this->mockGetWebHookResponse();
+it('can show details for a web hook', function () {
+    $expectedResponse = $this->mockGetWebHookResponse();
 
-        $expectedMethod = 'showWebHookDetails';
+    $expectedMethod = 'showWebHookDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0EH40505U7160970P'));
-    }
+    expect($mockClient->{$expectedMethod}('0EH40505U7160970P'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_web_hooks_events(): void
-    {
-        $expectedResponse = $this->mockListWebHookEventsResponse();
+it('can list web hooks events', function () {
+    $expectedResponse = $this->mockListWebHookEventsResponse();
 
-        $expectedMethod = 'listWebHookEvents';
+    $expectedMethod = 'listWebHookEvents';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0EH40505U7160970P'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('0EH40505U7160970P'))->toBe($expectedResponse);
+});

@@ -1,49 +1,32 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
+it('can show details for a captured payment', function () {
+    $expectedResponse = $this->mockGetCapturedPaymentDetailsResponse();
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
+    $expectedMethod = 'showCapturedPaymentDetails';
 
-class PaymentCapturesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_show_details_for_a_captured_payment(): void
-    {
-        $expectedResponse = $this->mockGetCapturedPaymentDetailsResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'showCapturedPaymentDetails';
+    expect($mockClient->{$expectedMethod}('2GG279541U471931P'))->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can refund a captured payment', function () {
+    $expectedResponse = $this->mockRefundCapturedPaymentResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'refundCapturedPayment';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('2GG279541U471931P'));
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_refund_a_captured_payment(): void
-    {
-        $expectedResponse = $this->mockRefundCapturedPaymentResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'refundCapturedPayment';
-
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
-
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            '2GG279541U471931P',
-            'INVOICE-123',
-            10.99,
-            'Defective product'
-        ));
-    }
-}
+    expect($mockClient->{$expectedMethod}(
+        '2GG279541U471931P',
+        'INVOICE-123',
+        10.99,
+        'Defective product'
+    ))->toBe($expectedResponse);
+});

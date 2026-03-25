@@ -1,154 +1,118 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Feature;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Blendbyte\PayPal\Services\PayPal as PayPalClient;
-use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
-class AdapterPaymentMethodTokensHelpersTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    /** @var string */
-    protected static string $access_token = '';
+beforeEach(function () {
+    $this->client = new PayPalClient($this->getApiCredentials());
+    $this->client->setClient($this->mock_http_client($this->mockAccessTokenResponse()));
+    $response = $this->client->getAccessToken();
+    $this->access_token = $response['access_token'];
+});
 
-    /** @var PayPalClient */
-    protected PayPalClient $client;
+it('can create payment token from a vault token', function () {
+    $this->client->setAccessToken([
+        'access_token'  => $this->access_token,
+        'token_type'    => 'Bearer',
+    ]);
 
-    protected function setUp(): void
-    {
-        $this->client = new PayPalClient($this->getApiCredentials());
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreatePaymentMethodsTokenResponse()
+        )
+    );
 
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAccessTokenResponse()
-            )
-        );
-        $response = $this->client->getAccessToken();
+    $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
+    ->setCustomerSource('customer_4029352050');
 
-        self::$access_token = $response['access_token'];
+    $response = $this->client->sendPaymentMethodRequest();
 
-        parent::setUp();
-    }
+    expect($response)->toHaveKey('id');
+    expect($response)->toHaveKey('customer');
+});
 
-    #[Test]
-    public function it_can_create_payment_token_from_a_vault_token(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
+it('can create payment source from a vault token', function () {
+    $this->client->setAccessToken([
+        'access_token'  => $this->access_token,
+        'token_type'    => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockCreatePaymentMethodsTokenResponse()
-            )
-        );
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreatePaymentSetupTokenResponse()
+        )
+    );
 
-        $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
-        ->setCustomerSource('customer_4029352050');
+    $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
+    ->setCustomerSource('customer_4029352050');
 
-        $response = $this->client->sendPaymentMethodRequest();
+    $response = $this->client->sendPaymentMethodRequest(true);
 
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('customer', $response);
-    }
+    expect($response)->toHaveKey('payment_source');
+});
 
-    #[Test]
-    public function it_can_create_payment_source_from_a_vault_token(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
+it('can create payment source from a credit card', function () {
+    $this->client->setAccessToken([
+        'access_token'  => $this->access_token,
+        'token_type'    => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockCreatePaymentSetupTokenResponse()
-            )
-        );
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreatePaymentSetupTokenResponse()
+        )
+    );
 
-        $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
-        ->setCustomerSource('customer_4029352050');
+    $this->client = $this->client->setPaymentSourceCard($this->mockCreatePaymentSetupTokensParams()['payment_source']['card'])
+    ->setCustomerSource('customer_4029352050');
 
-        $response = $this->client->sendPaymentMethodRequest(true);
+    $response = $this->client->sendPaymentMethodRequest(true);
 
-        $this->assertArrayHasKey('payment_source', $response);
-    }
+    expect($response)->toHaveKey('payment_source');
+});
 
-    #[Test]
-    public function it_can_create_payment_source_from_a_credit_card(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
+it('can create payment source from a paypal account', function () {
+    $this->client->setAccessToken([
+        'access_token'  => $this->access_token,
+        'token_type'    => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockCreatePaymentSetupTokenResponse()
-            )
-        );
+    $response_data = $this->mockCreatePaymentSetupTokenResponse();
+    $response_data['payment_source']['paypal'] = $this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'];
+    unset($response_data['payment_source']['card']);
 
-        $this->client = $this->client->setPaymentSourceCard($this->mockCreatePaymentSetupTokensParams()['payment_source']['card'])
-        ->setCustomerSource('customer_4029352050');
+    $this->client->setClient(
+        $this->mock_http_client($response_data)
+    );
 
-        $response = $this->client->sendPaymentMethodRequest(true);
+    $this->client = $this->client->setPaymentSourcePayPal($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
+    ->setCustomerSource('customer_4029352050');
 
-        $this->assertArrayHasKey('payment_source', $response);
-    }
+    $response = $this->client->sendPaymentMethodRequest(true);
 
-    #[Test]
-    public function it_can_create_payment_source_from_a_paypal_account(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
+    expect($response)->toHaveKey('payment_source');
+});
 
-        $response_data = $this->mockCreatePaymentSetupTokenResponse();
-        $response_data['payment_source']['paypal'] = $this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'];
-        unset($response_data['payment_source']['card']);
+it('can create payment source from a venmo account', function () {
+    $this->client->setAccessToken([
+        'access_token'  => $this->access_token,
+        'token_type'    => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client($response_data)
-        );
+    $response_data = $this->mockCreatePaymentSetupTokenResponse();
+    $response_data['payment_source']['venmo'] = $this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'];
+    unset($response_data['payment_source']['card']);
 
-        $this->client = $this->client->setPaymentSourcePayPal($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
-        ->setCustomerSource('customer_4029352050');
+    $this->client->setClient(
+        $this->mock_http_client($response_data)
+    );
 
-        $response = $this->client->sendPaymentMethodRequest(true);
+    $this->client = $this->client->setPaymentSourceVenmo($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
+    ->setCustomerSource('customer_4029352050');
 
-        $this->assertArrayHasKey('payment_source', $response);
-    }
+    $response = $this->client->sendPaymentMethodRequest(true);
 
-    #[Test]
-    public function it_can_create_payment_source_from_a_venmo_account(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $response_data = $this->mockCreatePaymentSetupTokenResponse();
-        $response_data['payment_source']['venmo'] = $this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'];
-        unset($response_data['payment_source']['card']);
-
-        $this->client->setClient(
-            $this->mock_http_client($response_data)
-        );
-
-        $this->client = $this->client->setPaymentSourceVenmo($this->mockCreatePaymentSetupPayPalParams()['payment_source']['paypal'])
-        ->setCustomerSource('customer_4029352050');
-
-        $response = $this->client->sendPaymentMethodRequest(true);
-
-        $this->assertArrayHasKey('payment_source', $response);
-    }
-}
+    expect($response)->toHaveKey('payment_source');
+});

@@ -1,82 +1,63 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
-class CatalogProductsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_a_product(): void
-    {
-        $expectedResponse = $this->mockCreateCatalogProductsResponse();
+it('can create a product', function () {
+    $expectedResponse = $this->mockCreateCatalogProductsResponse();
 
-        $expectedParams = $this->createProductParams();
+    $expectedParams = $this->createProductParams();
 
-        $expectedMethod = 'createProduct';
-        $additionalMethod = 'setRequestHeader';
+    $expectedMethod = 'createProduct';
+    $additionalMethod = 'setRequestHeader';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-        $mockClient->{$additionalMethod}('PayPal-Request-Id', 'some-request-id');
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+    $mockClient->{$additionalMethod}('PayPal-Request-Id', 'some-request-id');
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_products(): void
-    {
-        $expectedResponse = $this->mockListCatalogProductsResponse();
+it('can list products', function () {
+    $expectedResponse = $this->mockListCatalogProductsResponse();
 
-        $expectedMethod = 'listProducts';
+    $expectedMethod = 'listProducts';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_a_product(): void
-    {
-        $expectedResponse = '';
+it('can update a product', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->updateProductParams();
+    $expectedParams = $this->updateProductParams();
 
-        $expectedMethod = 'updateProduct';
+    $expectedMethod = 'updateProduct';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('72255d4849af8ed6e0df1173', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('72255d4849af8ed6e0df1173', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_details_for_a_product(): void
-    {
-        $expectedResponse = $this->mockGetCatalogProductsResponse();
+it('can get details for a product', function () {
+    $expectedResponse = $this->mockGetCatalogProductsResponse();
 
-        $expectedMethod = 'showProductDetails';
+    $expectedMethod = 'showProductDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('72255d4849af8ed6e0df1173'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('72255d4849af8ed6e0df1173'))->toBe($expectedResponse);
+});

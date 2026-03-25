@@ -1,29 +1,14 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
+it('can show details for a refund', function () {
+    $expectedResponse = $this->mockGetRefundDetailsResponse();
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
+    $expectedMethod = 'showRefundDetails';
 
-class PaymentRefundsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_show_details_for_a_refund(): void
-    {
-        $expectedResponse = $this->mockGetRefundDetailsResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'showRefundDetails';
-
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
-
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('1JU08902781691411'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('1JU08902781691411'))->toBe($expectedResponse);
+});

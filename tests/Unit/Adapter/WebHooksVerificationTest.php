@@ -1,33 +1,20 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
-class WebHooksVerificationTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_verify_web_hook_signature(): void
-    {
-        $expectedResponse = $this->mockVerifyWebHookSignatureResponse();
+it('can verify web hook signature', function () {
+    $expectedResponse = $this->mockVerifyWebHookSignatureResponse();
 
-        $expectedParams = $this->mockVerifyWebHookSignatureParams();
+    $expectedParams = $this->mockVerifyWebHookSignatureParams();
 
-        $expectedMethod = 'verifyWebHook';
+    $expectedMethod = 'verifyWebHook';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
-}
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});

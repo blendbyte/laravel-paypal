@@ -30,8 +30,6 @@ trait MockClientClasses
 
     private function mock_http_request($expectedResponse, $expectedEndpoint, $expectedParams, $expectedMethod = 'post')
     {
-        $set_method_name = ($this->setMethodsFunction() === true) ? 'onlyMethods' : 'setMethods';
-
         $mockResponse = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
         $mockResponse->expects($this->exactly(1))
@@ -39,7 +37,7 @@ trait MockClientClasses
             ->willReturn(new HttpStream(fopen('data://text/plain,'.$expectedResponse, 'r')));
 
         $mockHttpClient = $this->getMockBuilder(HttpClient::class)
-            ->{$set_method_name}([$expectedMethod])
+            ->onlyMethods([$expectedMethod])
             ->getMock();
         $mockHttpClient->expects($this->once())
             ->method($expectedMethod)
@@ -51,14 +49,12 @@ trait MockClientClasses
 
     private function mock_client($expectedResponse, $expectedMethod, $token = false, $additionalMethod = null)
     {
-        $set_method_name = ($this->setMethodsFunction() === true) ? 'onlyMethods' : 'setMethods';
-
         $methods = [$expectedMethod, 'setApiCredentials'];
         $methods[] = ($token) ? 'getAccessToken' : '';
         $methods[] = isset($additionalMethod) ? $additionalMethod : '';
 
         $mockClient = $this->getMockBuilder(PayPalClient::class)
-            ->{$set_method_name}(array_filter($methods))
+            ->onlyMethods(array_filter($methods))
             ->getMock();
 
         if ($token) {
@@ -68,7 +64,7 @@ trait MockClientClasses
 
         if (isset($additionalMethod)) {
             $mockClient->expects($this->any())
-            ->method($additionalMethod);
+                ->method($additionalMethod);
         }
 
         $mockClient->expects($this->exactly(1))
@@ -113,18 +109,5 @@ trait MockClientClasses
             'locale'         => 'en_US',
             'validate_ssl'   => true,
         ];
-    }
-
-    protected function setMethodsFunction(): bool
-    {
-        $useOnlyMethods = false;
-
-        foreach (['8.1', '8.2', '8.3'] as $php_version) {
-            if (strpos(phpversion(), $php_version) !== false) {
-                $useOnlyMethods = true;
-            }
-        }
-
-        return $useOnlyMethods;
     }
 }

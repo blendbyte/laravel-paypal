@@ -1,79 +1,58 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
+it('can show details for an authorized payment', function () {
+    $expectedResponse = $this->mockGetAuthorizedPaymentDetailsResponse();
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
+    $expectedMethod = 'showAuthorizedPaymentDetails';
 
-class PaymentAuthorizationsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_show_details_for_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockGetAuthorizedPaymentDetailsResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'showAuthorizedPaymentDetails';
+    expect($mockClient->{$expectedMethod}('0VF52814937998046'))->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can capture an authorized payment', function () {
+    $expectedResponse = $this->mockCaptureAuthorizedPaymentResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'captureAuthorizedPayment';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0VF52814937998046'));
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_capture_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockCaptureAuthorizedPaymentResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'captureAuthorizedPayment';
+    expect($mockClient->{$expectedMethod}(
+        '0VF52814937998046',
+        'INVOICE-123',
+        10.99,
+        'Payment is due'
+    ))->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can reauthorize an authorized payment', function () {
+    $expectedResponse = $this->mockReAuthorizeAuthorizedPaymentResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'reAuthorizeAuthorizedPayment';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            '0VF52814937998046',
-            'INVOICE-123',
-            10.99,
-            'Payment is due'
-        ));
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_reauthorize_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockReAuthorizeAuthorizedPaymentResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'reAuthorizeAuthorizedPayment';
+    expect($mockClient->{$expectedMethod}('0VF52814937998046', 10.99))->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can void an authorized payment', function () {
+    $expectedResponse = '';
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'voidAuthorizedPayment';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0VF52814937998046', 10.99));
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_void_an_authorized_payment(): void
-    {
-        $expectedResponse = '';
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'voidAuthorizedPayment';
-
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
-
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('0VF52814937998046'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('0VF52814937998046'))->toBe($expectedResponse);
+});

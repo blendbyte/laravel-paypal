@@ -1,262 +1,223 @@
 <?php
 
-namespace Blendbyte\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockRequestPayloads;
-use Blendbyte\PayPal\Tests\MockResponsePayloads;
 
-class InvoicesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_generate_unique_invoice_number(): void
-    {
-        $expectedResponse = $this->mockGenerateInvoiceNumberResponse();
+it('can generate unique invoice number', function () {
+    $expectedResponse = $this->mockGenerateInvoiceNumberResponse();
 
-        $expectedMethod = 'generateInvoiceNumber';
+    $expectedMethod = 'generateInvoiceNumber';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_create_a_draft_invoice(): void
-    {
-        $expectedResponse = $this->mockCreateInvoicesResponse();
+it('can create a draft invoice', function () {
+    $expectedResponse = $this->mockCreateInvoicesResponse();
 
-        $expectedParams = $this->createInvoiceParams();
+    $expectedParams = $this->createInvoiceParams();
 
-        $expectedMethod = 'createInvoice';
+    $expectedMethod = 'createInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_current_invoices(): void
-    {
-        $expectedResponse = $this->mockListInvoicesResponse();
+it('can list current invoices', function () {
+    $expectedResponse = $this->mockListInvoicesResponse();
 
-        $expectedMethod = 'listInvoices';
+    $expectedMethod = 'listInvoices';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_an_invoice(): void
-    {
-        $expectedResponse = '';
+it('can delete an invoice', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'deleteInvoice';
+    $expectedMethod = 'deleteInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5'));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_an_invoice(): void
-    {
-        $expectedResponse = $this->mockUpdateInvoicesResponse();
+it('can update an invoice', function () {
+    $expectedResponse = $this->mockUpdateInvoicesResponse();
 
-        $expectedParams = $this->updateInvoiceParams();
+    $expectedParams = $this->updateInvoiceParams();
 
-        $expectedMethod = 'updateInvoice';
+    $expectedMethod = 'updateInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_details_for_an_invoice(): void
-    {
-        $expectedResponse = $this->mockGetInvoicesResponse();
+it('can show details for an invoice', function () {
+    $expectedResponse = $this->mockGetInvoicesResponse();
 
-        $expectedMethod = 'showInvoiceDetails';
+    $expectedMethod = 'showInvoiceDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5'));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_cancel_an_invoice(): void
-    {
-        $expectedResponse = '';
+it('can cancel an invoice', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->cancelInvoiceParams();
+    $expectedParams = $this->cancelInvoiceParams();
 
-        $expectedMethod = 'cancelInvoice';
+    $expectedMethod = 'cancelInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            'INV2-Z56S-5LLA-Q52L-CPZ5',
-            'Reminder: Payment due for the invoice #ABC-123',
-            'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
-            true,
-            true,
-            [
-                'customer-a@example.com',
-                'customer@example.com',
-            ]
-        ));
-    }
+    expect($mockClient->{$expectedMethod}(
+        'INV2-Z56S-5LLA-Q52L-CPZ5',
+        'Reminder: Payment due for the invoice #ABC-123',
+        'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
+        true,
+        true,
+        [
+            'customer-a@example.com',
+            'customer@example.com',
+        ]
+    ))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_generate_qr_code_for_invoice(): void
-    {
-        $expectedResponse = $this->mockGenerateInvoiceQRCodeResponse();
+it('can generate qr code for invoice', function () {
+    $expectedResponse = $this->mockGenerateInvoiceQRCodeResponse();
 
-        $expectedMethod = 'generateQRCodeInvoice';
+    $expectedMethod = 'generateQRCodeInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 400, 400));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 400, 400))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_register_payment_for_invoice(): void
-    {
-        $expectedResponse = $this->mockInvoiceRegisterPaymentResponse();
+it('can register payment for invoice', function () {
+    $expectedResponse = $this->mockInvoiceRegisterPaymentResponse();
 
-        $expectedMethod = 'registerPaymentInvoice';
+    $expectedMethod = 'registerPaymentInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 10.00));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 10.00))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_payment_for_invoice(): void
-    {
-        $expectedResponse = '';
+it('can delete payment for invoice', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'deleteExternalPaymentInvoice';
+    $expectedMethod = 'deleteExternalPaymentInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-86F38350LX4353815'));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-86F38350LX4353815'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_refund_payment_for_invoice(): void
-    {
-        $expectedResponse = $this->mockInvoiceRefundPaymentResponse();
+it('can refund payment for invoice', function () {
+    $expectedResponse = $this->mockInvoiceRefundPaymentResponse();
 
-        $expectedMethod = 'refundInvoice';
+    $expectedMethod = 'refundInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 5.00));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 5.00))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_refund_for_invoice(): void
-    {
-        $expectedResponse = '';
+it('can delete refund for invoice', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'deleteRefundInvoice';
+    $expectedMethod = 'deleteRefundInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-2LG703375E477444T'));
-    }
+    expect($mockClient->{$expectedMethod}('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-2LG703375E477444T'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_send_an_invoice(): void
-    {
-        $expectedResponse = '';
+it('can send an invoice', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'sendInvoice';
+    $expectedMethod = 'sendInvoice';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            'INV2-Z56S-5LLA-Q52L-CPZ5',
-            'Reminder: Payment due for the invoice #ABC-123',
-            'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
-            true,
-            true,
-            [
-                'customer-a@example.com',
-                'customer@example.com',
-            ]
-        ));
-    }
+    expect($mockClient->{$expectedMethod}(
+        'INV2-Z56S-5LLA-Q52L-CPZ5',
+        'Reminder: Payment due for the invoice #ABC-123',
+        'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
+        true,
+        true,
+        [
+            'customer-a@example.com',
+            'customer@example.com',
+        ]
+    ))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_send_reminder_for_an_invoice(): void
-    {
-        $expectedResponse = '';
+it('can send reminder for an invoice', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'sendInvoiceReminder';
+    $expectedMethod = 'sendInvoiceReminder';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}(
-            'INV2-Z56S-5LLA-Q52L-CPZ5',
-            'Reminder: Payment due for the invoice #ABC-123',
-            'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
-            true,
-            true,
-            [
-                'customer-a@example.com',
-                'customer@example.com',
-            ]
-        ));
-    }
-}
+    expect($mockClient->{$expectedMethod}(
+        'INV2-Z56S-5LLA-Q52L-CPZ5',
+        'Reminder: Payment due for the invoice #ABC-123',
+        'Please pay before the due date to avoid incurring late payment charges which will be adjusted in the next bill generated.',
+        true,
+        true,
+        [
+            'customer-a@example.com',
+            'customer@example.com',
+        ]
+    ))->toBe($expectedResponse);
+});
