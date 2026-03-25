@@ -91,7 +91,7 @@ trait Filters
         }
 
         if ($invalid_status === true) {
-            throw new \Exception('status should be always one of these: '.implode(',', $this->invoices_date_types));
+            throw new \Exception('status should be always one of these: '.implode(',', $this->invoices_status_types));
         }
 
         $this->invoice_search_filters['status'] = $status;
@@ -178,7 +178,7 @@ trait Filters
      */
     public function addInvoiceFilterByFields(array $fields): PayPal
     {
-        $this->invoice_search_filters['status'] = $fields;
+        $this->invoice_search_filters['fields'] = $fields;
 
         return $this;
     }

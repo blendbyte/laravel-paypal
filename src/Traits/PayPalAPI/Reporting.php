@@ -22,7 +22,7 @@ trait Reporting
     {
         $filters_list = collect($filters)->isEmpty() ? '' :
             collect($filters)->map(function ($value, $key) {
-                return "{$key}={$value}&";
+                return urlencode($key).'='.urlencode($value).'&';
             })->implode('');
 
         $this->apiEndPoint = "v1/reporting/transactions?{$filters_list}fields={$fields}&page={$this->current_page}&page_size={$this->page_size}";
