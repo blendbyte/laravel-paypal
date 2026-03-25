@@ -25,7 +25,7 @@ class Str extends \Illuminate\Support\Str
 
         try {
             Utils::jsonDecode($value, true, 512, 4194304);
-        } catch (\JsonException $jsonException) {
+        } catch (\InvalidArgumentException $jsonException) {
             return false;
         }
 

@@ -108,7 +108,7 @@ trait PayPalHttpClient
      *
      * @return bool
      */
-    protected function defineCurlConstant(string $key, string $value)
+    protected function defineCurlConstant(string $key, string|int $value)
     {
         return defined($key) ? true : define($key, $value);
     }
@@ -120,7 +120,7 @@ trait PayPalHttpClient
      *
      * @return void
      */
-    public function setClient(HttpClient $client = null)
+    public function setClient(?HttpClient $client = null)
     {
         if ($client instanceof HttpClient) {
             $this->client = $client;

@@ -22,7 +22,7 @@ trait PricingSchemes
      */
     public function addPricingScheme(string $interval_unit, int $interval_count, float $price, bool $trial = false): \Blendbyte\PayPal\Services\PayPal
     {
-        $this->pricing_schemes[] = $this->addPlanBillingCycle($interval_unit, $interval_count, $price, $trial);
+        $this->pricing_schemes[] = $this->addPlanBillingCycle($interval_unit, $interval_count, $price, 0, $trial);
 
         return $this;
     }

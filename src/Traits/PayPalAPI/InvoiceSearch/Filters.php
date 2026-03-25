@@ -149,7 +149,7 @@ trait Filters
      */
     public function addInvoiceFilterByCurrencyCode(string $currency_code = ''): \Blendbyte\PayPal\Services\PayPal
     {
-        $currency = !isset($currency_code) ? $this->getCurrency() : $currency_code;
+        $currency = empty($currency_code) ? $this->getCurrency() : $currency_code;
 
         $this->invoice_search_filters['currency_code'] = $currency;
 
@@ -171,7 +171,7 @@ trait Filters
             throw new \Exception('Starting amount should always be less than end amount!');
         }
 
-        $currency = !isset($amount_currency) ? $this->getCurrency() : $amount_currency;
+        $currency = empty($amount_currency) ? $this->getCurrency() : $amount_currency;
 
         $this->invoice_search_filters['total_amount_range'] = [
             'lower_amount' => [
@@ -222,7 +222,7 @@ trait Filters
      *
      * @return \Blendbyte\PayPal\Services\PayPal
      */
-    public function addInvoiceFilterByArchivedStatus(bool $archived = null): \Blendbyte\PayPal\Services\PayPal
+    public function addInvoiceFilterByArchivedStatus(?bool $archived = null): \Blendbyte\PayPal\Services\PayPal
     {
         $this->invoice_search_filters['archived'] = $archived;
 

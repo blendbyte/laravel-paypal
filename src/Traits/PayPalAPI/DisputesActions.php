@@ -38,7 +38,7 @@ trait DisputesActions
      * Providence evidence in support of a dispute.
      *
      * @param string $dispute_id
-     * @param array  $file_path
+     * @param array  $files
      *
      * @throws \Throwable
      *

@@ -10,7 +10,7 @@ class PayPalFacadeAccessor
     /**
      * PayPal API provider object.
      *
-     * @var
+     * @var \Blendbyte\PayPal\Services\PayPal|null
      */
     public static $provider;
 

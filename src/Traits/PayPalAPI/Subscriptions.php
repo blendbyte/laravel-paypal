@@ -211,11 +211,11 @@ trait Subscriptions
      */
     public function listSubscriptionTransactions(string $subscription_id, $start_date = '', $end_date = '')
     {
-        if (($start_date instanceof \DateTimeInterface) === false) {
+        if (!($start_date instanceof \Carbon\CarbonInterface)) {
             $start_date = Carbon::parse($start_date);
         }
 
-        if (($end_date instanceof \DateTimeInterface) === false) {
+        if (!($end_date instanceof \Carbon\CarbonInterface)) {
             $end_date = Carbon::parse($end_date);
         }
 

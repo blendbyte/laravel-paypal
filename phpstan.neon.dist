@@ -1,9 +1,9 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
 parameters:
-  paths:
-    - src
-  level: 0
-  ignoreErrors:
-    - "#Parameter#"
-    - "#Call to static method error\\(\\)\\ on an unknown class Log.#"
-  excludePaths:
-    - "src/Providers/PayPalServiceProvider.php" 
+    paths:
+        - src
+    level: 5
+    excludePaths:
+        - src/Providers/PayPalServiceProvider.php

@@ -107,7 +107,7 @@ trait PayPalAPI
     /**
      * Set the current page for list resources API calls.
      *
-     * @param int $size
+     * @param int $page
      *
      * @return \Blendbyte\PayPal\Services\PayPal
      */
