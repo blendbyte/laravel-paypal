@@ -195,4 +195,21 @@ trait Identity
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Generate a client token for use with PayPal Fastlane or Advanced Card Payments.
+     *
+     * Alias for getClientToken(). Pass the returned client_token to the
+     * PayPal JS SDK to initialise Fastlane on the client side.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/checkout/fastlane/
+     */
+    public function generateClientToken()
+    {
+        return $this->getClientToken();
+    }
 }

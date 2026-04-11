@@ -1259,6 +1259,23 @@ it('can get client token', function () {
     expect($response)->toHaveKey('client_token');
 });
 
+it('can generate client token for fastlane', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockGetClientTokenResponse()
+        )
+    );
+
+    $response = $this->client->generateClientToken();
+
+    expect($response)->toHaveKey('client_token');
+});
+
 it('can create orders', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
