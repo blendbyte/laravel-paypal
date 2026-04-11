@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\MimeType;
 class VerifyDocuments
 {
     /**
-     * @var array
+     * @var list<string>
      */
     protected static $dispute_evidence_types = [
         'application/pdf',
@@ -40,6 +40,8 @@ class VerifyDocuments
     /**
      * Check if the evidence file being submitted mime type is valid.
      *
+     *
+     * @param list<string> $files
      *
      * @return bool
      */

@@ -11,7 +11,7 @@ trait PaymentAuthorizations
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -31,7 +31,7 @@ trait PaymentAuthorizations
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -61,7 +61,7 @@ trait PaymentAuthorizations
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -88,7 +88,7 @@ trait PaymentAuthorizations
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

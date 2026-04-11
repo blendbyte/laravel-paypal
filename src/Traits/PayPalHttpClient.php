@@ -22,7 +22,7 @@ trait PayPalHttpClient
     /**
      * Http Client configuration.
      *
-     * @var array
+     * @var array<int, mixed>
      */
     private $httpClientConfig;
 
@@ -196,7 +196,7 @@ trait PayPalHttpClient
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|string
      *
      * @throws \Throwable
      */
@@ -208,7 +208,13 @@ trait PayPalHttpClient
             // Perform PayPal HTTP API request.
             $response = $this->makeHttpRequest();
 
-            return ($decode === false) ? $response->getContents() : Utils::jsonDecode($response, true);
+            if ($decode === false) {
+                return $response->getContents();
+            }
+
+            $decoded = Utils::jsonDecode($response, true);
+
+            return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
             $error = ($decode === false) || (Str::isJson($t->getMessage()) === false) ? $t->getMessage() : Utils::jsonDecode($t->getMessage(), true);
 

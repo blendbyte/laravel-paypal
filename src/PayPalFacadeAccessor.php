@@ -19,11 +19,11 @@ class PayPalFacadeAccessor
      * Get specific PayPal API provider object to use.
      *
      *
-     * @return PayPal
+     * @return PayPal|null
      *
      * @throws Exception
      */
-    public static function getProvider()
+    public static function getProvider(): ?PayPal
     {
         return self::$provider;
     }

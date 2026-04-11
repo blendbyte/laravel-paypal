@@ -11,7 +11,7 @@ trait PaymentRefunds
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

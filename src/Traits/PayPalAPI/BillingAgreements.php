@@ -19,7 +19,9 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -41,7 +43,7 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|string|StreamInterface
+     * @return array<string, mixed>|string|StreamInterface
      *
      * @throws \Throwable
      *
@@ -61,7 +63,7 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|string|StreamInterface
+     * @return array<string, mixed>|string|StreamInterface
      *
      * @throws \Throwable
      *
@@ -85,7 +87,9 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|string|StreamInterface
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|string|StreamInterface
      *
      * @throws \Throwable
      *
@@ -107,7 +111,7 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|string|StreamInterface
+     * @return array<string, mixed>|string|StreamInterface
      *
      * @throws \Throwable
      *
@@ -127,7 +131,7 @@ trait BillingAgreements
      *
      *
      *
-     * @return array|string|StreamInterface
+     * @return array<string, mixed>|string|StreamInterface
      *
      * @throws \Throwable
      *

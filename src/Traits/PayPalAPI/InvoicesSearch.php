@@ -13,7 +13,7 @@ trait InvoicesSearch
      * Search and return existing invoices.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

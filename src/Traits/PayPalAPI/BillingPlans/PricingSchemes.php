@@ -8,6 +8,9 @@ use Throwable;
 
 trait PricingSchemes
 {
+    /**
+     * @var list<array<string, mixed>>
+     */
     protected $pricing_schemes = [];
 
     /**
@@ -27,7 +30,7 @@ trait PricingSchemes
      * Process pricing updates for an existing billing plan.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws Throwable
      */

@@ -13,7 +13,9 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -34,7 +36,7 @@ trait BillingPlans
      * List all billing plans.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -54,7 +56,9 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -76,7 +80,7 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -96,7 +100,7 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -116,7 +120,7 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -136,7 +140,9 @@ trait BillingPlans
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param list<array<string, mixed>> $pricing
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

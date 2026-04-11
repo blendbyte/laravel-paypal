@@ -10,7 +10,7 @@ trait Identity
      * Get user profile information.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -32,7 +32,7 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -54,7 +54,7 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -76,7 +76,7 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -98,7 +98,10 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param list<string> $redirect_uris
+     * @param array<string, mixed> $contacts
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -128,7 +131,9 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param list<string> $features
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -153,7 +158,7 @@ trait Identity
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -176,7 +181,7 @@ trait Identity
      * Get a client token.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

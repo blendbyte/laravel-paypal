@@ -12,7 +12,9 @@ trait Reporting
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -37,7 +39,7 @@ trait Reporting
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

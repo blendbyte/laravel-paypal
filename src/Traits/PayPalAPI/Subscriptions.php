@@ -15,7 +15,9 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -37,7 +39,9 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -59,7 +63,7 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -79,7 +83,7 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -101,7 +105,7 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -123,7 +127,7 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -145,7 +149,7 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -174,7 +178,9 @@ trait Subscriptions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $items
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -196,7 +202,7 @@ trait Subscriptions
      *
      * @param  \DateTimeInterface|string  $start_date
      * @param  \DateTimeInterface|string  $end_date
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
