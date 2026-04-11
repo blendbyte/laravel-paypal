@@ -123,6 +123,34 @@ trait PayPalRequest
     }
 
     /**
+     * Set a PayPal-Request-Id idempotency key for the next request.
+     *
+     * Sending this header allows safe retrying of failed requests without
+     * risk of double-processing (e.g. duplicate charges). The key is
+     * automatically cleared after the next API call.
+     *
+     * Pass null (default) to auto-generate a UUID v4.
+     */
+    public function withIdempotencyKey(?string $key = null): static
+    {
+        $this->setRequestHeader('PayPal-Request-Id', $key ?? $this->generateIdempotencyKey());
+
+        return $this;
+    }
+
+    /**
+     * Generate a random UUID v4 for use as an idempotency key.
+     */
+    private function generateIdempotencyKey(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // version 4
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // variant RFC 4122
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
      * Function to add request header.
      */
     public function setRequestHeader(string $key, string $value): PayPal
