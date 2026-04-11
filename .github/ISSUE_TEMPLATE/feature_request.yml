@@ -1,0 +1,37 @@
+name: Feature Request
+description: Suggest a new API endpoint, helper method, or enhancement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are welcome. The more context you provide, the easier it is to assess and implement.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the use-case or limitation you're running into.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should it work? A method signature, config key, or behaviour description is helpful.
+    validations:
+      required: true
+
+  - type: input
+    id: paypal_docs
+    attributes:
+      label: PayPal API docs link (if applicable)
+      description: Link to the relevant PayPal REST API reference page.
+      placeholder: https://developer.paypal.com/docs/api/...
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you're currently using.

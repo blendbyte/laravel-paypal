@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: PayPal Developer Community
+    url: https://developer.paypal.com/community/
+    about: For general PayPal API questions not specific to this package
+  - name: PayPal REST API Reference
+    url: https://developer.paypal.com/docs/api/overview/
+    about: Official PayPal REST API documentation
