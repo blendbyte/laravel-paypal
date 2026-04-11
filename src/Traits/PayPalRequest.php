@@ -96,11 +96,15 @@ trait PayPalRequest
      */
     public function setCurrency(string $currency = 'USD'): PayPal
     {
-        $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD', 'RUB', 'CNY'];
+        // Supported currencies per PayPal REST API docs:
+        // https://developer.paypal.com/reference/currency-codes/
+        // INR is retained for PayPal India (paypal.com/in) domestic accounts.
+        // RUB was removed: PayPal suspended Russian services in March 2022.
+        $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'];
 
         // Check if provided currency is valid.
         if (! in_array($currency, $allowedCurrencies, true)) {
-            throw new RuntimeException('Currency is not supported by PayPal.');
+            throw new RuntimeException("'{$currency}' is not a supported PayPal currency code. See https://developer.paypal.com/reference/currency-codes/ for the full list.");
         }
 
         $this->currency = $currency;
