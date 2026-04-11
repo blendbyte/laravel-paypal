@@ -698,7 +698,7 @@ $provider->listEvents();
 $provider->showEventDetails('event-id');
 $provider->resendEventNotification('event-id', ['webhook-id']);
 
-// Verify incoming webhook signature
+// Verify incoming webhook signature (API roundtrip)
 $provider->verifyWebHook([
     'auth_algo'         => $request->header('PAYPAL-AUTH-ALGO'),
     'cert_url'          => $request->header('PAYPAL-CERT-URL'),
@@ -708,7 +708,21 @@ $provider->verifyWebHook([
     'webhook_id'        => 'your-webhook-id',
     'webhook_event'     => $request->all(),
 ]);
+
+// Verify locally (offline — no API roundtrip, faster for high-volume webhooks)
+// Pass all request headers, your webhook ID, and the RAW (unmodified) request body.
+$valid = $provider->verifyWebHookLocally(
+    $request->headers->all(),
+    'your-webhook-id',
+    $request->getContent(),  // must be the raw body bytes, not re-encoded JSON
+);
 ```
+
+> **Local verification** skips the PayPal verify API entirely. The signing certificate is fetched
+> over HTTPS from the `PAYPAL-CERT-URL` on the first call, then cached in memory for the lifetime
+> of the process — subsequent calls are pure in-memory RSA-SHA256 with no network I/O. Short-lived
+> processes (serverless, etc.) will still fetch the cert on each cold start. The cert URL is
+> validated against PayPal's known API domains before any request is made (SSRF guard).
 
 ---
 
