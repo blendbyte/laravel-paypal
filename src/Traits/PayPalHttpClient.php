@@ -6,7 +6,11 @@ use Blendbyte\PayPal\Services\Str;
 use GuzzleHttp\Client;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException as HttpClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Utils;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
@@ -126,8 +130,34 @@ trait PayPalHttpClient
             return;
         }
 
+        $timeout = (float) ($this->config['timeout'] ?? 30);
+        $connectTimeout = (float) ($this->config['connect_timeout'] ?? 10);
+        $maxRetries = (int) ($this->config['max_retries'] ?? 2);
+
+        $stack = HandlerStack::create();
+
+        if ($maxRetries > 0) {
+            $stack->push(Middleware::retry(
+                static function (int $retries, mixed $request, mixed $response, mixed $exception) use ($maxRetries): bool {
+                    if ($retries >= $maxRetries) {
+                        return false;
+                    }
+
+                    return $exception instanceof ConnectException
+                        || ($response instanceof ResponseInterface && $response->getStatusCode() >= 500);
+                },
+                static function (int $retries): int {
+                    // Exponential backoff: 500ms, 1s, 2s, 4s — capped at 8s.
+                    return (int) min(500 * (2 ** ($retries - 1)), 8000);
+                }
+            ));
+        }
+
         $this->client = new HttpClient([
+            'handler' => $stack,
             'curl' => $this->httpClientConfig,
+            'timeout' => $timeout,
+            'connect_timeout' => $connectTimeout,
         ]);
     }
 
