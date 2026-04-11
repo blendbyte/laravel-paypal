@@ -8,6 +8,23 @@ use Throwable;
 trait Helpers
 {
     /**
+     * Extract the capture (transaction) ID from a captured order response.
+     *
+     * After calling capturePaymentOrder(), the capture ID is buried at
+     * purchase_units[0].payments.captures[0].id. This helper surfaces it
+     * directly so callers don't need to navigate the nested structure.
+     *
+     * Returns null if the order has not been captured or the path is absent.
+     */
+    /**
+     * @param array<string, mixed> $order
+     */
+    public function getCaptureIdFromOrder(array $order): ?string
+    {
+        return $order['purchase_units'][0]['payments']['captures'][0]['id'] ?? null;
+    }
+
+    /**
      * Confirm payment for an order.
      *
      *
