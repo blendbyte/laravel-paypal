@@ -43,7 +43,11 @@ it('returns the client instance if valid credentials are provided through method
 });
 
 it('throws exception if invalid currency is set', function () {
-    expect(fn () => $this->client->setCurrency('PKR'))->toThrow(RuntimeException::class);
+    expect(fn () => $this->client->setCurrency('PKR'))->toThrow(RuntimeException::class, "'PKR' is not a supported PayPal currency code.");
+});
+
+it('throws exception for RUB as PayPal suspended Russian services', function () {
+    expect(fn () => $this->client->setCurrency('RUB'))->toThrow(RuntimeException::class, "'RUB' is not a supported PayPal currency code.");
 });
 
 it('can set a valid currency', function () {
