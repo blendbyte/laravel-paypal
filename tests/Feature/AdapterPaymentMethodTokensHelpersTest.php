@@ -95,6 +95,40 @@ it('can create payment source from a paypal account', function () {
     expect($response)->toHaveKey('payment_source');
 });
 
+it('can delete a payment setup token', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client(false));
+
+    $response = $this->client->deletePaymentSetupToken('8XF08998X3492364U');
+
+    expect($response)->toBeEmpty();
+});
+
+it('can set customer id for vault operations', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreatePaymentMethodsTokenResponse()
+        )
+    );
+
+    $this->client = $this->client->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
+        ->setCustomerId('customer_4029352050');
+
+    $response = $this->client->sendPaymentMethodRequest();
+
+    expect($response)->toHaveKey('id');
+    expect($response)->toHaveKey('customer');
+});
+
 it('can create payment source from a venmo account', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
