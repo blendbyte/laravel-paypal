@@ -131,11 +131,11 @@ trait Filters
         $this->invoice_search_filters['total_amount_range'] = [
             'lower_amount' => [
                 'currency_code' => $currency,
-                'value' => $start_amount,
+                'value' => number_format($start_amount, 2, '.', ''),
             ],
             'upper_amount' => [
                 'currency_code' => $currency,
-                'value' => $end_amount,
+                'value' => number_format($end_amount, 2, '.', ''),
             ],
         ];
 

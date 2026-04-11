@@ -27,6 +27,18 @@ trait Orders
     /*
     * @return array
     */
+    private function addTrackingForOrderParams(): array
+    {
+        return [
+            'tracking_number' => '443844607820',
+            'carrier' => 'FEDEX',
+            'capture_id' => '3C679366HH908993F',
+        ];
+    }
+
+    /*
+    * @return array
+    */
     private function updateOrderParams(): array
     {
         return Utils::jsonDecode('[

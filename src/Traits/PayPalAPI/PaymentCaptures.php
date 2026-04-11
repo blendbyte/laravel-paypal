@@ -43,7 +43,7 @@ trait PaymentCaptures
 
         $this->options['json'] = [
             'amount' => [
-                'value' => $amount,
+                'value' => number_format($amount, 2, '.', ''),
                 'currency_code' => $this->currency,
             ],
             'invoice_id' => $invoice_id,

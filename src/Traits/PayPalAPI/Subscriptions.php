@@ -160,7 +160,7 @@ trait Subscriptions
             'capture_type' => 'OUTSTANDING_BALANCE',
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => "{$amount}",
+                'value' => number_format($amount, 2, '.', ''),
             ],
         ];
 

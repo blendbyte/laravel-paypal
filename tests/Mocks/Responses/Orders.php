@@ -253,6 +253,29 @@ trait Orders
       }', true);
     }
 
+    private function mockAddTrackingForOrderResponse(): array
+    {
+        return Utils::jsonDecode('{
+  "id": "5O190127TN364715T",
+  "status": "COMPLETED",
+  "purchase_units": [
+    {
+      "reference_id": "d9f80740-38f0-11e8-b467-0ed5f89f718b",
+      "shipping": {
+        "trackers": [
+          {
+            "id": "5O190127TN364715T-443844607820",
+            "status": "SHIPPED",
+            "tracking_number": "443844607820",
+            "carrier": "FEDEX"
+          }
+        ]
+      }
+    }
+  ]
+}', true);
+    }
+
     private function mockConfirmOrderResponse()
     {
         return Utils::jsonDecode('{
