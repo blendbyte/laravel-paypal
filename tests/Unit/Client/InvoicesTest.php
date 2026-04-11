@@ -15,6 +15,7 @@ it('can generate unique invoice number', function () {
             'Accept-Language' => 'en_US',
             'Authorization' => 'Bearer some-token',
         ],
+        'json' => (object) [],
     ];
 
     $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
