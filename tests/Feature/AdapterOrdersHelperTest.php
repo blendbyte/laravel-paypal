@@ -13,6 +13,21 @@ beforeEach(function () {
     $this->access_token = $response['access_token'];
 });
 
+it('can extract capture id from a captured order response', function () {
+    $response = $this->client->capturePaymentOrder('5O190127TN364715T');
+
+    // Simulate the captured order response that capturePaymentOrder() returns.
+    $captured = $this->mockOrderPaymentCapturedResponse();
+
+    expect($this->client->getCaptureIdFromOrder($captured))->toBe('3C679366HH908993F');
+});
+
+it('returns null when order has no capture data', function () {
+    $order = ['id' => '5O190127TN364715T', 'status' => 'CREATED'];
+
+    expect($this->client->getCaptureIdFromOrder($order))->toBeNull();
+});
+
 it('can set shipping address change callback url', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
