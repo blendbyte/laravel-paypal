@@ -16,6 +16,7 @@ A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP c
 - [Standalone Usage (without Laravel)](#standalone-usage-without-laravel)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [PayPal Fastlane](#paypal-fastlane)
 - [Subscription Helpers](#subscription-helpers)
 - [Billing Plans](#billing-plans)
 - [Catalog Products](#catalog-products)
@@ -218,6 +219,57 @@ $provider->getAccessToken();
 
 ```php
 $provider->setCurrency('EUR');
+```
+
+---
+
+## PayPal Fastlane
+
+[PayPal Fastlane](https://developer.paypal.com/docs/checkout/fastlane/) is a one-click guest checkout experience that pre-fills shipping and payment details for returning PayPal customers, typically delivering ~50% higher conversion on guest checkout flows.
+
+**Server role:** generate a client token and handle Orders v2 create/capture. The Fastlane UI is rendered entirely by the PayPal JS SDK on the client.
+
+### 1. Generate a client token (server-side)
+
+```php
+$provider->getAccessToken();
+
+$result = $provider->generateClientToken();
+// $result['client_token'] — pass this to your frontend
+```
+
+### 2. Initialise Fastlane (client-side)
+
+```html
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&components=fastlane"></script>
+<script>
+const { Fastlane } = await paypal.Fastlane({ clientToken: '<?= $result["client_token"] ?>' });
+const { selectionChanged, selectedCard } = await Fastlane.identity.lookupCustomerByEmail(email);
+// render Fastlane.FastlaneWatermarkComponent(), Fastlane.FastlaneCardComponent(), etc.
+</script>
+```
+
+### 3. Create & capture the order (server-side)
+
+```php
+// Create
+$order = $provider->createOrder([
+    'intent' => 'CAPTURE',
+    'purchase_units' => [
+        ['amount' => ['currency_code' => 'USD', 'value' => '49.99']],
+    ],
+    'payment_source' => [
+        'card' => [
+            'single_use_token' => $singleUseToken, // from Fastlane.FastlaneCardComponent
+        ],
+    ],
+]);
+
+// Capture
+$capture = $provider->capturePaymentOrder($order['id']);
+
+// Extract the transaction/capture ID
+$captureId = $provider->getCaptureIdFromOrder($capture);
 ```
 
 ---
@@ -591,13 +643,26 @@ $provider->verifyWebHook([
 ## Payment Method Tokens
 
 ```php
+// Payment tokens (permanent)
 $provider->createPaymentSourceToken($data);
+$provider->setCustomerId('customer_4029352050');  // required before listPaymentSourceTokens()
 $provider->listPaymentSourceTokens(1, 10, true);
 $provider->showPaymentSourceTokenDetails('token-id');
 $provider->deletePaymentSourceToken('token-id');
 
+// Setup tokens (single-use, used to create a payment token)
 $provider->createPaymentSetupToken($data);
 $provider->showPaymentSetupTokenDetails('token-id');
+$provider->deletePaymentSetupToken('token-id');
+```
+
+Using the fluent helpers to create a token:
+
+```php
+$response = $provider->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
+    ->setCustomerId('customer_4029352050')
+    ->sendPaymentMethodRequest();
+// or ->sendPaymentMethodRequest(true) to create a setup token instead
 ```
 
 ---
@@ -637,7 +702,10 @@ $provider->disableAccountProperties();
 $provider->listUsers(1, 10);
 $provider->showUserDetails('user-id');
 $provider->deleteUser('user-id');
-$provider->getClientToken();
+
+// Client token — used with PayPal Fastlane and Advanced Card Payments
+$provider->generateClientToken(); // preferred alias
+$provider->getClientToken();       // equivalent
 ```
 
 ---
