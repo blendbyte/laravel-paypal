@@ -585,3 +585,42 @@ it('can create a subscription with fixed installments', function () {
     expect($response)->toHaveKey('id');
     expect($response)->toHaveKey('plan_id');
 });
+
+it('can set a custom id on a subscription', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreateCatalogProductsResponse()
+        )
+    );
+
+    $start_date = Carbon::now()->addDay()->toDateString();
+
+    $this->client = $this->client->addProduct('Demo Product', 'Demo Product', 'SERVICE', 'SOFTWARE');
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreatePlansResponse()
+        )
+    );
+
+    $this->client = $this->client->addMonthlyPlan('Demo Plan', 'Demo Plan', 100);
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockCreateSubscriptionResponse()
+        )
+    );
+
+    $response = $this->client
+        ->addCustomId('order-ref-12345')
+        ->setupSubscription('John Doe', 'john@example.com', $start_date);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+    expect($response)->toHaveKey('plan_id');
+});
