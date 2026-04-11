@@ -26,7 +26,7 @@ it('can confirm payment for an order', function () {
         ->setStoredPaymentSource(
             'MERCHANT',
             'RECURRING',
-            'SUBSEQUENT',
+            'RESUBMISSION',
             true,
             '5TY05013RG002845M',
             $start_date,

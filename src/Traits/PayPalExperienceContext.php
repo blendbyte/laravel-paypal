@@ -38,14 +38,19 @@ trait PayPalExperienceContext
 
     /**
      * Set stored payment source.
+     *
+     * @param  string  $initiator  Payment initiator: CUSTOMER or MERCHANT
+     * @param  string  $type       Payment type: ONE_TIME, RECURRING, or UNSCHEDULED
+     * @param  string  $usage_pattern  Usage pattern (Feb 2025+): IMMEDIATE, DEFERRED, RESUBMISSION,
+     *                                REAUTHORIZATION, NO_SHOW, DELAYED_CHARGE, or INCREMENTAL_AUTH
      */
-    public function setStoredPaymentSource(string $initiator, string $type, string $usage, bool $previous_reference = false, ?string $previous_transaction_id = null, ?string $previous_transaction_date = null, ?string $previous_transaction_reference_number = null, ?string $previous_transaction_network = null): PayPal
+    public function setStoredPaymentSource(string $initiator, string $type, string $usage_pattern, bool $previous_reference = false, ?string $previous_transaction_id = null, ?string $previous_transaction_date = null, ?string $previous_transaction_reference_number = null, ?string $previous_transaction_network = null): PayPal
     {
         $this->experience_context = array_merge($this->experience_context, [
             'stored_payment_source' => [
                 'payment_initiator' => $initiator,
                 'payment_type' => $type,
-                'usage' => $usage,
+                'usage_pattern' => $usage_pattern,
             ],
         ]);
 
