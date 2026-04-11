@@ -12,6 +12,7 @@ A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP c
 ---
 
 - [Migrating from srmklive/laravel-paypal](#migrating-from-srmklivelaravel-paypal)
+- [Moving to Orders v2 (v1 Payments API sunset Jan 2027)](#moving-to-orders-v2-v1-payments-api-sunset-jan-2027)
 - [Installation](#installation)
 - [Standalone Usage (without Laravel)](#standalone-usage-without-laravel)
 - [Configuration](#configuration)
@@ -77,6 +78,62 @@ php artisan vendor:publish --provider "Blendbyte\PayPal\Providers\PayPalServiceP
 ```
 
 That's it. No API changes, no method renames, no config structure changes.
+
+---
+
+## Moving to Orders v2 (v1 Payments API sunset Jan 2027)
+
+PayPal is sunsetting the v1 Payments REST API (`/v1/payments/payment`) in **January 2027**. If your integration uses the old create-payment → redirect → execute-payment flow, or the classic Billing Agreements API (`/v1/billing-agreements/`), you need to migrate before then.
+
+> **This package already uses Orders v2 and Subscriptions v2 throughout.** The migration notes below are for callers who built custom flows against the legacy endpoints or who were previously using `srmklive/laravel-paypal`'s Express Checkout helpers.
+
+### Checkout: redirect-based payment flow
+
+| Old (v1 Payments — being sunset) | New (Orders v2) |
+|---|---|
+| `POST /v1/payments/payment` → redirect → `POST /v1/payments/payment/{id}/execute` | `createOrder()` → redirect → `capturePaymentOrder()` |
+
+```php
+// 1. Create the order and redirect the buyer
+$order = $provider->createOrder([
+    'intent' => 'CAPTURE',
+    'purchase_units' => [
+        ['amount' => ['currency_code' => 'USD', 'value' => '49.99']],
+    ],
+    'payment_source' => [
+        'paypal' => [
+            'experience_context' => [
+                'return_url' => 'https://example.com/paypal/return',
+                'cancel_url' => 'https://example.com/paypal/cancel',
+            ],
+        ],
+    ],
+]);
+
+// Redirect the buyer to: $order['links'][href where rel === 'payer-action']
+
+// 2. After the buyer approves, capture the payment
+$capture = $provider->capturePaymentOrder($order['id']);
+$captureId = $provider->getCaptureIdFromOrder($capture); // store this
+```
+
+### Recurring billing: Billing Agreements → Subscriptions
+
+| Old (v1 Billing Agreements — being sunset) | New (Subscriptions v2) |
+|---|---|
+| `createBillingAgreementToken()` → `createBillingAgreement()` | `addProductById()` → `addBillingPlanById()` → `setupSubscription()` |
+
+```php
+// New subscriptions flow
+$response = $provider->addProductById('PROD-XYAB12ABSB7868434')
+    ->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
+    ->setReturnAndCancelUrl('https://example.com/success', 'https://example.com/cancel')
+    ->setupSubscription('John Doe', 'john@example.com');
+
+// Redirect the buyer to: $response['links'][href where rel === 'approve']
+```
+
+See the [Subscription Helpers](#subscription-helpers) section for creating plans programmatically.
 
 ---
 
