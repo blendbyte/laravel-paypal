@@ -208,6 +208,9 @@ trait PayPalHttpClient
             // Perform PayPal HTTP API request.
             $response = $this->makeHttpRequest();
 
+            // Idempotency key is single-use — clear it after the request.
+            unset($this->options['headers']['PayPal-Request-Id']);
+
             if ($decode === false) {
                 return $response->getContents();
             }
@@ -216,6 +219,8 @@ trait PayPalHttpClient
 
             return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
+            unset($this->options['headers']['PayPal-Request-Id']);
+
             $error = ($decode === false) || (Str::isJson($t->getMessage()) === false) ? $t->getMessage() : Utils::jsonDecode($t->getMessage(), true);
 
             return ['error' => $error];
