@@ -87,7 +87,7 @@ trait DisputesActions
         $data['offer_type'] = $refund_type;
         $data['offer_amount'] = [
             'currency_code' => $this->getCurrency(),
-            'value' => $amount,
+            'value' => number_format($amount, 2, '.', ''),
         ];
 
         $this->options['json'] = $data;

@@ -140,7 +140,7 @@ trait Invoices
             'note' => $payment_note,
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => $amount,
+                'value' => number_format($amount, 2, '.', ''),
             ],
         ];
 
@@ -191,7 +191,7 @@ trait Invoices
             'method' => $payment_method,
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => $amount,
+                'value' => number_format($amount, 2, '.', ''),
             ],
         ];
 
