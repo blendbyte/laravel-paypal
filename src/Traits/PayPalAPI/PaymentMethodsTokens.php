@@ -123,4 +123,21 @@ trait PaymentMethodsTokens
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Delete a payment setup token.
+     *
+     *
+     * @return array<string, mixed>|string
+     *
+     * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#setup-tokens_delete
+     */
+    public function deletePaymentSetupToken(string $token)
+    {
+        $this->apiEndPoint = "v3/vault/setup-tokens/{$token}";
+
+        $this->verb = 'delete';
+
+        return $this->doPayPalRequest(false);
+    }
 }
