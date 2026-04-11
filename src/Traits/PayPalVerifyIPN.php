@@ -8,7 +8,7 @@ use Psr\Http\Message\StreamInterface;
 
 trait PayPalVerifyIPN
 {
-    protected $webhook_id;
+    protected ?string $webhook_id = null;
 
     public function setWebHookID(string $webhook_id): PayPal
     {
@@ -21,7 +21,7 @@ trait PayPalVerifyIPN
      * Verify incoming IPN through a web hook id.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      */

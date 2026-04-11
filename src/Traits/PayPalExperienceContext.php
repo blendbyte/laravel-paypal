@@ -7,7 +7,7 @@ use Blendbyte\PayPal\Services\PayPal;
 trait PayPalExperienceContext
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $experience_context = [];
 

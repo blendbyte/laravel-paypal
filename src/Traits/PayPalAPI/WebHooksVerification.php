@@ -10,8 +10,9 @@ trait WebHooksVerification
      * Verify a web hook from PayPal.
      *
      *
+     * @param array<string, mixed> $data
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

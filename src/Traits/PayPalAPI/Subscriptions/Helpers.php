@@ -11,7 +11,7 @@ use Throwable;
 trait Helpers
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $trial_pricing = [];
 
@@ -20,14 +20,17 @@ trait Helpers
      */
     protected $payment_failure_threshold = 3;
 
+    /** @var array<string, mixed>|null */
     protected ?array $product = null;
 
+    /** @var array<string, mixed>|null */
     protected ?array $billing_plan = null;
 
+    /** @var array<string, mixed>|null */
     protected ?array $shipping_address = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $payment_preferences;
 
@@ -36,6 +39,7 @@ trait Helpers
      */
     protected $has_setup_fee = false;
 
+    /** @var array<string, mixed>|null */
     protected ?array $taxes = null;
 
     protected ?string $custom_id = null;
@@ -45,7 +49,7 @@ trait Helpers
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws Throwable
      */
@@ -89,8 +93,11 @@ trait Helpers
         }
 
         $subscription = $this->createSubscription($body);
-        $subscription['billing_plan_id'] = $this->billing_plan['id'];
-        $subscription['product_id'] = $this->product['id'];
+
+        if (is_array($subscription) && isset($this->billing_plan['id'], $this->product['id'])) {
+            $subscription['billing_plan_id'] = $this->billing_plan['id'];
+            $subscription['product_id'] = $this->product['id'];
+        }
 
         $this->product = null;
         $this->billing_plan = null;
@@ -123,7 +130,7 @@ trait Helpers
         }
 
         $plan_pricing = $this->addPlanBillingCycle('DAY', 1, $price, $total_cycles);
-        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : collect([$this->trial_pricing, $plan_pricing])->filter()->toArray();
+        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : array_filter([$this->trial_pricing, $plan_pricing]);
 
         $this->addBillingPlan($name, $description, $billing_cycles);
 
@@ -143,7 +150,7 @@ trait Helpers
         }
 
         $plan_pricing = $this->addPlanBillingCycle('WEEK', 1, $price, $total_cycles);
-        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : collect([$this->trial_pricing, $plan_pricing])->filter()->toArray();
+        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : array_filter([$this->trial_pricing, $plan_pricing]);
 
         $this->addBillingPlan($name, $description, $billing_cycles);
 
@@ -163,7 +170,7 @@ trait Helpers
         }
 
         $plan_pricing = $this->addPlanBillingCycle('MONTH', 1, $price, $total_cycles);
-        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : collect([$this->trial_pricing, $plan_pricing])->filter()->toArray();
+        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : array_filter([$this->trial_pricing, $plan_pricing]);
 
         $this->addBillingPlan($name, $description, $billing_cycles);
 
@@ -183,7 +190,7 @@ trait Helpers
         }
 
         $plan_pricing = $this->addPlanBillingCycle('YEAR', 1, $price, $total_cycles);
-        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : collect([$this->trial_pricing, $plan_pricing])->filter()->toArray();
+        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : array_filter([$this->trial_pricing, $plan_pricing]);
 
         $this->addBillingPlan($name, $description, $billing_cycles);
 
@@ -209,7 +216,7 @@ trait Helpers
         }
 
         $plan_pricing = $this->addPlanBillingCycle($interval_unit, $interval_count, $price, $total_cycles);
-        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : collect([$this->trial_pricing, $plan_pricing])->filter()->toArray();
+        $billing_cycles = empty($this->trial_pricing) ? [$plan_pricing] : array_filter([$this->trial_pricing, $plan_pricing]);
 
         $this->addBillingPlan($name, $description, $billing_cycles);
 
@@ -218,6 +225,8 @@ trait Helpers
 
     /**
      * Add Plan's Billing cycle.
+     *
+     * @return array<string, mixed>
      */
     protected function addPlanBillingCycle(string $interval_unit, int $interval_count, float $price, int $total_cycles, bool $trial = false): array
     {
@@ -270,6 +279,11 @@ trait Helpers
         if ($error = data_get($product, 'error', false)) {
             throw new \RuntimeException(data_get($error, 'details.0.description', 'Failed to add product'));
         }
+
+        if (! is_array($product)) {
+            throw new \RuntimeException('Failed to add product: unexpected response format');
+        }
+
         $this->product = $product;
 
         return $this;
@@ -303,6 +317,8 @@ trait Helpers
      * Create a product for a subscription's billing plan.
      *
      *
+     * @param list<array<string, mixed>> $billing_cycles
+     *
      * @throws Throwable
      */
     protected function addBillingPlan(string $name, string $description, array $billing_cycles): void
@@ -326,6 +342,11 @@ trait Helpers
         if ($error = data_get($billingPlan, 'error', false)) {
             throw new \RuntimeException(data_get($error, 'details.0.description', 'Failed to add billing plan'));
         }
+
+        if (! is_array($billingPlan)) {
+            throw new \RuntimeException('Failed to add billing plan: unexpected response format');
+        }
+
         $this->billing_plan = $billingPlan;
     }
 

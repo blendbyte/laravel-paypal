@@ -13,7 +13,9 @@ trait PaymentMethodsTokens
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -34,7 +36,7 @@ trait PaymentMethodsTokens
      * List all the payment tokens.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#customer_payment-tokens_get
      */
@@ -51,7 +53,7 @@ trait PaymentMethodsTokens
      * Show details for a payment method token.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#payment-tokens_get
      */
@@ -68,7 +70,7 @@ trait PaymentMethodsTokens
      * Show details for a payment token.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#payment-tokens_delete
      */
@@ -86,7 +88,9 @@ trait PaymentMethodsTokens
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -107,7 +111,7 @@ trait PaymentMethodsTokens
      * Show details for a payment setup token.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#setup-tokens_get
      */

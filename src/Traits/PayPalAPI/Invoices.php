@@ -11,7 +11,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -33,7 +35,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param list<string> $fields
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -57,7 +61,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $recipients
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -79,7 +85,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $recipients
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -101,7 +109,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $recipients
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -123,7 +133,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -156,7 +166,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -176,7 +186,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -207,7 +217,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -227,7 +237,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -250,7 +260,7 @@ trait Invoices
      * Generate the next invoice number.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -272,7 +282,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -292,7 +302,9 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -314,7 +326,7 @@ trait Invoices
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -331,6 +343,10 @@ trait Invoices
 
     /**
      * Get Invoice Message Payload.
+     *
+     * @param array<string, mixed> $recipients
+     *
+     * @return array<string, mixed>
      */
     protected function getInvoiceMessagePayload(string $subject, string $note, array $recipients, bool $send_recipient, bool $send_merchant): array
     {

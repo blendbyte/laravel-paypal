@@ -8,12 +8,12 @@ use Psr\Http\Message\StreamInterface;
 trait Helpers
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $payment_source = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $customer_source = [];
 
@@ -44,6 +44,8 @@ trait Helpers
 
     /**
      * Set payment source data for credit card.
+     *
+     * @param array<string, mixed> $data
      */
     public function setPaymentSourceCard(array $data): PayPal
     {
@@ -52,6 +54,8 @@ trait Helpers
 
     /**
      * Set payment source data for PayPal.
+     *
+     * @param array<string, mixed> $data
      */
     public function setPaymentSourcePayPal(array $data): PayPal
     {
@@ -60,6 +64,8 @@ trait Helpers
 
     /**
      * Set payment source data for Venmo.
+     *
+     * @param array<string, mixed> $data
      */
     public function setPaymentSourceVenmo(array $data): PayPal
     {
@@ -68,6 +74,8 @@ trait Helpers
 
     /**
      * Set payment source details.
+     *
+     * @param array<string, mixed> $data
      */
     protected function setPaymentSourceDetails(string $source, array $data): PayPal
     {
@@ -81,7 +89,7 @@ trait Helpers
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      */

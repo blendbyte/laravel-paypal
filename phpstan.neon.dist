@@ -4,6 +4,6 @@ includes:
 parameters:
     paths:
         - src
-    level: 5
+    level: 7
     excludePaths:
         - src/Providers/PayPalServiceProvider.php
