@@ -412,11 +412,16 @@ $order = $provider->createOrder([
     ],
 ]);
 
-// Update, show, authorize, capture
+// Update, show, authorize
 $provider->updateOrder('5O190127TN364715T', $patchData);
 $order = $provider->showOrderDetails('5O190127TN364715T');
 $provider->authorizePaymentOrder('5O190127TN364715T');
-$provider->capturePaymentOrder('5O190127TN364715T');
+
+// Capture — and extract the capture/transaction ID from the response
+$capture = $provider->capturePaymentOrder($order['id']);
+$captureId = $provider->getCaptureIdFromOrder($capture);
+// $captureId is the value you store in your database and use for refunds,
+// dispute lookups, and shipment tracking (see Trackers section).
 ```
 
 ---
@@ -604,11 +609,13 @@ $provider->provideDisputeEvidence('PP-D-27803', [
 
 ## Trackers
 
+The `transaction-id` used here is the capture ID — get it via `getCaptureIdFromOrder()` after calling `capturePaymentOrder()` (see [Orders](#orders)).
+
 ```php
 $provider->addBatchTracking($data);
 $provider->addTracking($data);
-$provider->listTrackingDetails('transaction-id');
-$provider->listTrackingDetails('transaction-id', 'tracking-number');
+$provider->listTrackingDetails($captureId);
+$provider->listTrackingDetails($captureId, 'tracking-number');
 $provider->updateTrackingDetails('tracking-id', $data);
 $provider->showTrackingDetails('tracking-id');
 ```
