@@ -13,6 +13,26 @@ beforeEach(function () {
     $this->access_token = $response['access_token'];
 });
 
+it('can set shipping address change callback url', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setShippingAddressChangeCallback('https://example.com/shipping-callback');
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockConfirmOrderResponse()
+        )
+    );
+
+    $response = $this->client->setupOrderConfirmation('5O190127TN364715T', 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL');
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
 it('can confirm payment for an order', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,

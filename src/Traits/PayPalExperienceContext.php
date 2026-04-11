@@ -37,6 +37,24 @@ trait PayPalExperienceContext
     }
 
     /**
+     * Set the server-side shipping address change callback URL.
+     *
+     * When the buyer changes their shipping address during checkout, PayPal
+     * calls this URL so the merchant can recalculate shipping options/costs
+     * before the order is confirmed. Requires Orders v2 (Feb 2025+).
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-experience_context_base
+     */
+    public function setShippingAddressChangeCallback(string $url): PayPal
+    {
+        $this->experience_context = array_merge($this->experience_context, [
+            'shipping_address_change_callback_url' => $url,
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Set stored payment source.
      *
      * @param  string  $initiator  Payment initiator: CUSTOMER or MERCHANT
