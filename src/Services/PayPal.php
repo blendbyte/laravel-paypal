@@ -55,5 +55,8 @@ class PayPal
         $this->config['payment_action'] = $credentials['payment_action'];
         $this->config['notify_url'] = $credentials['notify_url'];
         $this->config['locale'] = $credentials['locale'];
+        $this->config['timeout'] = (float) ($credentials['timeout'] ?? 30);
+        $this->config['connect_timeout'] = (float) ($credentials['connect_timeout'] ?? 10);
+        $this->config['max_retries'] = (int) ($credentials['max_retries'] ?? 2);
     }
 }

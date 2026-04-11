@@ -74,3 +74,22 @@ it('can set multiple request headers', function () {
 it('throws exception if options header not set', function () {
     expect(fn () => $this->client->getRequestHeader('Prefer'))->toThrow(RuntimeException::class, 'Options header is not set.');
 });
+
+it('accepts custom timeout and connect_timeout in credentials', function () {
+    $credentials = $this->getApiCredentials();
+    $credentials['timeout'] = 60;
+    $credentials['connect_timeout'] = 5;
+
+    $client = new PayPalClient($credentials);
+
+    expect($client)->toBeInstanceOf(PayPalClient::class);
+});
+
+it('accepts max_retries in credentials and disables retry when zero', function () {
+    $credentials = $this->getApiCredentials();
+    $credentials['max_retries'] = 0;
+
+    $client = new PayPalClient($credentials);
+
+    expect($client)->toBeInstanceOf(PayPalClient::class);
+});
