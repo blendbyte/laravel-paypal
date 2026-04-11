@@ -31,6 +31,16 @@ trait Helpers
     }
 
     /**
+     * Set customer ID for Vault operations (list payment tokens, create token for customer).
+     *
+     * Alias for setCustomerSource() with a more discoverable name.
+     */
+    public function setCustomerId(string $id): PayPal
+    {
+        return $this->setCustomerSource($id);
+    }
+
+    /**
      * Set payment method token customer id.
      */
     public function setCustomerSource(string $id): PayPal
