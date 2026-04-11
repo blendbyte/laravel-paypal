@@ -8,12 +8,12 @@ use Carbon\Carbon;
 trait Filters
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $invoice_search_filters = [];
 
     /**
-     * @var array
+     * @var list<string>
      */
     protected $invoices_date_types = [
         'invoice_date',
@@ -23,7 +23,7 @@ trait Filters
     ];
 
     /**
-     * @var array
+     * @var list<string>
      */
     protected $invoices_status_types = [
         'DRAFT',
@@ -76,6 +76,8 @@ trait Filters
     }
 
     /**
+     * @param list<string> $status
+     *
      * @throws \Exception
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#definition-invoice_status
@@ -174,6 +176,8 @@ trait Filters
     }
 
     /**
+     * @param list<string> $fields
+     *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#definition-field
      */
     public function addInvoiceFilterByFields(array $fields): PayPal

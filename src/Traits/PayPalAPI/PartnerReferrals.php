@@ -11,7 +11,9 @@ trait PartnerReferrals
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $partner_data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -33,7 +35,7 @@ trait PartnerReferrals
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -53,7 +55,7 @@ trait PartnerReferrals
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -73,7 +75,7 @@ trait PartnerReferrals
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -93,7 +95,7 @@ trait PartnerReferrals
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

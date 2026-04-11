@@ -28,7 +28,7 @@ trait PayPalRequest
     /**
      * PayPal API configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $config;
 
@@ -40,7 +40,7 @@ trait PayPalRequest
     /**
      * Additional options for PayPal API request.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $options;
 
@@ -66,6 +66,8 @@ trait PayPalRequest
     /**
      * Set PayPal API Credentials.
      *
+     *
+     * @param array<string, mixed> $credentials
      *
      * @throws RuntimeException|\Exception
      */
@@ -132,6 +134,8 @@ trait PayPalRequest
 
     /**
      * Function to add multiple request headers.
+     *
+     * @param array<string, string> $headers
      */
     public function setRequestHeaders(array $headers): PayPal
     {
@@ -161,6 +165,8 @@ trait PayPalRequest
      * Function To Set PayPal API Configuration.
      *
      *
+     * @param array<string, mixed> $config
+     *
      * @throws \Exception
      */
     private function setConfig(array $config): void
@@ -183,6 +189,8 @@ trait PayPalRequest
 
     /**
      * Set API environment to be used by PayPal.
+     *
+     * @param array<string, mixed> $credentials
      */
     private function setApiEnvironment(array $credentials): void
     {
@@ -207,6 +215,8 @@ trait PayPalRequest
      * Set configuration details for the provider.
      *
      *
+     * @param array<string, mixed> $credentials
+     *
      * @throws \Exception
      */
     private function setApiProviderConfiguration(array $credentials): void
@@ -224,9 +234,9 @@ trait PayPalRequest
             }
         }
 
-        collect($credentials[$this->mode])->map(function ($value, $key) {
+        foreach ($credentials[$this->mode] as $key => $value) {
             $this->config[$key] = $value;
-        });
+        }
 
         $this->paymentAction = $credentials['payment_action'];
 
@@ -241,7 +251,7 @@ trait PayPalRequest
     /**
      * @throws RuntimeException
      */
-    private function throwConfigurationException()
+    private function throwConfigurationException(): never
     {
         throw new RuntimeException('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
     }
@@ -249,7 +259,7 @@ trait PayPalRequest
     /**
      * @throws RuntimeException
      */
-    private function throwInvalidEvidenceFileException()
+    private function throwInvalidEvidenceFileException(): never
     {
         throw new RuntimeException('Invalid evidence file type provided.
         1. The party can upload up to 50 MB of files per request.

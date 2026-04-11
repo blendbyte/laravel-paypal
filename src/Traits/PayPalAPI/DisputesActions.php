@@ -13,7 +13,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -38,7 +38,9 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param list<string> $files
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_provide-evidence
      *
@@ -73,7 +75,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -102,7 +104,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -126,7 +128,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -150,7 +152,9 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -175,7 +179,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -199,7 +203,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -223,7 +227,7 @@ trait DisputesActions
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

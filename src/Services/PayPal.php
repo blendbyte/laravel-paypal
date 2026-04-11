@@ -15,6 +15,8 @@ class PayPal
      * PayPal constructor.
      *
      *
+     * @param array<string, mixed> $config
+     *
      * @throws Exception
      */
     public function __construct(array $config = [])
@@ -31,6 +33,8 @@ class PayPal
 
     /**
      * Set ExpressCheckout API endpoints & options.
+     *
+     * @param array<string, mixed> $credentials
      */
     protected function setOptions(array $credentials): void
     {

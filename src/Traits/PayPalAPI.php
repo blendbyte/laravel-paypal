@@ -36,7 +36,7 @@ trait PayPalAPI
      * Login through PayPal API to get access token.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -57,7 +57,7 @@ trait PayPalAPI
         unset($this->options['auth']);
         unset($this->options[$this->httpBodyParam]);
 
-        if (isset($response['access_token'])) {
+        if (is_array($response) && isset($response['access_token'])) {
             $this->setAccessToken($response);
         }
 
@@ -67,6 +67,8 @@ trait PayPalAPI
     /**
      * Set PayPal Rest API access token.
      *
+     *
+     * @param array<string, mixed> $response
      *
      * @return void
      */
@@ -82,6 +84,8 @@ trait PayPalAPI
     /**
      * Set PayPal App ID.
      *
+     *
+     * @param array<string, mixed> $response
      *
      * @return void
      */

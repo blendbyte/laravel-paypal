@@ -10,7 +10,7 @@ trait WebHooksEvents
      * List all events types for web hooks.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -29,7 +29,7 @@ trait WebHooksEvents
      * List all events notifications for web hooks.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -49,7 +49,7 @@ trait WebHooksEvents
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -69,7 +69,9 @@ trait WebHooksEvents
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $items
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *

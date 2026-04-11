@@ -11,7 +11,9 @@ trait WebHooks
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $events
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -37,7 +39,7 @@ trait WebHooks
      * List all web hooks.
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -57,7 +59,7 @@ trait WebHooks
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -77,7 +79,9 @@ trait WebHooks
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -99,7 +103,7 @@ trait WebHooks
      *
      *
      *
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
@@ -118,7 +122,7 @@ trait WebHooks
      * List events for an existing web hook.
      *
      * @param  string  $web_hook_id
-     * @return array|StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
