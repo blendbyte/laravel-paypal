@@ -260,6 +260,8 @@ trait Invoices
     {
         $this->apiEndPoint = 'v2/invoicing/generate-next-invoice-number';
 
+        $this->options['json'] = (object) [];
+
         $this->verb = 'post';
 
         return $this->doPayPalRequest();
