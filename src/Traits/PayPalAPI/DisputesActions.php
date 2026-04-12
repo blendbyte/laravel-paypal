@@ -52,7 +52,7 @@ trait DisputesActions
             $this->throwInvalidEvidenceFileException();
         }
 
-        $this->apiEndPoint = "/v1/customer/disputes/{$dispute_id}/provide-evidence";
+        $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/provide-evidence";
 
         $this->setRequestHeader('Content-Type', 'multipart/form-data');
 
@@ -150,7 +150,9 @@ trait DisputesActions
     /**
      * Accept customer dispute claim.
      *
-     *
+     * Pass `accept_claim_type` in $data to use a value other than the default
+     * 'REFUND'. PayPal-supported values: REFUND, MERCHANDISE, MISSING_ITEM,
+     * MISSING_REFUND, UNABLE_TO_COMPLETE_REFUND.
      *
      * @param array<string, mixed> $data
      *
@@ -165,7 +167,7 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/accept-claim";
 
         $data['note'] = $dispute_note;
-        $data['accept_claim_type'] = 'REFUND';
+        $data['accept_claim_type'] ??= 'REFUND';
 
         $this->options['json'] = $data;
 
