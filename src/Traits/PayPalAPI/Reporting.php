@@ -22,10 +22,7 @@ trait Reporting
      */
     public function listTransactions(array $filters, string $fields = 'all')
     {
-        $filters_list = collect($filters)->isEmpty() ? '' :
-            collect($filters)->map(function ($value, $key) {
-                return urlencode($key).'='.urlencode($value).'&';
-            })->implode('');
+        $filters_list = empty($filters) ? '' : http_build_query($filters).'&';
 
         $this->apiEndPoint = "v1/reporting/transactions?{$filters_list}fields={$fields}&page={$this->current_page}&page_size={$this->page_size}";
 

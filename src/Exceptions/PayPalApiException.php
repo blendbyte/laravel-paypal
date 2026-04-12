@@ -40,4 +40,15 @@ class PayPalApiException extends RuntimeException
     {
         return $this->paypalError;
     }
+
+    /**
+     * The HTTP status code of the failed response (e.g. 400, 401, 422, 500).
+     *
+     * Returns 0 for non-HTTP failures such as network timeouts or
+     * connection errors where no response was received.
+     */
+    public function getHttpStatus(): int
+    {
+        return $this->getCode();
+    }
 }
