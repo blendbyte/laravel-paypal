@@ -9,6 +9,8 @@ A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP c
 
 **Supports:** PHP 8.2–8.5 · Laravel 12 / 13
 
+> **Disclaimer:** This package is an independent community project and is not affiliated with, endorsed by, or supported by PayPal, Inc. "PayPal" is a registered trademark of PayPal, Inc. Use this package at your own risk; no warranty is provided beyond what the MIT license covers.
+
 ---
 
 - [Migrating from srmklive/laravel-paypal](#migrating-from-srmklivelaravel-paypal)
