@@ -42,7 +42,13 @@ it('does not throw by default on a failed request', function () {
     $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
     $this->client->setClient(mockErrorClient(422, '{"name":"UNPROCESSABLE_ENTITY","message":"Invalid request"}'));
 
-    expect(fn () => $this->client->showOrderDetails('bad-id'))->not->toThrow(PayPalApiException::class);
+    $exception = null;
+    try {
+        $this->client->showOrderDetails('bad-id');
+    } catch (PayPalApiException $e) {
+        $exception = $e;
+    }
+    expect($exception)->toBeNull();
 });
 
 // ── Exception mode ────────────────────────────────────────────────────────
@@ -64,12 +70,15 @@ it('getPayPalError() returns the decoded error payload', function () {
     $this->client->withExceptions();
     $this->client->setClient(mockErrorClient(422, '{"name":"UNPROCESSABLE_ENTITY","message":"Invalid request"}'));
 
+    $exception = null;
     try {
         $this->client->showOrderDetails('bad-id');
     } catch (PayPalApiException $e) {
-        expect($e->getPayPalError())->toBeArray();
-        expect($e->getPayPalError())->toHaveKey('name');
+        $exception = $e;
     }
+    expect($exception)->toBeInstanceOf(PayPalApiException::class);
+    expect($exception->getPayPalError())->toBeArray();
+    expect($exception->getPayPalError())->toHaveKey('name');
 });
 
 it('getMessage() contains the error information', function () {
@@ -77,11 +86,14 @@ it('getMessage() contains the error information', function () {
     $this->client->withExceptions();
     $this->client->setClient(mockErrorClient(422, '{"name":"UNPROCESSABLE_ENTITY","message":"Invalid request"}'));
 
+    $exception = null;
     try {
         $this->client->showOrderDetails('bad-id');
     } catch (PayPalApiException $e) {
-        expect($e->getMessage())->toContain('UNPROCESSABLE_ENTITY');
+        $exception = $e;
     }
+    expect($exception)->toBeInstanceOf(PayPalApiException::class);
+    expect($exception->getMessage())->toContain('UNPROCESSABLE_ENTITY');
 });
 
 it('getPayPalError() returns a string for non-JSON error bodies', function () {
@@ -89,12 +101,15 @@ it('getPayPalError() returns a string for non-JSON error bodies', function () {
     $this->client->withExceptions();
     $this->client->setClient(mockErrorClient(503, 'Service Unavailable'));
 
+    $exception = null;
     try {
         $this->client->showOrderDetails('bad-id');
     } catch (PayPalApiException $e) {
-        expect($e->getPayPalError())->toBeString();
-        expect($e->getPayPalError())->toBe('Service Unavailable');
+        $exception = $e;
     }
+    expect($exception)->toBeInstanceOf(PayPalApiException::class);
+    expect($exception->getPayPalError())->toBeString();
+    expect($exception->getPayPalError())->toBe('Service Unavailable');
 });
 
 // ── HTTP status code ──────────────────────────────────────────────────────
@@ -104,11 +119,14 @@ it('getHttpStatus() returns the HTTP status code', function () {
     $this->client->withExceptions();
     $this->client->setClient(mockErrorClient(422, '{"name":"UNPROCESSABLE_ENTITY","message":"Invalid request"}'));
 
+    $exception = null;
     try {
         $this->client->showOrderDetails('bad-id');
     } catch (PayPalApiException $e) {
-        expect($e->getHttpStatus())->toBe(422);
+        $exception = $e;
     }
+    expect($exception)->toBeInstanceOf(PayPalApiException::class);
+    expect($exception->getHttpStatus())->toBe(422);
 });
 
 it('getHttpStatus() returns the correct code for different status codes', function () {
@@ -116,11 +134,14 @@ it('getHttpStatus() returns the correct code for different status codes', functi
     $this->client->withExceptions();
     $this->client->setClient(mockErrorClient(404, '{"name":"RESOURCE_NOT_FOUND","message":"Not found"}'));
 
+    $exception = null;
     try {
         $this->client->showOrderDetails('bad-id');
     } catch (PayPalApiException $e) {
-        expect($e->getHttpStatus())->toBe(404);
+        $exception = $e;
     }
+    expect($exception)->toBeInstanceOf(PayPalApiException::class);
+    expect($exception->getHttpStatus())->toBe(404);
 });
 
 // ── Toggling back ─────────────────────────────────────────────────────────
