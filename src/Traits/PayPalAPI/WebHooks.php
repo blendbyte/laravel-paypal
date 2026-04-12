@@ -24,9 +24,7 @@ trait WebHooks
         $this->apiEndPoint = 'v1/notifications/webhooks';
 
         $data = ['url' => $url];
-        $data['event_types'] = collect($events)->map(function ($item) {
-            return ['name' => $item];
-        })->toArray();
+        $data['event_types'] = array_map(fn ($item) => ['name' => $item], $events);
 
         $this->options['json'] = $data;
 
