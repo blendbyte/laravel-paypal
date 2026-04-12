@@ -23,6 +23,38 @@ it('returns error when PayPal webhook headers are missing', function () {
     expect($response)->toBe(['error' => 'Invalid headers or webhook id provided']);
 });
 
+it('returns error when request body is empty', function () {
+    // Regression: json_decode() returns null on empty/invalid body, which was
+    // forwarded verbatim as webhook_event — PayPal rejects {"webhook_event":null}.
+    $request = Request::create('/', 'POST', [], [], [], [
+        'HTTP_PAYPAL-AUTH-ALGO'         => 'SHA256withRSA',
+        'HTTP_PAYPAL-TRANSMISSION-ID'   => 'abc123',
+        'HTTP_PAYPAL-CERT-URL'          => 'https://api.paypal.com/cert.pem',
+        'HTTP_PAYPAL-TRANSMISSION-SIG'  => base64_encode('sig'),
+        'HTTP_PAYPAL-TRANSMISSION-TIME' => '2016-02-18T20:01:35Z',
+    ], '');
+
+    $this->client->setWebHookID('test-webhook-id');
+    $response = $this->client->verifyIPN($request);
+
+    expect($response)->toBe(['error' => 'Invalid or empty request body']);
+});
+
+it('returns error when request body is not valid JSON', function () {
+    $request = Request::create('/', 'POST', [], [], [], [
+        'HTTP_PAYPAL-AUTH-ALGO'         => 'SHA256withRSA',
+        'HTTP_PAYPAL-TRANSMISSION-ID'   => 'abc123',
+        'HTTP_PAYPAL-CERT-URL'          => 'https://api.paypal.com/cert.pem',
+        'HTTP_PAYPAL-TRANSMISSION-SIG'  => base64_encode('sig'),
+        'HTTP_PAYPAL-TRANSMISSION-TIME' => '2016-02-18T20:01:35Z',
+    ], 'not-valid-json{{');
+
+    $this->client->setWebHookID('test-webhook-id');
+    $response = $this->client->verifyIPN($request);
+
+    expect($response)->toBe(['error' => 'Invalid or empty request body']);
+});
+
 it('returns error when webhook_id has not been set', function () {
     $request = Request::create('/', 'POST', [], [], [], [
         'HTTP_PAYPAL-AUTH-ALGO'         => 'SHA256withRSA',
