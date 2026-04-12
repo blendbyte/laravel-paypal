@@ -40,7 +40,7 @@ trait Identity
      */
     public function listUsers(string $field = 'userName')
     {
-        $this->apiEndPoint = "v2/scim/Users?filter={$field}";
+        $this->apiEndPoint = 'v2/scim/Users?filter='.rawurlencode($field);
 
         $this->setRequestHeader('Content-Type', 'application/scim+json');
 
