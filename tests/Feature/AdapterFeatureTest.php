@@ -21,9 +21,11 @@ it('returns error if invalid credentials are used to get access token', function
 });
 
 it('can get access token', function () {
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAccessTokenResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAccessTokenResponse(),
+            $container
         )
     );
     $response = $this->client->getAccessToken();
@@ -32,6 +34,20 @@ it('can get access token', function () {
 
     expect($response)->toHaveKey('access_token');
     expect($response['access_token'])->not->toBeEmpty();
+
+    // Verify the actual PSR-7 request that was sent carried the right auth
+    // and body — this would have caught the PSR-18 migration regression.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+
+    $credentials = $this->getApiCredentials();
+    $expectedBasic = 'Basic '.base64_encode(
+        $credentials['sandbox']['client_id'].':'.$credentials['sandbox']['client_secret']
+    );
+
+    expect($request->getHeaderLine('Authorization'))->toBe($expectedBasic);
+    expect($request->getHeaderLine('Content-Type'))->toBe('application/x-www-form-urlencoded');
+    expect((string) $request->getBody())->toBe('grant_type=client_credentials');
 });
 
 it('can create a billing agreement token', function () {
@@ -437,9 +453,11 @@ it('can provide evidence for a dispute claim', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAcceptDisputesClaimResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
         )
     );
 
@@ -456,6 +474,13 @@ it('can provide evidence for a dispute claim', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('links');
+
+    // Regression guard: a leading '/' on the endpoint produces a double-slash
+    // URL (e.g. https://api-m.sandbox.paypal.com//v1/...) which PayPal rejects.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    expect((string) $request->getUri())->not->toContain('//v1/');
+    expect((string) $request->getUri())->toContain('/v1/customer/disputes/PP-D-27803/provide-evidence');
 });
 
 it('throws exception if invalid file as evidence is provided for a dispute claim', function () {
@@ -534,9 +559,11 @@ it('can accept dispute claim', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAcceptDisputesClaimResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
         )
     );
 
@@ -547,6 +574,39 @@ it('can accept dispute claim', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('links');
+
+    // Default claim type must be REFUND when none is supplied.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $body = json_decode((string) $request->getBody(), true);
+    expect($body['accept_claim_type'])->toBe('REFUND');
+});
+
+it('acceptDisputeClaim allows caller to override accept_claim_type', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
+        )
+    );
+
+    $this->client->acceptDisputeClaim(
+        'PP-D-27803',
+        'Sending replacement item.',
+        ['accept_claim_type' => 'MERCHANDISE']
+    );
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $body = json_decode((string) $request->getBody(), true);
+    expect($body['accept_claim_type'])->toBe('MERCHANDISE');
+    expect($body['note'])->toBe('Sending replacement item.');
 });
 
 it('can accept dispute offer resolution', function () {
@@ -1113,6 +1173,19 @@ it('throws exception on search invoices with invalid date ranges', function () {
     expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')->searchInvoices())->toThrow(Exception::class);
 });
 
+it('normalises non-ISO date strings to Y-m-d format in date range filter', function () {
+    // Regression: Carbon::parse() was used to validate ordering but the raw
+    // input strings were stored verbatim. Passing "January 5 2024" or "2024-1-5"
+    // would store those literals and send them to the PayPal API unchanged.
+    $this->client->addInvoiceFilterByDateRange('January 1 2018', 'June 21 2018', 'invoice_date');
+
+    $prop = (new ReflectionClass($this->client))->getProperty('invoice_search_filters');
+    $filters = $prop->getValue($this->client);
+
+    expect($filters['invoice_date_range']['start'])->toBe('2018-01-01');
+    expect($filters['invoice_date_range']['end'])->toBe('2018-06-21');
+});
+
 it('throws exception on search invoices with invalid date range type', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
@@ -1153,15 +1226,50 @@ it('can get list users', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mocklistUsersResponse()
+        $this->mock_http_client_capturing(
+            $this->mocklistUsersResponse(),
+            $container
         )
     );
 
     $response = $this->client->listUsers();
 
     expect($response)->toHaveKey('Resources');
+
+    // Regression: the default filter value must appear verbatim (no spaces to encode).
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('filter=userName');
+});
+
+it('URL-encodes the SCIM filter when it contains spaces or special characters', function () {
+    // Regression: bare string interpolation left spaces/quotes raw in the URL,
+    // which breaks HTTP clients that enforce RFC 3986 and confuses some proxies.
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mocklistUsersResponse(),
+            $container
+        )
+    );
+
+    $this->client->listUsers('userName eq "bjensen"');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+
+    // Must be percent-encoded, not raw spaces or quotes.
+    expect($url)->toContain('filter=userName%20eq%20%22bjensen%22');
+    expect($url)->not->toContain('filter=userName eq');
 });
 
 it('can get user details', function () {
@@ -2147,9 +2255,11 @@ it('can list tracking details', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockGetTrackingDetailsResponse()
+        $this->mock_http_client_capturing(
+            $this->mockGetTrackingDetailsResponse(),
+            $container
         )
     );
 
@@ -2159,6 +2269,36 @@ it('can list tracking details', function () {
     expect($response)->toBe($this->mockGetTrackingDetailsResponse());
     expect($response)->toHaveKey('transaction_id');
     expect($response)->toHaveKey('tracking_number');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('transaction_id=8MC585209K746392H-443844607820');
+});
+
+it('URL-encodes tracking_number when it contains special characters', function () {
+    // Regression: bare string interpolation left special characters raw in the URL.
+    // Some carrier tracking numbers include spaces or other non-URL-safe characters.
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockGetTrackingDetailsResponse(),
+            $container
+        )
+    );
+
+    $this->client->listTrackingDetails('8MC585209K746392H', 'TRACK 123+456');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('tracking_number=TRACK+123%2B456');
+    expect($url)->not->toContain('tracking_number=TRACK 123');
 });
 
 it('can get tracking details for tracking id', function () {
@@ -2448,9 +2588,11 @@ it('can list payment methods source tokens', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockListPaymentMethodsTokensResponse()
+        $this->mock_http_client_capturing(
+            $this->mockListPaymentMethodsTokensResponse(),
+            $container
         )
     );
 
@@ -2459,6 +2601,46 @@ it('can list payment methods source tokens', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('payment_tokens');
+
+    // Regression guard: a raw PHP bool interpolates as "1" or "", not "true"/"false".
+    // PayPal requires the literal string "true" or "false" for total_required.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('total_required=true');
+    expect($url)->not->toContain('total_required=1');
+});
+
+it('throws when listPaymentSourceTokens is called without a customer ID', function () {
+    // Regression: accessing $this->customer_source['id'] without a guard caused an
+    // "Undefined array key 'id'" error rather than a clear, actionable message.
+    expect(fn () => $this->client->listPaymentSourceTokens())
+        ->toThrow(RuntimeException::class, 'A customer ID must be set via setCustomerId() before listing payment tokens.');
+});
+
+it('listPaymentSourceTokens sends total_required=false when totals disabled', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockListPaymentMethodsTokensResponse(),
+            $container
+        )
+    );
+
+    $this->client->setCustomerSource('customer_4029352050')
+        ->listPaymentSourceTokens(1, 10, false);
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('total_required=false');
+    expect($url)->not->toContain('total_required=1');
+    expect($url)->not->toContain('total_required=&');
 });
 
 it('can show details for payment method source token', function () {

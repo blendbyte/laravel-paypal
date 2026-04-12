@@ -149,6 +149,38 @@ it('creates order without payment_source when none is set', function () {
     expect($response)->toHaveKey('id');
 });
 
+it('omits null fields from previous_network_transaction_reference', function () {
+    // Regression: all four optional params were always included in the array,
+    // so passing only some of them sent null values to PayPal (e.g. {"id":null}).
+    $this->client->setStoredPaymentSource(
+        'MERCHANT',
+        'RECURRING',
+        'RESUBMISSION',
+        true,
+        '5TY05013RG002845M', // id provided
+        null,                 // date omitted
+        null,                 // acquirer_reference_number omitted
+        'VISA'                // network provided
+    );
+
+    $ctx = (new ReflectionClass($this->client))->getProperty('experience_context')->getValue($this->client);
+    $ref = $ctx['stored_payment_source']['previous_network_transaction_reference'];
+
+    expect($ref)->toHaveKey('id', '5TY05013RG002845M');
+    expect($ref)->toHaveKey('network', 'VISA');
+    expect($ref)->not->toHaveKey('date');
+    expect($ref)->not->toHaveKey('acquirer_reference_number');
+});
+
+it('omits previous_network_transaction_reference entirely when previous_reference is false', function () {
+    $this->client->setStoredPaymentSource('CUSTOMER', 'ONE_TIME', 'IMMEDIATE');
+
+    $ctx   = (new ReflectionClass($this->client))->getProperty('experience_context')->getValue($this->client);
+    $stored = $ctx['stored_payment_source'];
+
+    expect($stored)->not->toHaveKey('previous_network_transaction_reference');
+});
+
 it('can confirm payment for an order', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
