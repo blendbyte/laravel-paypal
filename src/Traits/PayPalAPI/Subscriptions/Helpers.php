@@ -4,7 +4,6 @@ namespace Blendbyte\PayPal\Traits\PayPalAPI\Subscriptions;
 
 use Blendbyte\PayPal\Services\PayPal;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Psr\Http\Message\StreamInterface;
 use Throwable;
 
@@ -267,7 +266,7 @@ trait Helpers
             return $this;
         }
 
-        $request_id = Str::random();
+        $request_id = bin2hex(random_bytes(8));
 
         $product = $this->createProduct([
             'name' => $name,
@@ -323,7 +322,7 @@ trait Helpers
      */
     protected function addBillingPlan(string $name, string $description, array $billing_cycles): void
     {
-        $request_id = Str::random();
+        $request_id = bin2hex(random_bytes(8));
 
         $plan_params = [
             'product_id' => $this->product['id'],

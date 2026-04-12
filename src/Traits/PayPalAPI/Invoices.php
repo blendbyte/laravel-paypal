@@ -45,9 +45,7 @@ trait Invoices
      */
     public function listInvoices(array $fields = [])
     {
-        $fields_list = collect($fields);
-
-        $fields = ($fields_list->count() > 0) ? "&fields={$fields_list->implode(',')}" : '';
+        $fields = count($fields) > 0 ? '&fields='.implode(',', $fields) : '';
 
         $this->apiEndPoint = "v2/invoicing/invoices?page={$this->current_page}&page_size={$this->page_size}&total_required={$this->show_totals}{$fields}";
 
@@ -353,11 +351,11 @@ trait Invoices
         $data = [
             'subject' => ! empty($subject) ? $subject : '',
             'note' => ! empty($note) ? $note : '',
-            'additional_recipients' => (collect($recipients)->count() > 0) ? $recipients : '',
+            'additional_recipients' => count($recipients) > 0 ? $recipients : '',
             'send_to_recipient' => $send_recipient,
             'send_to_invoicer' => $send_merchant,
         ];
 
-        return collect($data)->filter()->toArray();
+        return array_filter($data);
     }
 }

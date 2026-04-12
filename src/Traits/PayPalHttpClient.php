@@ -312,7 +312,7 @@ trait PayPalHttpClient
     private function doPayPalRequest(bool $decode = true)
     {
         try {
-            $this->apiUrl = collect([$this->config['api_url'], $this->apiEndPoint])->implode('/');
+            $this->apiUrl = implode('/', [$this->config['api_url'], $this->apiEndPoint]);
 
             // Perform PayPal HTTP API request.
             $response = $this->makeHttpRequest();

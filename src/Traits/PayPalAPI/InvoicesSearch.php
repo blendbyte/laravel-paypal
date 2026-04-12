@@ -21,7 +21,7 @@ trait InvoicesSearch
      */
     public function searchInvoices()
     {
-        if (collect($this->invoice_search_filters)->count() < 1) {
+        if (empty($this->invoice_search_filters)) {
             $this->invoice_search_filters = [
                 'currency_code' => $this->getCurrency(),
             ];
