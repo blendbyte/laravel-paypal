@@ -251,6 +251,28 @@ it('returns false when the cert PEM cannot be parsed as a public key', function 
     expect($result)->toBeFalse();
 });
 
+it('fetchCert reads a local file, caches it, and returns the contents', function () {
+    // Write a fake PEM to a temp file so file_get_contents() succeeds locally,
+    // exercising the cache-store + return path (lines 149–151 in WebHooksVerification).
+    $tempFile = tempnam(sys_get_temp_dir(), 'paypal_cert_success_');
+    file_put_contents($tempFile, 'FAKE-PEM-CONTENT');
+
+    $cacheProp = new ReflectionProperty(PayPalClient::class, 'certCache');
+    $cacheProp->setValue(null, []);
+
+    $client = $this->createPartialMock(PayPalClient::class, []);
+    $method = new ReflectionMethod(PayPalClient::class, 'fetchCert');
+    $result = $method->invoke($client, $tempFile);
+
+    expect($result)->toBe('FAKE-PEM-CONTENT');
+
+    $cache = $cacheProp->getValue(null);
+    expect($cache)->toHaveKey($tempFile);
+    expect($cache[$tempFile])->toBe('FAKE-PEM-CONTENT');
+
+    unlink($tempFile);
+});
+
 it('does not cache a failed cert fetch so the next call can retry', function () {
     // Use a local path that is guaranteed not to exist — file_get_contents() returns
     // false for it, which is the same failure path as an unreachable HTTPS URL.

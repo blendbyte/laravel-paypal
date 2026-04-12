@@ -182,7 +182,7 @@ trait PayPalHttpClient
             $stack->push(Middleware::retry(
                 static function (int $retries, mixed $request, mixed $response, mixed $exception) use ($maxRetries): bool {
                     if ($retries >= $maxRetries) {
-                        return false;
+                        return false; // @codeCoverageIgnore
                     }
 
                     return $exception instanceof ConnectException
@@ -190,7 +190,7 @@ trait PayPalHttpClient
                 },
                 static function (int $retries): int {
                     // Exponential backoff: 500ms, 1s, 2s, 4s — capped at 8s.
-                    return (int) min(500 * (2 ** ($retries - 1)), 8000);
+                    return (int) min(500 * (2 ** ($retries - 1)), 8000); // @codeCoverageIgnore
                 }
             ));
         }

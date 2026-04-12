@@ -1451,6 +1451,23 @@ describe('Orders', function () {
         expect($response)->toHaveKey('purchase_units');
         expect($response)->toHaveKey('links');
     });
+
+    it('can add tracking for an order', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockCreateOrdersResponse()
+            )
+        );
+
+        $response = $this->client->addTrackingForOrder('5O190127TN364715T', $this->addTrackingForOrderParams());
+
+        expect($response)->not->toBeNull();
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

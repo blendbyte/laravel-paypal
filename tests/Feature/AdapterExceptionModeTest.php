@@ -174,6 +174,28 @@ it('returns an empty array when the API response is the JSON null literal', func
     expect($response)->toBe([]);
 });
 
+// ── PSR-18 transport exception ────────────────────────────────────────────
+
+it('returns error array when the PSR-18 transport throws a ClientExceptionInterface', function () {
+    // Inject a PSR-18 ClientInterface stub whose sendRequest() throws a
+    // ClientExceptionInterface, exercising the catch block in makeHttpRequest()
+    // that wraps it as a RuntimeException (line 306 of PayPalHttpClient).
+    $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
+
+    $psr18Mock = new class implements \Psr\Http\Client\ClientInterface {
+        public function sendRequest(\Psr\Http\Message\RequestInterface $request): \Psr\Http\Message\ResponseInterface
+        {
+            throw new class('Connection refused') extends \RuntimeException implements \Psr\Http\Client\ClientExceptionInterface {};
+        }
+    };
+    $this->client->setClient($psr18Mock);
+
+    $response = $this->client->showOrderDetails('some-id');
+
+    expect($response)->toHaveKey('error');
+    expect($response['error'])->toContain('Connection refused');
+});
+
 // ── Toggling back ─────────────────────────────────────────────────────────
 
 it('withoutExceptions() reverts to silent error mode', function () {

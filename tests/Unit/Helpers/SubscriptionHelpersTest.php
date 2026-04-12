@@ -135,6 +135,14 @@ it('addCustomPlan throws with invalid interval unit', function () {
         ->toThrow(RuntimeException::class, 'Billing intervals');
 });
 
+it('addMonthlyPlan throws when no product is set', function () {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+    // $billing_plan is null (so the early-return guard is skipped) and $product is
+    // also null — addBillingPlan() must throw because there is no product to attach.
+    expect(fn () => $client->addMonthlyPlan('Monthly Plan', 'Test', 19.99))
+        ->toThrow(RuntimeException::class, 'No product set');
+});
+
 // ---------------------------------------------------------------------------
 // Idempotency — plan methods return early when billing_plan already set
 // ---------------------------------------------------------------------------
