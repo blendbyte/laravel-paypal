@@ -73,12 +73,12 @@ trait PayPalExperienceContext
         ]);
 
         if ($previous_reference === true) {
-            $this->experience_context['stored_payment_source']['previous_network_transaction_reference'] = [
+            $this->experience_context['stored_payment_source']['previous_network_transaction_reference'] = array_filter([
                 'id' => $previous_transaction_id,
                 'date' => $previous_transaction_date,
                 'acquirer_reference_number' => $previous_transaction_reference_number,
                 'network' => $previous_transaction_network,
-            ];
+            ], fn ($v) => $v !== null);
         }
 
         return $this;
