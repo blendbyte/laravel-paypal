@@ -77,10 +77,9 @@ trait PayPalHttpClient
 
     /**
      * Validate SSL details when creating HTTP client.
-     *
-     * @var bool
+     * Null means "not yet set by config"; setDefaultValues() will default it to true.
      */
-    private $validateSSL;
+    private ?bool $validateSSL = null;
 
     /**
      * Request type.
@@ -241,8 +240,10 @@ trait PayPalHttpClient
         $locale = empty($this->locale) ? 'en_US' : $this->locale;
         $this->locale = $locale;
 
-        $validateSSL = empty($this->validateSSL) ? true : $this->validateSSL;
-        $this->validateSSL = $validateSSL;
+        // Use null-coalescing assignment so that an explicit false is preserved.
+        // empty(false) === true, so the old ternary silently reset false to true,
+        // making it impossible to disable SSL verification via config.
+        $this->validateSSL ??= true;
 
         $this->showTotals(true);
     }

@@ -2508,9 +2508,11 @@ it('can list payment methods source tokens', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockListPaymentMethodsTokensResponse()
+        $this->mock_http_client_capturing(
+            $this->mockListPaymentMethodsTokensResponse(),
+            $container
         )
     );
 
@@ -2519,6 +2521,39 @@ it('can list payment methods source tokens', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('payment_tokens');
+
+    // Regression guard: a raw PHP bool interpolates as "1" or "", not "true"/"false".
+    // PayPal requires the literal string "true" or "false" for total_required.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('total_required=true');
+    expect($url)->not->toContain('total_required=1');
+});
+
+it('listPaymentSourceTokens sends total_required=false when totals disabled', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockListPaymentMethodsTokensResponse(),
+            $container
+        )
+    );
+
+    $this->client->setCustomerSource('customer_4029352050')
+        ->listPaymentSourceTokens(1, 10, false);
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('total_required=false');
+    expect($url)->not->toContain('total_required=1');
+    expect($url)->not->toContain('total_required=&');
 });
 
 it('can show details for payment method source token', function () {

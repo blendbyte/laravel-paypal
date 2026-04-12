@@ -42,7 +42,8 @@ trait PaymentMethodsTokens
      */
     public function listPaymentSourceTokens(int $page = 1, int $page_size = 10, bool $totals = true)
     {
-        $this->apiEndPoint = "v3/vault/payment-tokens?customer_id={$this->customer_source['id']}&page={$page}&page_size={$page_size}&total_required={$totals}";
+        $total_required = $totals ? 'true' : 'false';
+        $this->apiEndPoint = "v3/vault/payment-tokens?customer_id={$this->customer_source['id']}&page={$page}&page_size={$page_size}&total_required={$total_required}";
 
         $this->verb = 'get';
 
