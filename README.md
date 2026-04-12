@@ -254,6 +254,22 @@ $provider = new PayPalClient;
 $provider = \PayPal::setProvider();
 ```
 
+### Custom HTTP Client (PSR-18)
+
+`setClient()` accepts any [PSR-18](https://www.php-fig.org/psr/psr-18/) `ClientInterface`, so you can swap out Guzzle for Symfony HttpClient, Buzz, or any other compliant implementation:
+
+```php
+use Symfony\Component\HttpClient\Psr18Client;
+
+$provider->setClient(new Psr18Client());
+```
+
+Pass `null` (or call with no argument) to restore the default Guzzle client with the configured timeout and retry middleware.
+
+> **Note:** The built-in retry middleware runs only on the default Guzzle client. When you inject a custom client, handle retries in that client's own middleware stack.
+
+---
+
 ### Override Configuration at Runtime
 
 ```php

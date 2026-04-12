@@ -4,12 +4,14 @@ namespace Blendbyte\PayPal\Traits;
 
 use Blendbyte\PayPal\Services\Str;
 use GuzzleHttp\Client;
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\ClientException as HttpClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Utils;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
@@ -19,7 +21,7 @@ trait PayPalHttpClient
     /**
      * Http Client class object.
      *
-     * @var HttpClient
+     * @var ClientInterface
      */
     private $client;
 
@@ -117,14 +119,21 @@ trait PayPalHttpClient
     }
 
     /**
-     * Function to initialize/override Http Client.
+     * Initialise or replace the HTTP client.
      *
+     * Pass any PSR-18 {@see ClientInterface} to use a custom HTTP client
+     * (e.g. Symfony HttpClient, Buzz, etc.). Pass null (the default) to
+     * build the bundled Guzzle client with the configured timeout and
+     * optional exponential-backoff retry middleware.
+     *
+     * Note: the retry middleware is only active on the default Guzzle client.
+     * When injecting a custom client, handle retries externally if needed.
      *
      * @return void
      */
-    public function setClient(?HttpClient $client = null)
+    public function setClient(?ClientInterface $client = null)
     {
-        if ($client instanceof HttpClient) {
+        if ($client !== null) {
             $this->client = $client;
 
             return;
@@ -153,7 +162,7 @@ trait PayPalHttpClient
             ));
         }
 
-        $this->client = new HttpClient([
+        $this->client = new Client([
             'handler' => $stack,
             'curl' => $this->httpClientConfig,
             'timeout' => $timeout,
@@ -207,18 +216,54 @@ trait PayPalHttpClient
     /**
      * Perform PayPal API request & return response.
      *
+     * Builds a PSR-7 request from the current verb, URL, and options, then
+     * dispatches it via the injected PSR-18 client. A response with status
+     * >= 400 is treated as an error and re-thrown as RuntimeException so
+     * that doPayPalRequest() can normalise it into an ['error' => ...] array.
+     *
      * @throws \Throwable
      */
     private function makeHttpRequest(): StreamInterface
     {
-        try {
-            return $this->client->{$this->verb}(
-                $this->apiUrl,
-                $this->options
-            )->getBody();
-        } catch (HttpClientException $e) {
-            throw new RuntimeException((string) $e->getResponse()->getBody(), 0, $e);
+        $factory = new HttpFactory();
+        $request = $factory->createRequest(strtoupper($this->verb), $this->apiUrl);
+
+        // Apply headers. Skip a manually set Content-Type for multipart
+        // requests — the correct value (including boundary) is set below.
+        /** @var array<string, string> $headers */
+        $headers = is_array($this->options['headers'] ?? null) ? $this->options['headers'] : [];
+        foreach ($headers as $name => $value) {
+            if (isset($this->options['multipart']) && strtolower($name) === 'content-type') {
+                continue;
+            }
+            $request = $request->withHeader($name, $value);
         }
+
+        if (isset($this->options['json'])) {
+            $body = Utils::jsonEncode($this->options['json']);
+            $request = $request
+                ->withBody($factory->createStream($body))
+                ->withHeader('Content-Type', 'application/json');
+        } elseif (isset($this->options['multipart'])) {
+            /** @var array<mixed> $parts */
+            $parts = is_array($this->options['multipart']) ? $this->options['multipart'] : [];
+            $multipart = new MultipartStream($parts);
+            $request = $request
+                ->withBody($multipart)
+                ->withHeader('Content-Type', 'multipart/form-data; boundary='.$multipart->getBoundary());
+        }
+
+        try {
+            $response = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $e) {
+            throw new RuntimeException($e->getMessage(), 0, $e);
+        }
+
+        if ($response->getStatusCode() >= 400) {
+            throw new RuntimeException((string) $response->getBody());
+        }
+
+        return $response->getBody();
     }
 
     /**
