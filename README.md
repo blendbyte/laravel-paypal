@@ -25,6 +25,7 @@ A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP c
 - [Payments](#payments)
 - [Payouts](#payouts)
 - [Referenced Payouts](#referenced-payouts)
+- [Reference Transactions (Billing Agreements)](#reference-transactions-billing-agreements)
 - [Invoices](#invoices)
 - [Invoice Search](#invoice-search)
 - [Invoice Templates](#invoice-templates)
@@ -580,6 +581,28 @@ $provider->createReferencedBatchPayoutItem(
 );
 
 $provider->showReferencedPayoutItemDetails('CDZEC5MJ8R5HY', 'some-attribution-id');
+```
+
+---
+
+## Reference Transactions (Billing Agreements)
+
+> **Note:** This is a [limited-release PayPal API](https://developer.paypal.com/limited-release/reference-transactions/). You must request access from PayPal before using it.
+
+```php
+// Create an agreement token (first step)
+$provider->createBillingAgreementToken($data);
+
+// Get details of an existing agreement token
+$provider->getBillingAgreementTokenDetails('token-id');
+
+// Create a billing agreement from a token
+$provider->createBillingAgreement('token-id');
+
+// Show / Update / Cancel a billing agreement
+$provider->showBillingAgreementDetails('agreement-id');
+$provider->updateBillingAgreement('agreement-id', $patchData);
+$provider->cancelBillingAgreement('agreement-id');
 ```
 
 ---
