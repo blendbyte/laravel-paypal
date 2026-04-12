@@ -36,6 +36,10 @@ trait PricingSchemes
      */
     public function processBillingPlanPricingUpdates()
     {
+        if ($this->billing_plan === null) {
+            throw new \RuntimeException('No billing plan set. Call addBillingPlanById() first.');
+        }
+
         return $this->updatePlanPricing($this->billing_plan['id'], $this->pricing_schemes);
     }
 }

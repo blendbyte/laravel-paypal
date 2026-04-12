@@ -36,11 +36,11 @@ class PayPalFacadeAccessor
      *
      * @throws Exception
      */
-    public static function setProvider()
+    public static function setProvider(): PayPal
     {
-        // Set default provider. Defaults to ExpressCheckout
-        self::$provider = new PayPalClient;
+        $provider = new PayPalClient;
+        self::$provider = $provider;
 
-        return self::getProvider();
+        return $provider;
     }
 }
