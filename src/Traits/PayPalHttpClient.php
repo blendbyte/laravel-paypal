@@ -77,10 +77,9 @@ trait PayPalHttpClient
 
     /**
      * Validate SSL details when creating HTTP client.
-     *
-     * @var bool
+     * Null means "not yet set by config"; setDefaultValues() will default it to true.
      */
-    private $validateSSL;
+    private ?bool $validateSSL = null;
 
     /**
      * Request type.
