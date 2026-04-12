@@ -89,6 +89,7 @@ trait Filters
         foreach ($status as $item) {
             if (! in_array($item, $this->invoices_status_types)) {
                 $invalid_status = true;
+                break;
             }
         }
 
