@@ -1213,15 +1213,50 @@ it('can get list users', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mocklistUsersResponse()
+        $this->mock_http_client_capturing(
+            $this->mocklistUsersResponse(),
+            $container
         )
     );
 
     $response = $this->client->listUsers();
 
     expect($response)->toHaveKey('Resources');
+
+    // Regression: the default filter value must appear verbatim (no spaces to encode).
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('filter=userName');
+});
+
+it('URL-encodes the SCIM filter when it contains spaces or special characters', function () {
+    // Regression: bare string interpolation left spaces/quotes raw in the URL,
+    // which breaks HTTP clients that enforce RFC 3986 and confuses some proxies.
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mocklistUsersResponse(),
+            $container
+        )
+    );
+
+    $this->client->listUsers('userName eq "bjensen"');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+
+    // Must be percent-encoded, not raw spaces or quotes.
+    expect($url)->toContain('filter=userName%20eq%20%22bjensen%22');
+    expect($url)->not->toContain('filter=userName eq');
 });
 
 it('can get user details', function () {
