@@ -324,6 +324,7 @@ $provider->withExceptions();
 try {
     $order = $provider->showOrderDetails('bad-id');
 } catch (PayPalApiException $e) {
+    $e->getHttpStatus();    // HTTP status code: 400, 401, 404, 422, 500, etc. (0 for network errors)
     $e->getMessage();       // JSON-encoded error string
     $e->getPayPalError();   // decoded array (e.g. ['name' => 'RESOURCE_NOT_FOUND', ...])
                             // or a plain string for non-JSON errors

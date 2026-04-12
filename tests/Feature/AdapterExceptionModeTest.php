@@ -97,6 +97,32 @@ it('getPayPalError() returns a string for non-JSON error bodies', function () {
     }
 });
 
+// ── HTTP status code ──────────────────────────────────────────────────────
+
+it('getHttpStatus() returns the HTTP status code', function () {
+    $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
+    $this->client->withExceptions();
+    $this->client->setClient(mockErrorClient(422, '{"name":"UNPROCESSABLE_ENTITY","message":"Invalid request"}'));
+
+    try {
+        $this->client->showOrderDetails('bad-id');
+    } catch (PayPalApiException $e) {
+        expect($e->getHttpStatus())->toBe(422);
+    }
+});
+
+it('getHttpStatus() returns the correct code for different status codes', function () {
+    $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
+    $this->client->withExceptions();
+    $this->client->setClient(mockErrorClient(404, '{"name":"RESOURCE_NOT_FOUND","message":"Not found"}'));
+
+    try {
+        $this->client->showOrderDetails('bad-id');
+    } catch (PayPalApiException $e) {
+        expect($e->getHttpStatus())->toBe(404);
+    }
+});
+
 // ── Toggling back ─────────────────────────────────────────────────────────
 
 it('withoutExceptions() reverts to silent error mode', function () {
