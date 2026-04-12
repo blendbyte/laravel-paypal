@@ -1,118 +1,95 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class PaymentExperienceWebProfilesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_list_web_experience_profiles(): void
-    {
-        $expectedResponse = $this->mockListWebProfilesResponse();
+it('can list web experience profiles', function () {
+    $expectedResponse = $this->mockListWebProfilesResponse();
 
-        $expectedMethod = 'listWebExperienceProfiles';
+    $expectedMethod = 'listWebExperienceProfiles';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_create_web_experience_profile(): void
-    {
-        $expectedResponse = $this->mockWebProfileResponse();
+it('can create web experience profile', function () {
+    $expectedResponse = $this->mockWebProfileResponse();
 
-        $expectedParams = $this->mockCreateWebProfileParams();
+    $expectedParams = $this->mockCreateWebProfileParams();
 
-        $expectedMethod = 'createWebExperienceProfile';
-        $additionalMethod = 'setRequestHeader';
+    $expectedMethod = 'createWebExperienceProfile';
+    $additionalMethod = 'setRequestHeader';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-        $mockClient->{$additionalMethod}('PayPal-Request-Id', 'some-request-id');
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+    $mockClient->{$additionalMethod}('PayPal-Request-Id', 'some-request-id');
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_web_experience_profile(): void
-    {
-        $expectedResponse = '';
+it('can delete web experience profile', function () {
+    $expectedResponse = '';
 
-        $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
+    $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
 
-        $expectedMethod = 'deleteWebExperienceProfile';
+    $expectedMethod = 'deleteWebExperienceProfile';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_partially_update_web_experience_profile(): void
-    {
-        $expectedResponse = '';
+it('can partially update web experience profile', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->partiallyUpdateWebProfileParams();
+    $expectedParams = $this->partiallyUpdateWebProfileParams();
 
-        $expectedMethod = 'patchWebExperienceProfile';
+    $expectedMethod = 'patchWebExperienceProfile';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_fully_update_web_experience_profile(): void
-    {
-        $expectedResponse = '';
+it('can fully update web experience profile', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->updateWebProfileParams();
+    $expectedParams = $this->updateWebProfileParams();
 
-        $expectedMethod = 'updateWebExperienceProfile';
+    $expectedMethod = 'updateWebExperienceProfile';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_web_experience_profile_details(): void
-    {
-        $expectedResponse = $this->mockWebProfileResponse();
+it('can get web experience profile details', function () {
+    $expectedResponse = $this->mockWebProfileResponse();
 
-        $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
+    $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
 
-        $expectedMethod = 'showWebExperienceProfileDetails';
+    $expectedMethod = 'showWebExperienceProfileDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
-}
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});

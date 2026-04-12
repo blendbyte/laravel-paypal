@@ -1,76 +1,55 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
+it('can list web hooks event types', function () {
+    $expectedResponse = $this->mockListWebHookEventsTypesResponse();
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+    $expectedMethod = 'listEventTypes';
 
-class WebHooksEventsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_list_web_hooks_event_types(): void
-    {
-        $expectedResponse = $this->mockListWebHookEventsTypesResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'listEventTypes';
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can list web hooks events', function () {
+    $expectedResponse = $this->mockWebHookEventsListResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'listEvents';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_list_web_hooks_events(): void
-    {
-        $expectedResponse = $this->mockWebHookEventsListResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'listEvents';
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can show details for a web hooks event', function () {
+    $expectedResponse = $this->mockGetWebHookEventResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedMethod = 'showEventDetails';
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-    #[Test]
-    public function it_can_show_details_for_a_web_hooks_event(): void
-    {
-        $expectedResponse = $this->mockGetWebHookEventResponse();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'showEventDetails';
+    expect($mockClient->{$expectedMethod}('8PT597110X687430LKGECATA'))->toBe($expectedResponse);
+});
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+it('can resend notification for a web hooks event', function () {
+    $expectedResponse = $this->mockResendWebHookEventNotificationResponse();
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $expectedParams = ['12334456'];
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('8PT597110X687430LKGECATA'));
-    }
+    $expectedMethod = 'resendEventNotification';
 
-    #[Test]
-    public function it_can_resend_notification_for_a_web_hooks_event(): void
-    {
-        $expectedResponse = $this->mockResendWebHookEventNotificationResponse();
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $expectedParams = ['12334456'];
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $expectedMethod = 'resendEventNotification';
-
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
-
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('8PT597110X687430LKGECATA', $expectedParams));
-    }
-}
+    expect($mockClient->{$expectedMethod}('8PT597110X687430LKGECATA', $expectedParams))->toBe($expectedResponse);
+});

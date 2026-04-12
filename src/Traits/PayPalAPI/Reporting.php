@@ -3,27 +3,26 @@
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
 use Carbon\Carbon;
+use Psr\Http\Message\StreamInterface;
 
 trait Reporting
 {
     /**
      * List all transactions.
      *
-     * @param array  $filters
-     * @param string $fields
+     *
+     *
+     * @param array<string, mixed> $filters
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/transaction-search/v1/#transactions_get
      */
     public function listTransactions(array $filters, string $fields = 'all')
     {
-        $filters_list = collect($filters)->isEmpty() ? '' :
-            collect($filters)->map(function ($value, $key) {
-                return "{$key}={$value}&";
-            })->implode('');
+        $filters_list = empty($filters) ? '' : http_build_query($filters).'&';
 
         $this->apiEndPoint = "v1/reporting/transactions?{$filters_list}fields={$fields}&page={$this->current_page}&page_size={$this->page_size}";
 
@@ -35,12 +34,11 @@ trait Reporting
     /**
      * List available balance.
      *
-     * @param string $date
-     * @param string $balance_currency
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/transaction-search/v1/#balances_get
      */

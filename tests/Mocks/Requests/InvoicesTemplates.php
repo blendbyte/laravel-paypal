@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait InvoicesTemplates
 {
-    /**
-     * @return array
-     */
     private function mockCreateInvoiceTemplateParams(): array
     {
         return Utils::jsonDecode('{
@@ -236,9 +233,6 @@ trait InvoicesTemplates
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockUpdateInvoiceTemplateParams(): array
     {
         return Utils::jsonDecode('{

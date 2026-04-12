@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Subscriptions
 {
-    /**
-     * @return array
-     */
     private function mockCreateSubscriptionResponse(): array
     {
         return Utils::jsonDecode('{
@@ -64,9 +61,6 @@ trait Subscriptions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetSubscriptionDetailsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -171,9 +165,6 @@ trait Subscriptions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockUpdateSubscriptionItemsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -206,9 +197,6 @@ trait Subscriptions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListSubscriptionTransactionsResponse(): array
     {
         return Utils::jsonDecode('{

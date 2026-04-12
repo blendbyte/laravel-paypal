@@ -1,0 +1,72 @@
+name: Bug Report
+description: Something is broken or behaving incorrectly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a bug report, please check that the issue hasn't already been reported and that you're on the latest version.
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: e.g. 1.2.3
+    validations:
+      required: true
+
+  - type: input
+    id: php
+    attributes:
+      label: PHP version
+      placeholder: e.g. 8.3
+    validations:
+      required: true
+
+  - type: input
+    id: laravel
+    attributes:
+      label: Laravel version (if applicable)
+      placeholder: e.g. 12.x or "standalone"
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: PayPal mode
+      options:
+        - sandbox
+        - live
+        - both
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal code snippet or sequence of API calls that triggers the bug.
+      render: php
+    validations:
+      required: true
+
+  - type: textarea
+    id: response
+    attributes:
+      label: PayPal API response (if relevant)
+      description: Paste the raw error response. Redact any credentials.
+      render: json

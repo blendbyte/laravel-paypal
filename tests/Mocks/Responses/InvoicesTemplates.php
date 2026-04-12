@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait InvoicesTemplates
 {
-    /**
-     * @return array
-     */
     private function mockCreateInvoiceTemplateResponse(): array
     {
         return Utils::jsonDecode('{

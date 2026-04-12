@@ -1,114 +1,93 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Client;
-
-use GuzzleHttp\Utils;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use GuzzleHttp\Utils;
 
-class InvoicesTemplatesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_invoice_template(): void
-    {
-        $expectedResponse = $this->mockCreateInvoiceTemplateResponse();
+it('can create invoice template', function () {
+    $expectedResponse = $this->mockCreateInvoiceTemplateResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockCreateInvoiceTemplateParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockCreateInvoiceTemplateParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_invoice_templates(): void
-    {
-        $expectedResponse = $this->mockListInvoiceTemplateResponse();
+it('can list invoice templates', function () {
+    $expectedResponse = $this->mockListInvoiceTemplateResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_an_invoice_template(): void
-    {
-        $expectedResponse = '';
+it('can delete an invoice template', function () {
+    $expectedResponse = '';
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'delete');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'delete');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->delete($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->delete($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_an_invoice_template(): void
-    {
-        $expectedResponse = $this->mockUpdateInvoiceTemplateResponse();
+it('can update an invoice template', function () {
+    $expectedResponse = $this->mockUpdateInvoiceTemplateResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockUpdateInvoiceTemplateParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockUpdateInvoiceTemplateParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'put');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'put');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->put($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->put($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_details_for_an_invoice_template(): void
-    {
-        $expectedResponse = $this->mockGetInvoiceTemplateResponse();
+it('can get details for an invoice template', function () {
+    $expectedResponse = $this->mockGetInvoiceTemplateResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/invoicing/templates/TEMP-19V05281TU309413B';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
-}
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});

@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait BillingPlans
 {
-    /**
-     * @return array
-     */
     private function mockCreatePlansResponse(): array
     {
         return Utils::jsonDecode('{
@@ -113,9 +110,6 @@ trait BillingPlans
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListPlansResponse(): array
     {
         return Utils::jsonDecode('{
@@ -178,9 +172,6 @@ trait BillingPlans
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetPlansResponse(): array
     {
         return Utils::jsonDecode('{
@@ -277,9 +268,6 @@ trait BillingPlans
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCreatePlansErrorResponse(): array
     {
         return Utils::jsonDecode('{

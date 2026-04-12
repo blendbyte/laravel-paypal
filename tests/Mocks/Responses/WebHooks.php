@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait WebHooks
 {
-    /**
-     * @return array
-     */
     private function mockCreateWebHookResponse(): array
     {
         return Utils::jsonDecode('{
@@ -44,9 +41,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListWebHookResponse(): array
     {
         return Utils::jsonDecode('{
@@ -117,9 +111,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockUpdateWebHookResponse(): array
     {
         return Utils::jsonDecode('{
@@ -151,9 +142,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetWebHookResponse(): array
     {
         return Utils::jsonDecode('{
@@ -191,9 +179,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListWebHookEventsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -217,9 +202,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListWebHookEventsTypesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -252,9 +234,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockWebHookEventsListResponse(): array
     {
         return Utils::jsonDecode('{
@@ -392,9 +371,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetWebHookEventResponse(): array
     {
         return Utils::jsonDecode('{
@@ -457,9 +433,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockResendWebHookEventNotificationResponse(): array
     {
         return Utils::jsonDecode('{
@@ -522,9 +495,6 @@ trait WebHooks
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockVerifyWebHookSignatureResponse(): array
     {
         return Utils::jsonDecode('{

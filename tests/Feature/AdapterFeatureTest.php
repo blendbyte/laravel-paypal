@@ -1,72 +1,69 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Feature;
-
-use Carbon\Carbon;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use Carbon\Carbon;
 
-class AdapterFeatureTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    /** @var string */
-    protected static string $access_token = '';
+beforeEach(function () {
+    $this->client = new PayPalClient($this->getApiCredentials());
+    $this->access_token = '';
+});
 
-    /** @var string */
-    protected static string $product_id = '';
+// ─────────────────────────────────────────────────────────────────────────────
+// Access Token
+// ─────────────────────────────────────────────────────────────────────────────
 
-    /** @var PayPalClient */
-    protected PayPalClient $client;
-
-    protected function setUp(): void
-    {
-        try {
-            $this->client = new PayPalClient($this->getApiCredentials());
-        } catch (\Exception $e) {
-        }
-
-        parent::setUp();
-    }
-
-    #[Test]
-    public function it_returns_error_if_invalid_credentials_are_used_to_get_access_token(): void
-    {
+describe('Access Token', function () {
+    it('returns error if invalid credentials are used to get access token', function () {
         $this->client = new PayPalClient($this->getMockCredentials());
         $response = $this->client->getAccessToken();
 
-        $this->assertIsArray($response['error']);
-        $this->assertArrayHasKey('error', $response);
-    }
+        expect($response['error'])->toBeArray();
+        expect($response)->toHaveKey('error');
+    });
 
-    #[Test]
-    public function it_can_get_access_token(): void
-    {
+    it('can get access token', function () {
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAccessTokenResponse()
+            $this->mock_http_client_capturing(
+                $this->mockAccessTokenResponse(),
+                $container
             )
         );
         $response = $this->client->getAccessToken();
 
-        self::$access_token = $response['access_token'];
+        $this->access_token = $response['access_token'];
 
-        $this->assertArrayHasKey('access_token', $response);
-        $this->assertNotEmpty($response['access_token']);
-    }
+        expect($response)->toHaveKey('access_token');
+        expect($response['access_token'])->not->toBeEmpty();
 
-    #[Test]
-    public function it_can_create_a_billing_agreement_token(): void
-    {
+        // Verify the actual PSR-7 request that was sent carried the right auth
+        // and body — this would have caught the PSR-18 migration regression.
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+
+        $credentials = $this->getApiCredentials();
+        $expectedBasic = 'Basic '.base64_encode(
+            $credentials['sandbox']['client_id'].':'.$credentials['sandbox']['client_secret']
+        );
+
+        expect($request->getHeaderLine('Authorization'))->toBe($expectedBasic);
+        expect($request->getHeaderLine('Content-Type'))->toBe('application/x-www-form-urlencoded');
+        expect((string) $request->getBody())->toBe('grant_type=client_credentials');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Billing Agreements
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Billing Agreements', function () {
+    it('can create a billing agreement token', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -77,21 +74,16 @@ class AdapterFeatureTest extends TestCase
 
         $expectedParams = $this->createBillingAgreementTokenParams();
 
-        try {
-            $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreementToken($expectedParams);
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreementToken($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('token_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('token_id');
+    });
 
-    #[Test]
-    public function it_can_show_billing_agreement_token_details(): void
-    {
+    it('can show billing agreement token details', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -100,21 +92,16 @@ class AdapterFeatureTest extends TestCase
             )
         );
 
-        try {
-            $response = $this->client->getBillingAgreementTokenDetails('BA-8A802366G0648845Y');
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->getBillingAgreementTokenDetails('BA-8A802366G0648845Y');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('token_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('token_id');
+    });
 
-    #[Test]
-    public function it_can_create_a_billing_agreement(): void
-    {
+    it('can create a billing agreement', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -123,21 +110,16 @@ class AdapterFeatureTest extends TestCase
             )
         );
 
-        try {
-            $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreement('BA-8A802366G0648845Y');
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createBillingAgreement('BA-8A802366G0648845Y');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_update_a_billing_agreement(): void
-    {
+    it('can update a billing agreement', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -146,20 +128,15 @@ class AdapterFeatureTest extends TestCase
 
         $expectedParams = $this->updateBillingAgreementParams();
 
-        try {
-            $response = $this->client->updateBillingAgreement('BA-8A802366G0648845Y', $expectedParams);
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->updateBillingAgreement('BA-8A802366G0648845Y', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_show_billing_agreement_details(): void
-    {
+    it('can show billing agreement details', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -168,41 +145,37 @@ class AdapterFeatureTest extends TestCase
             )
         );
 
-        try {
-            $response = $this->client->showBillingAgreementDetails('BA-8A802366G0648845Y');
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->showBillingAgreementDetails('BA-8A802366G0648845Y');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_cancel_a_billing_agreement(): void
-    {
+    it('can cancel a billing agreement', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
             $this->mock_http_client(false)
         );
 
-        try {
-            $response = $this->client->cancelBillingAgreement('BA-8A802366G0648845Y');
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->cancelBillingAgreement('BA-8A802366G0648845Y');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
+});
 
-    #[Test]
-    public function it_can_create_a_billing_plan(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Billing Plans
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Billing Plans', function () {
+    it('can create a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -213,21 +186,16 @@ class AdapterFeatureTest extends TestCase
 
         $expectedParams = $this->createPlanParams();
 
-        try {
-            $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createPlan($expectedParams);
-        } catch (\Throwable $e) {
-        }
+        $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createPlan($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_list_billing_plans(): void
-    {
+    it('can list billing plans', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -238,16 +206,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listPlans();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('plans', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('plans');
+    });
 
-    #[Test]
-    public function it_can_update_a_billing_plan(): void
-    {
+    it('can update a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -258,15 +224,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updatePlan('P-7GL4271244454362WXNWU5NQ', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_billing_plan(): void
-    {
+    it('can show details for a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -277,16 +241,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showPlanDetails('P-5ML4271244454362WXNWU5NQ');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_activate_a_billing_plan(): void
-    {
+    it('can activate a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -295,15 +257,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->activatePlan('P-7GL4271244454362WXNWU5NQ');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_deactivate_a_billing_plan(): void
-    {
+    it('can deactivate a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -312,15 +272,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deactivatePlan('P-7GL4271244454362WXNWU5NQ');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_update_pricing_for_a_billing_plan(): void
-    {
+    it('can update pricing for a billing plan', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -331,15 +289,19 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updatePlanPricing('P-2UF78835G6983425GLSM44MA', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
+});
 
-    #[Test]
-    public function it_can_list_products(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Catalog Products
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Catalog Products', function () {
+    it('can list products', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -350,16 +312,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listProducts();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('products', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('products');
+    });
 
-    #[Test]
-    public function it_can_create_a_product(): void
-    {
+    it('can create a product', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -372,18 +332,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->setRequestHeader('PayPal-Request-Id', 'product-request-'.time())->createProduct($expectedParams);
 
-        self::$product_id = $response['id'];
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
-
-    #[Test]
-    public function it_can_update_a_product(): void
-    {
+    it('can update a product', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -392,17 +348,15 @@ class AdapterFeatureTest extends TestCase
 
         $expectedParams = $this->updateProductParams();
 
-        $response = $this->client->updateProduct(self::$product_id, $expectedParams);
+        $response = $this->client->updateProduct('PROD-XYAB12ABSB7868434', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_get_details_for_a_product(): void
-    {
+    it('can get details for a product', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -411,18 +365,22 @@ class AdapterFeatureTest extends TestCase
             )
         );
 
-        $response = $this->client->showProductDetails(self::$product_id);
+        $response = $this->client->showProductDetails('PROD-XYAB12ABSB7868434');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
+});
 
-    #[Test]
-    public function it_can_acknowledge_item_is_returned_for_raised_dispute(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Disputes
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Disputes', function () {
+    it('can acknowledge item is returned for raised dispute', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -437,16 +395,14 @@ class AdapterFeatureTest extends TestCase
             'ITEM_RECEIVED'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_list_disputes(): void
-    {
+    it('can list disputes', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -457,16 +413,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listDisputes();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('items', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('items');
+    });
 
-    #[Test]
-    public function it_can_partially_update_a_dispute(): void
-    {
+    it('can partially update a dispute', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -477,15 +431,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateDispute('PP-D-27803', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_get_details_for_a_dispute(): void
-    {
+    it('can get details for a dispute', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -496,21 +448,21 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showDisputeDetails('PP-D-4012');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('dispute_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('dispute_id');
+    });
 
-    #[Test]
-    public function it_can_provide_evidence_for_a_dispute_claim(): void
-    {
+    it('can provide evidence for a dispute claim', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAcceptDisputesClaimResponse()
+            $this->mock_http_client_capturing(
+                $this->mockAcceptDisputesClaimResponse(),
+                $container
             )
         );
 
@@ -525,18 +477,21 @@ class AdapterFeatureTest extends TestCase
             $mockFiles
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
 
-        $this->markTestIncomplete('Skipping the test');
-    }
+        // Regression guard: a leading '/' on the endpoint produces a double-slash
+        // URL (e.g. https://api-m.sandbox.paypal.com//v1/...) which PayPal rejects.
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        expect((string) $request->getUri())->not->toContain('//v1/');
+        expect((string) $request->getUri())->toContain('/v1/customer/disputes/PP-D-27803/provide-evidence');
+    });
 
-    #[Test]
-    public function it_throws_exception_if_invalid_file_as_evidence_is_provided_for_a_dispute_claim(): void
-    {
+    it('throws exception if invalid file as evidence is provided for a dispute claim', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -550,78 +505,19 @@ class AdapterFeatureTest extends TestCase
             __DIR__.'/../Mocks/samples/sample.pdf',
         ];
 
-        $this->expectException(\Exception::class);
+        expect(fn () => $this->client->provideDisputeEvidence('PP-D-27803', $mockFiles))->toThrow(Exception::class);
+    });
 
-        $this->markTestIncomplete('Skipping the test');
+    it('throws exception if file size as evidence exceeds per file limit for a dispute claim')
+        ->todo('Requires a >10MB test file not included in the repo');
 
-        $response = $this->client->provideDisputeEvidence(
-            'PP-D-27803',
-            $mockFiles
-        );
-    }
+    it('throws exception if file size as evidence exceeds overall limit for a dispute claim')
+        ->todo('Requires >50MB of test files not included in the repo');
 
-    #[Test]
-    public function it_throws_exception_if_file_size_as_evidence_exceeds_per_file_limit_for_a_dispute_claim(): void
-    {
+    it('can offer to resolve dispute claim', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAcceptDisputesClaimResponse()
-            )
-        );
-
-        $file = __DIR__.'/../Mocks/samples/sample2.pdf';
-
-        $mockFiles = [$file];
-
-        $this->expectException(\Exception::class);
-
-        $this->markTestIncomplete('Skipping the test');
-
-        $this->client->provideDisputeEvidence(
-            'PP-D-27803',
-            $mockFiles
-        );
-    }
-
-    #[Test]
-    public function it_throws_exception_if_file_size_as_evidence_exceeds_overall_limit_for_a_dispute_claim(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAcceptDisputesClaimResponse()
-            )
-        );
-
-        $file = __DIR__.'/../Mocks/samples/sample2.pdf';
-
-        $mockFiles = [$file, $file, $file, $file, $file];
-
-        $this->expectException(\Exception::class);
-
-        $this->markTestIncomplete('Skipping the test');
-
-        $this->client->provideDisputeEvidence(
-            'PP-D-27803',
-            $mockFiles
-        );
-    }
-
-    #[Test]
-    public function it_can_offer_to_resolve_dispute_claim(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -637,16 +533,14 @@ class AdapterFeatureTest extends TestCase
             'REFUND_WITH_REPLACEMENT'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_escalate_dispute_claim(): void
-    {
+    it('can escalate dispute claim', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -660,21 +554,21 @@ class AdapterFeatureTest extends TestCase
             'Escalating to PayPal claim for resolution.'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_accept_dispute_claim(): void
-    {
+    it('can accept dispute claim', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAcceptDisputesClaimResponse()
+            $this->mock_http_client_capturing(
+                $this->mockAcceptDisputesClaimResponse(),
+                $container
             )
         );
 
@@ -683,16 +577,47 @@ class AdapterFeatureTest extends TestCase
             'Full refund to the customer.'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
 
-    #[Test]
-    public function it_can_accept_dispute_offer_resolution(): void
-    {
+        // Default claim type must be REFUND when none is supplied.
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $body = json_decode((string) $request->getBody(), true);
+        expect($body['accept_claim_type'])->toBe('REFUND');
+    });
+
+    it('acceptDisputeClaim allows caller to override accept_claim_type', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $container = [];
+        $this->client->setClient(
+            $this->mock_http_client_capturing(
+                $this->mockAcceptDisputesClaimResponse(),
+                $container
+            )
+        );
+
+        $this->client->acceptDisputeClaim(
+            'PP-D-27803',
+            'Sending replacement item.',
+            ['accept_claim_type' => 'MERCHANDISE']
+        );
+
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $body = json_decode((string) $request->getBody(), true);
+        expect($body['accept_claim_type'])->toBe('MERCHANDISE');
+        expect($body['note'])->toBe('Sending replacement item.');
+    });
+
+    it('can accept dispute offer resolution', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -706,16 +631,14 @@ class AdapterFeatureTest extends TestCase
             'I am ok with the refund offered.'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_update_dispute_status(): void
-    {
+    it('can update dispute status', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -729,16 +652,14 @@ class AdapterFeatureTest extends TestCase
             true
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_settle_dispute(): void
-    {
+    it('can settle dispute', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -752,16 +673,14 @@ class AdapterFeatureTest extends TestCase
             true
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_decline_dispute_offer_resolution(): void
-    {
+    it('can decline dispute offer resolution', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -775,16 +694,41 @@ class AdapterFeatureTest extends TestCase
             'I am not ok with the refund offered.'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_generate_unique_invoice_number(): void
-    {
+    it('can send a message about a dispute', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockSendDisputeMessageResponse()
+            )
+        );
+
+        $response = $this->client->sendDisputeMessage(
+            'PP-000-000-651-454',
+            'I have shipped the item. Tracking number: 1234567890.'
+        );
+
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Invoices
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Invoices', function () {
+    it('can generate unique invoice number', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -795,16 +739,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->generateInvoiceNumber();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('invoice_number', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('invoice_number');
+    });
 
-    #[Test]
-    public function it_can_create_a_draft_invoice(): void
-    {
+    it('can create a draft invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -817,16 +759,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->createInvoice($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_list_invoices(): void
-    {
+    it('can list invoices', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -837,16 +777,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listInvoices();
 
-        $this->assertArrayHasKey('total_pages', $response);
-        $this->assertArrayHasKey('total_items', $response);
-    }
+        expect($response)->toHaveKey('total_pages');
+        expect($response)->toHaveKey('total_items');
+    });
 
-    #[Test]
-    public function it_can_delete_an_invoice(): void
-    {
+    it('can delete an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -855,15 +793,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_update_an_invoice(): void
-    {
+    it('can update an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -876,16 +812,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_show_details_for_an_invoice(): void
-    {
+    it('can show details for an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -896,16 +830,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showInvoiceDetails('INV2-Z56S-5LLA-Q52L-CPZ5');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_cancel_an_invoice(): void
-    {
+    it('can cancel an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -926,15 +858,13 @@ class AdapterFeatureTest extends TestCase
             ]
         );
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_generate_qr_code_for_invoice(): void
-    {
+    it('can generate qr code for invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -945,15 +875,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 
-        $this->assertNotEmpty($response);
-    }
+        expect($response)->not->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_register_payment_for_invoice(): void
-    {
+    it('can register payment for invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -964,16 +892,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->registerPaymentInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 10.00);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('payment_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('payment_id');
+    });
 
-    #[Test]
-    public function it_can_delete_payment_for_invoice(): void
-    {
+    it('can delete payment for invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -982,15 +908,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteExternalPaymentInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-86F38350LX4353815');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_refund_payment_for_invoice(): void
-    {
+    it('can refund payment for invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1001,16 +925,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->refundInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', '2018-05-01', 'BANK_TRANSFER', 5.00);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('refund_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('refund_id');
+    });
 
-    #[Test]
-    public function it_can_delete_refund_for_invoice(): void
-    {
+    it('can delete refund for invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1019,15 +941,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteRefundInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-2LG703375E477444T');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_send_an_invoice(): void
-    {
+    it('can send an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1046,15 +966,13 @@ class AdapterFeatureTest extends TestCase
             ]
         );
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_send_reminder_for_an_invoice(): void
-    {
+    it('can send reminder for an invoice', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1073,15 +991,19 @@ class AdapterFeatureTest extends TestCase
             ]
         );
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
+});
 
-    #[Test]
-    public function it_can_create_invoice_template(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Invoice Templates
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Invoice Templates', function () {
+    it('can create invoice template', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1094,16 +1016,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->createInvoiceTemplate($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_list_invoice_templates(): void
-    {
+    it('can list invoice templates', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1114,16 +1034,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listInvoiceTemplates();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('templates', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('templates');
+    });
 
-    #[Test]
-    public function it_can_delete_an_invoice_template(): void
-    {
+    it('can delete an invoice template', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1132,15 +1050,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteInvoiceTemplate('TEMP-19V05281TU309413B');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_update_an_invoice_template(): void
-    {
+    it('can update an invoice template', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1153,16 +1069,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateInvoiceTemplate('TEMP-19V05281TU309413B', $expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_get_details_for_an_invoice_template(): void
-    {
+    it('can get details for an invoice template', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1173,16 +1087,20 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showInvoiceTemplateDetails('TEMP-19V05281TU309413B');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
+});
 
-    #[Test]
-    public function it_can_search_invoices(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Invoice Search
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Invoice Search', function () {
+    it('can search invoices', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1193,16 +1111,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->searchInvoices();
 
-        $this->assertArrayHasKey('total_pages', $response);
-        $this->assertArrayHasKey('total_items', $response);
-    }
+        expect($response)->toHaveKey('total_pages');
+        expect($response)->toHaveKey('total_items');
+    });
 
-    #[Test]
-    public function it_can_search_invoices_with_custom_filters(): void
-    {
+    it('can search invoices with custom filters', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1226,17 +1142,15 @@ class AdapterFeatureTest extends TestCase
             ->addInvoiceFilterByFields(['items', 'payments', 'refunds'])
             ->searchInvoices();
 
-        $this->assertArrayHasKey('total_pages', $response);
-        $this->assertArrayHasKey('total_items', $response);
-        $this->assertArrayHasKey('items', $response);
-    }
+        expect($response)->toHaveKey('total_pages');
+        expect($response)->toHaveKey('total_items');
+        expect($response)->toHaveKey('items');
+    });
 
-    #[Test]
-    public function it_throws_exception_on_search_invoices_with_invalid_status(): void
-    {
+    it('throws exception on search invoices with invalid status', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1245,42 +1159,13 @@ class AdapterFeatureTest extends TestCase
             )
         );
 
-        $this->expectException(\Exception::class);
+        expect(fn () => $this->client->addInvoiceFilterByInvoiceStatus(['DECLINED'])->searchInvoices())->toThrow(Exception::class);
+    });
 
-        $response = $this->client
-            ->addInvoiceFilterByInvoiceStatus(['DECLINED'])
-            ->searchInvoices();
-    }
-
-    #[Test]
-    public function it_throws_exception_on_search_invoices_with_invalid_amount_ranges(): void
-    {
+    it('throws exception on search invoices with invalid amount ranges', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockSearchInvoicesResponse()
-            )
-        );
-
-        $filters = $this->invoiceSearchParams();
-
-        $this->expectException(\Exception::class);
-
-        $response = $this->client
-            ->addInvoiceFilterByAmountRange(50, 30)
-            ->searchInvoices();
-    }
-
-    #[Test]
-    public function it_throws_exception_on_search_invoices_with_invalid_date_ranges(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1291,19 +1176,13 @@ class AdapterFeatureTest extends TestCase
 
         $filters = $this->invoiceSearchParams();
 
-        $this->expectException(\Exception::class);
+        expect(fn () => $this->client->addInvoiceFilterByAmountRange(50, 30)->searchInvoices())->toThrow(Exception::class);
+    });
 
-        $response = $this->client
-            ->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')
-            ->searchInvoices();
-    }
-
-    #[Test]
-    public function it_throws_exception_on_search_invoices_with_invalid_date_range_type(): void
-    {
+    it('throws exception on search invoices with invalid date ranges', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1314,19 +1193,49 @@ class AdapterFeatureTest extends TestCase
 
         $filters = $this->invoiceSearchParams();
 
-        $this->expectException(\Exception::class);
+        expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')->searchInvoices())->toThrow(Exception::class);
+    });
 
-        $response = $this->client
-            ->addInvoiceFilterByDateRange('2018-06-01', '2018-06-21', 'declined_date')
-            ->searchInvoices();
-    }
+    it('normalises non-ISO date strings to Y-m-d format in date range filter', function () {
+        // Regression: Carbon::parse() was used to validate ordering but the raw
+        // input strings were stored verbatim. Passing "January 5 2024" or "2024-1-5"
+        // would store those literals and send them to the PayPal API unchanged.
+        $this->client->addInvoiceFilterByDateRange('January 1 2018', 'June 21 2018', 'invoice_date');
 
-    #[Test]
-    public function it_can_get_user_profile_details(): void
-    {
+        $prop = (new ReflectionClass($this->client))->getProperty('invoice_search_filters');
+        $filters = $prop->getValue($this->client);
+
+        expect($filters['invoice_date_range']['start'])->toBe('2018-01-01');
+        expect($filters['invoice_date_range']['end'])->toBe('2018-06-21');
+    });
+
+    it('throws exception on search invoices with invalid date range type', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockSearchInvoicesResponse()
+            )
+        );
+
+        $filters = $this->invoiceSearchParams();
+
+        expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-06-01', '2018-06-21', 'declined_date')->searchInvoices())->toThrow(Exception::class);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Identity & Users
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Identity & Users', function () {
+    it('can get user profile details', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1337,34 +1246,65 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showProfileInfo();
 
-        $this->assertArrayHasKey('address', $response);
-    }
+        expect($response)->toHaveKey('address');
+    });
 
-    #[Test]
-    public function it_can_get_list_users(): void
-    {
+    it('can get list users', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mocklistUsersResponse()
+            $this->mock_http_client_capturing(
+                $this->mocklistUsersResponse(),
+                $container
             )
         );
 
         $response = $this->client->listUsers();
 
-        $this->assertArrayHasKey('Resources', $response);
-    }
+        expect($response)->toHaveKey('Resources');
 
-    #[Test]
-    public function it_can_get_user_details()
-    {
+        // Regression: the default filter value must appear verbatim (no spaces to encode).
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+        expect($url)->toContain('filter=userName');
+    });
+
+    it('URL-encodes the SCIM filter when it contains spaces or special characters', function () {
+        // Regression: bare string interpolation left spaces/quotes raw in the URL,
+        // which breaks HTTP clients that enforce RFC 3986 and confuses some proxies.
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $container = [];
+        $this->client->setClient(
+            $this->mock_http_client_capturing(
+                $this->mocklistUsersResponse(),
+                $container
+            )
+        );
+
+        $this->client->listUsers('userName eq "bjensen"');
+
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+
+        // Must be percent-encoded, not raw spaces or quotes.
+        expect($url)->toContain('filter=userName%20eq%20%22bjensen%22');
+        expect($url)->not->toContain('filter=userName eq');
+    });
+
+    it('can get user details', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1377,15 +1317,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showUserDetails($user_id);
 
-        $this->assertArrayHasKey('userName', $response);
-    }
+        expect($response)->toHaveKey('userName');
+    });
 
-    #[Test]
-    public function it_can_deleta_a_user(): void
-    {
+    it('can deleta a user', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1396,15 +1334,151 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteUser($user_id);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
+});
 
-    #[Test]
-    public function it_can_create_merchant_applications(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Orders
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Orders', function () {
+    it('can create orders', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockCreateOrdersResponse()
+            )
+        );
+
+        $filters = $this->createOrderParams();
+
+        $response = $this->client->createOrder($filters);
+
+        expect($response)->toHaveKey('status');
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('links');
+    });
+
+    it('can update orders', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockUpdateOrdersResponse()
+            )
+        );
+
+        $order_id = '5O190127TN364715T';
+        $filters = $this->updateOrderParams();
+
+        $response = $this->client->updateOrder($order_id, $filters);
+
+        expect($response)->not->toBeEmpty();
+    });
+
+    it('can get order details', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockOrderDetailsResponse()
+            )
+        );
+
+        $order_id = '5O190127TN364715T';
+        $response = $this->client->showOrderDetails($order_id);
+
+        expect($response)->toHaveKey('status');
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('intent');
+        expect($response)->toHaveKey('payment_source');
+        expect($response)->toHaveKey('purchase_units');
+        expect($response)->toHaveKey('create_time');
+        expect($response)->toHaveKey('links');
+    });
+
+    it('can authorize payment for an order', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockOrderPaymentAuthorizedResponse()
+            )
+        );
+
+        $order_id = '5O190127TN364715T';
+        $response = $this->client->authorizePaymentOrder($order_id);
+
+        expect($response)->toHaveKey('status');
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('payer');
+        expect($response)->toHaveKey('purchase_units');
+        expect($response)->toHaveKey('links');
+    });
+
+    it('can capture payment for an order', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockOrderPaymentCapturedResponse()
+            )
+        );
+
+        $order_id = '5O190127TN364715T';
+        $response = $this->client->capturePaymentOrder($order_id);
+
+        expect($response)->toHaveKey('status');
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('payer');
+        expect($response)->toHaveKey('purchase_units');
+        expect($response)->toHaveKey('links');
+    });
+
+    it('can add tracking for an order', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $this->client->setClient(
+            $this->mock_http_client(
+                $this->mockCreateOrdersResponse()
+            )
+        );
+
+        $response = $this->client->addTrackingForOrder('5O190127TN364715T', $this->addTrackingForOrderParams());
+
+        expect($response)->not->toBeNull();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Partner Referrals
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Partner Referrals', function () {
+    it('can create merchant applications', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1427,17 +1501,15 @@ class AdapterFeatureTest extends TestCase
             'some-open-id'
         );
 
-        $this->assertArrayHasKey('client_name', $response);
-        $this->assertArrayHasKey('contacts', $response);
-        $this->assertArrayHasKey('redirect_uris', $response);
-    }
+        expect($response)->toHaveKey('client_name');
+        expect($response)->toHaveKey('contacts');
+        expect($response)->toHaveKey('redirect_uris');
+    });
 
-    #[Test]
-    public function it_can_set_account_properties(): void
-    {
+    it('can set account properties', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1446,15 +1518,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->setAccountProperties($this->mockSetAccountPropertiesParams());
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_disable_account_properties(): void
-    {
+    it('can disable account properties', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1465,15 +1535,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->disableAccountProperties();
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_get_client_token(): void
-    {
+    it('can get client token', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1484,110 +1552,30 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->getClientToken();
 
-        $this->assertArrayHasKey('client_token', $response);
-    }
+        expect($response)->toHaveKey('client_token');
+    });
 
-    #[Test]
-    public function it_can_create_orders(): void
-    {
+    it('can generate client token for fastlane', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
             $this->mock_http_client(
-                $this->mockCreateOrdersResponse()
+                $this->mockGetClientTokenResponse()
             )
         );
 
-        $filters = $this->createOrderParams();
+        $response = $this->client->generateClientToken();
 
-        $response = $this->client->createOrder($filters);
+        expect($response)->toHaveKey('client_token');
+    });
 
-        $this->assertArrayHasKey('status', $response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('links', $response);
-    }
-
-    #[Test]
-    public function it_can_update_orders(): void
-    {
+    it('can create partner referral', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockUpdateOrdersResponse()
-            )
-        );
-
-        $order_id = '5O190127TN364715T';
-        $filters = $this->updateOrderParams();
-
-        $response = $this->client->updateOrder($order_id, $filters);
-
-        $this->assertNotEmpty($response);
-    }
-
-    #[Test]
-    public function it_can_get_order_details(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockOrderDetailsResponse()
-            )
-        );
-
-        $order_id = '5O190127TN364715T';
-        $response = $this->client->showOrderDetails($order_id);
-
-        $this->assertArrayHasKey('status', $response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('intent', $response);
-        $this->assertArrayHasKey('payment_source', $response);
-        $this->assertArrayHasKey('purchase_units', $response);
-        $this->assertArrayHasKey('create_time', $response);
-        $this->assertArrayHasKey('links', $response);
-    }
-
-    #[Test]
-    public function it_can_authorize_payment_for_an_order(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockOrderPaymentAuthorizedResponse()
-            )
-        );
-
-        $order_id = '5O190127TN364715T';
-        $response = $this->client->authorizePaymentOrder($order_id);
-
-        $this->assertArrayHasKey('status', $response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('payer', $response);
-        $this->assertArrayHasKey('purchase_units', $response);
-        $this->assertArrayHasKey('links', $response);
-    }
-
-    #[Test]
-    public function it_can_create_partner_referral(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1600,15 +1588,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->createPartnerReferral($expectedParams);
 
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_get_referral_details(): void
-    {
+    it('can get referral details', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1621,16 +1607,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showReferralData($partner_referral_id);
 
-        $this->assertArrayHasKey('partner_referral_id', $response);
-        $this->assertArrayHasKey('referral_data', $response);
-    }
+        expect($response)->toHaveKey('partner_referral_id');
+        expect($response)->toHaveKey('referral_data');
+    });
 
-    #[Test]
-    public function it_can_list_seller_tracking_information(): void
-    {
+    it('can list seller tracking information', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1644,16 +1628,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listSellerTrackingInformation($partner_id, $tracking_id);
 
-        $this->assertArrayHasKey('merchant_id', $response);
-        $this->assertArrayHasKey('tracking_id', $response);
-    }
+        expect($response)->toHaveKey('merchant_id');
+        expect($response)->toHaveKey('tracking_id');
+    });
 
-    #[Test]
-    public function it_can_show_seller_status(): void
-    {
+    it('can show seller status', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1667,15 +1649,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showSellerStatus($partner_id, $merchant_id);
 
-        $this->assertArrayHasKey('merchant_id', $response);
-    }
+        expect($response)->toHaveKey('merchant_id');
+    });
 
-    #[Test]
-    public function it_can_list_merchant_credentials(): void
-    {
+    it('can list merchant credentials', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1688,16 +1668,20 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listMerchantCredentials($partner_id);
 
-        $this->assertArrayHasKey('client_id', $response);
-        $this->assertArrayHasKey('payer_id', $response);
-    }
+        expect($response)->toHaveKey('client_id');
+        expect($response)->toHaveKey('payer_id');
+    });
+});
 
-    #[Test]
-    public function it_can_list_web_experience_profiles(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Web Experience Profiles
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Web Experience Profiles', function () {
+    it('can list web experience profiles', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1708,16 +1692,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listWebExperienceProfiles();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', collect($response)->first());
-    }
+        expect($response)->not->toBeEmpty();
+        expect(collect($response)->first())->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_create_web_experience_profile(): void
-    {
+    it('can create web experience profile', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1730,18 +1712,16 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->setRequestHeader('PayPal-Request-Id', 'some-request-id')->createWebExperienceProfile($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('name', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('name');
+    });
 
-    #[Test]
-    public function it_can_delete_web_experience_profile(): void
-    {
+    it('can delete web experience profile', function () {
         $expectedResponse = '';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1752,19 +1732,17 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteWebExperienceProfile($expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_partially_update_web_experience_profile(): void
-    {
+    it('can partially update web experience profile', function () {
         $expectedResponse = '';
 
         $expectedParams = $this->partiallyUpdateWebProfileParams();
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1773,19 +1751,17 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->patchWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_fully_update_web_experience_profile(): void
-    {
+    it('can fully update web experience profile', function () {
         $expectedResponse = '';
 
         $expectedParams = $this->updateWebProfileParams();
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1794,19 +1770,17 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_get_web_experience_profile_details(): void
-    {
+    it('can get web experience profile details', function () {
         $expectedResponse = $this->mockWebProfileResponse();
 
         $expectedParams = 'XP-A88A-LYLW-8Y3X-E5ER';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1815,40 +1789,20 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showWebExperienceProfileDetails($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('name', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('name');
+    });
+});
 
-    #[Test]
-    public function it_can_capture_payment_for_an_order(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Payments (Authorizations, Captures & Refunds)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Payments', function () {
+    it('can show details for an authorized payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockOrderPaymentCapturedResponse()
-            )
-        );
-
-        $order_id = '5O190127TN364715T';
-        $response = $this->client->capturePaymentOrder($order_id);
-
-        $this->assertArrayHasKey('status', $response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('payer', $response);
-        $this->assertArrayHasKey('purchase_units', $response);
-        $this->assertArrayHasKey('links', $response);
-    }
-
-    #[Test]
-    public function it_can_show_details_for_an_authorized_payment(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1859,16 +1813,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showAuthorizedPaymentDetails('0VF52814937998046');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_capture_an_authorized_payment(): void
-    {
+    it('can capture an authorized payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1884,16 +1836,14 @@ class AdapterFeatureTest extends TestCase
             'Payment is due'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_reauthorize_an_authorized_payment(): void
-    {
+    it('can reauthorize an authorized payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1904,16 +1854,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->reAuthorizeAuthorizedPayment('0VF52814937998046', 10.99);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_void_an_authorized_payment(): void
-    {
+    it('can void an authorized payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1922,15 +1870,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->voidAuthorizedPayment('0VF52814937998046');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_captured_payment(): void
-    {
+    it('can show details for a captured payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1941,16 +1887,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showCapturedPaymentDetails('2GG279541U471931P');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_refund_a_captured_payment(): void
-    {
+    it('can refund a captured payment', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1966,16 +1910,14 @@ class AdapterFeatureTest extends TestCase
             'Defective product'
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_refund(): void
-    {
+    it('can show details for a refund', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -1986,20 +1928,24 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showRefundDetails('1JU08902781691411');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
+});
 
-    #[Test]
-    public function it_can_create_batch_payout(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Payouts
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Payouts', function () {
+    it('can create batch payout', function () {
         $expectedResponse = $this->mockCreateBatchPayoutResponse();
 
         $expectedParams = $this->mockCreateBatchPayoutParams();
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2008,20 +1954,18 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->createBatchPayout($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('batch_header', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('batch_header');
+    });
 
-    #[Test]
-    public function it_can_show_batch_payout_details(): void
-    {
+    it('can show batch payout details', function () {
         $expectedResponse = $this->showBatchPayoutResponse();
 
         $expectedParams = 'FYXMPQTX4JC9N';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2030,21 +1974,19 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showBatchPayoutDetails($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('batch_header', $response);
-        $this->assertArrayHasKey('items', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('batch_header');
+        expect($response)->toHaveKey('items');
+    });
 
-    #[Test]
-    public function it_can_show_batch_payout_item_details(): void
-    {
+    it('can show batch payout item details', function () {
         $expectedResponse = $this->showBatchPayoutItemResponse();
 
         $expectedParams = '8AELMXH8UB2P8';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2053,22 +1995,20 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showPayoutItemDetails($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('payout_item_id', $response);
-        $this->assertArrayHasKey('payout_batch_id', $response);
-        $this->assertArrayHasKey('payout_item', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('payout_item_id');
+        expect($response)->toHaveKey('payout_batch_id');
+        expect($response)->toHaveKey('payout_item');
+    });
 
-    #[Test]
-    public function it_can_cancel_unclaimed_batch_payout_item(): void
-    {
+    it('can cancel unclaimed batch payout item', function () {
         $expectedResponse = $this->mockCancelUnclaimedBatchItemResponse();
 
         $expectedParams = '8AELMXH8UB2P8';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2077,22 +2017,26 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->cancelUnclaimedPayoutItem($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('payout_item_id', $response);
-        $this->assertArrayHasKey('payout_batch_id', $response);
-        $this->assertArrayHasKey('payout_item', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('payout_item_id');
+        expect($response)->toHaveKey('payout_batch_id');
+        expect($response)->toHaveKey('payout_item');
+    });
+});
 
-    #[Test]
-    public function it_can_create_referenced_batch_payout(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Referenced Payouts
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Referenced Payouts', function () {
+    it('can create referenced batch payout', function () {
         $expectedResponse = $this->mockCreateReferencedBatchPayoutResponse();
 
         $expectedParams = $this->mockCreateReferencedBatchPayoutParams();
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2100,24 +2044,22 @@ class AdapterFeatureTest extends TestCase
         );
 
         $response = $this->client->setRequestHeaders([
-            'PayPal-Request-Id'             => 'some-request-id',
+            'PayPal-Request-Id' => 'some-request-id',
             'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
         ])->createReferencedBatchPayout($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_list_items_referenced_in_batch_payout(): void
-    {
+    it('can list items referenced in batch payout', function () {
         $expectedResponse = $this->mockShowReferencedBatchPayoutResponse();
 
         $expectedParams = 'KHbwO28lWlXwi2IlToJ2IYNG4juFv6kpbFx4J9oQ5Hb24RSp96Dk5FudVHd6v4E=';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2126,20 +2068,18 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listItemsReferencedInBatchPayout($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_create_referenced_batch_payout_item(): void
-    {
+    it('can create referenced batch payout item', function () {
         $expectedResponse = $this->mockCreateReferencedBatchPayoutItemResponse();
 
         $expectedParams = $this->mockCreateReferencedBatchPayoutItemParams();
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2147,24 +2087,22 @@ class AdapterFeatureTest extends TestCase
         );
 
         $response = $this->client->setRequestHeaders([
-            'PayPal-Request-Id'             => 'some-request-id',
+            'PayPal-Request-Id' => 'some-request-id',
             'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
         ])->createReferencedBatchPayoutItem($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('links', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('links');
+    });
 
-    #[Test]
-    public function it_can_show_referenced_payout_item_details(): void
-    {
+    it('can show referenced payout item details', function () {
         $expectedResponse = $this->mockShowReferencedBatchPayoutItemResponse();
 
         $expectedParams = 'CDZEC5MJ8R5HY';
 
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2172,19 +2110,23 @@ class AdapterFeatureTest extends TestCase
         );
 
         $response = $this->client->setRequestHeader('PayPal-Partner-Attribution-Id', 'some-attribution-id')
-        ->showReferencedPayoutItemDetails($expectedParams);
+            ->showReferencedPayoutItemDetails($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('item_id', $response);
-        $this->assertArrayHasKey('reference_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('item_id');
+        expect($response)->toHaveKey('reference_id');
+    });
+});
 
-    #[Test]
-    public function it_can_list_transactions(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Reporting
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Reporting', function () {
+    it('can list transactions', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2194,22 +2136,20 @@ class AdapterFeatureTest extends TestCase
         );
 
         $filters = [
-            'start_date'    => Carbon::now()->toIso8601String(),
-            'end_date'      => Carbon::now()->subDays(30)->toIso8601String(),
+            'start_date' => Carbon::now()->toIso8601String(),
+            'end_date' => Carbon::now()->subDays(30)->toIso8601String(),
         ];
 
         $response = $this->client->listTransactions($filters);
 
-        $this->assertArrayHasKey('transaction_details', $response);
-        $this->assertGreaterThan(0, sizeof($response['transaction_details']));
-    }
+        expect($response)->toHaveKey('transaction_details');
+        expect(count($response['transaction_details']))->toBeGreaterThan(0);
+    });
 
-    #[Test]
-    public function it_can_list_account_balances(): void
-    {
+    it('can list account balances', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2222,15 +2162,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listBalances($date);
 
-        $this->assertNotEmpty($response);
-    }
+        expect($response)->not->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_list_account_balances_for_a_different_currency(): void
-    {
+    it('can list account balances for a different currency', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2243,15 +2181,19 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listBalances($date, 'EUR');
 
-        $this->assertNotEmpty($response);
-    }
+        expect($response)->not->toBeEmpty();
+    });
+});
 
-    #[Test]
-    public function it_can_create_a_subscription(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Subscriptions
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Subscriptions', function () {
+    it('can create a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2264,16 +2206,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->createSubscription($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_update_a_subscription(): void
-    {
+    it('can update a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2284,15 +2224,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateSubscription('I-BW452GLLEP1G', $expectedParams);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_subscription(): void
-    {
+    it('can show details for a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2303,16 +2241,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showSubscriptionDetails('I-BW452GLLEP1G');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_activate_a_subscription(): void
-    {
+    it('can activate a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2321,15 +2257,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->activateSubscription('I-BW452GLLEP1G', 'Reactivating the subscription');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_cancel_a_subscription(): void
-    {
+    it('can cancel a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2338,15 +2272,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->cancelSubscription('I-BW452GLLEP1G', 'Not satisfied with the service');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_suspend_a_subscription()
-    {
+    it('can suspend a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2355,15 +2287,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->suspendSubscription('I-BW452GLLEP1G', 'Item out of stock');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_capture_payment_for_a_subscription(): void
-    {
+    it('can capture payment for a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2372,15 +2302,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->captureSubscriptionPayment('I-BW452GLLEP1G', 'Charging as the balance reached the limit', 100);
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_update_quantity_or_product_for_a_subscription(): void
-    {
+    it('can update quantity or product for a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2393,16 +2321,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->reviseSubscription('I-BW452GLLEP1G', $expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('plan_id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('plan_id');
+    });
 
-    #[Test]
-    public function it_can_list_transactions_for_a_subscription(): void
-    {
+    it('can list transactions for a subscription', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2413,38 +2339,72 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listSubscriptionTransactions('I-BW452GLLEP1G', '2018-01-21T07:50:20.940Z', '2018-08-22T07:50:20.940Z');
 
-        $this->assertNotEmpty($response);
-        $this->assertEquals($response, $this->mockListSubscriptionTransactionsResponse());
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toBe($this->mockListSubscriptionTransactionsResponse());
+    });
+});
 
-    #[Test]
-    public function it_can_list_tracking_details(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Tracking
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Tracking', function () {
+    it('can list tracking details', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockGetTrackingDetailsResponse()
+            $this->mock_http_client_capturing(
+                $this->mockGetTrackingDetailsResponse(),
+                $container
             )
         );
 
         $response = $this->client->listTrackingDetails('8MC585209K746392H-443844607820');
 
-        $this->assertNotEmpty($response);
-        $this->assertEquals($response, $this->mockGetTrackingDetailsResponse());
-        $this->assertArrayHasKey('transaction_id', $response);
-        $this->assertArrayHasKey('tracking_number', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toBe($this->mockGetTrackingDetailsResponse());
+        expect($response)->toHaveKey('transaction_id');
+        expect($response)->toHaveKey('tracking_number');
 
-    #[Test]
-    public function it_can_get_tracking_details_for_tracking_id(): void
-    {
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+        expect($url)->toContain('transaction_id=8MC585209K746392H-443844607820');
+    });
+
+    it('URL-encodes tracking_number when it contains special characters', function () {
+        // Regression: bare string interpolation left special characters raw in the URL.
+        // Some carrier tracking numbers include spaces or other non-URL-safe characters.
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $container = [];
+        $this->client->setClient(
+            $this->mock_http_client_capturing(
+                $this->mockGetTrackingDetailsResponse(),
+                $container
+            )
+        );
+
+        $this->client->listTrackingDetails('8MC585209K746392H', 'TRACK 123+456');
+
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+        expect($url)->toContain('tracking_number=TRACK+123%2B456');
+        expect($url)->not->toContain('tracking_number=TRACK 123');
+    });
+
+    it('can get tracking details for tracking id', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2455,17 +2415,15 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showTrackingDetails('8MC585209K746392H-443844607820');
 
-        $this->assertNotEmpty($response);
-        $this->assertEquals($response, $this->mockGetTrackingDetailsResponse());
-        $this->assertArrayHasKey('tracking_number', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toBe($this->mockGetTrackingDetailsResponse());
+        expect($response)->toHaveKey('tracking_number');
+    });
 
-    #[Test]
-    public function it_can_update_tracking_details_for_tracking_id(): void
-    {
+    it('can update tracking details for tracking id', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2477,15 +2435,13 @@ class AdapterFeatureTest extends TestCase
             $this->mockUpdateTrackingDetailsParams()
         );
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_create_tracking_in_batches(): void
-    {
+    it('can create tracking in batches', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2498,16 +2454,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->addBatchTracking($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('tracker_identifiers', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('tracker_identifiers');
+    });
 
-    #[Test]
-    public function it_can_create_single_tracking_for_single_transaction(): void
-    {
+    it('can create single tracking for single transaction', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2520,16 +2474,20 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->addTracking($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('tracker_identifiers', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('tracker_identifiers');
+    });
+});
 
-    #[Test]
-    public function it_can_list_web_hooks_event_types(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhooks
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Webhooks', function () {
+    it('can list web hooks event types', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2540,16 +2498,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listEventTypes();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('event_types', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('event_types');
+    });
 
-    #[Test]
-    public function it_can_list_web_hooks_events(): void
-    {
+    it('can list web hooks events', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2560,16 +2516,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listEvents();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('events', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('events');
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_web_hooks_event(): void
-    {
+    it('can show details for a web hooks event', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2580,16 +2534,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showEventDetails('8PT597110X687430LKGECATA');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_resend_notification_for_a_web_hooks_event(): void
-    {
+    it('can resend notification for a web hooks event', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2602,16 +2554,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->resendEventNotification('8PT597110X687430LKGECATA', $expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+    });
 
-    #[Test]
-    public function it_can_create_a_web_hook(): void
-    {
+    it('can create a web hook', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2625,16 +2575,14 @@ class AdapterFeatureTest extends TestCase
             ['PAYMENT.AUTHORIZATION.CREATED', 'PAYMENT.AUTHORIZATION.VOIDED']
         );
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('event_types', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('event_types');
+    });
 
-    #[Test]
-    public function it_can_list_web_hooks(): void
-    {
+    it('can list web hooks', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2645,16 +2593,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listWebHooks();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('webhooks', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('webhooks');
+    });
 
-    #[Test]
-    public function it_can_delete_a_web_hook(): void
-    {
+    it('can delete a web hook', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2663,15 +2609,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deleteWebHook('5GP028458E2496506');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_update_a_web_hook(): void
-    {
+    it('can update a web hook', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2684,16 +2628,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->updateWebHook('0EH40505U7160970P', $expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('event_types', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('event_types');
+    });
 
-    #[Test]
-    public function it_can_show_details_for_a_web_hook(): void
-    {
+    it('can show details for a web hook', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2704,16 +2646,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showWebHookDetails('0EH40505U7160970P');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('event_types', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('event_types');
+    });
 
-    #[Test]
-    public function it_can_list_events_for_web_hooks(): void
-    {
+    it('can list events for web hooks', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2724,16 +2664,14 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->listWebHookEvents('0EH40505U7160970P');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('event_types', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('event_types');
+    });
 
-    #[Test]
-    public function it_can_verify_web_hook_signature(): void
-    {
+    it('can verify web hook signature', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2746,37 +2684,81 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->verifyWebHook($expectedParams);
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('verification_status', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('verification_status');
+    });
+});
 
-    #[Test]
-    public function it_can_list_payment_methods_source_tokens(): void
-    {
+// ─────────────────────────────────────────────────────────────────────────────
+// Payment Tokens
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('Payment Tokens', function () {
+    it('can list payment methods source tokens', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
+        $container = [];
         $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockListPaymentMethodsTokensResponse()
+            $this->mock_http_client_capturing(
+                $this->mockListPaymentMethodsTokensResponse(),
+                $container
             )
         );
 
         $response = $this->client->setCustomerSource('customer_4029352050')
-        ->listPaymentSourceTokens();
+            ->listPaymentSourceTokens();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('payment_tokens', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('payment_tokens');
 
-    #[Test]
-    public function it_can_show_details_for_payment_method_source_token(): void
-    {
+        // Regression guard: a raw PHP bool interpolates as "1" or "", not "true"/"false".
+        // PayPal requires the literal string "true" or "false" for total_required.
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+        expect($url)->toContain('total_required=true');
+        expect($url)->not->toContain('total_required=1');
+    });
+
+    it('throws when listPaymentSourceTokens is called without a customer ID', function () {
+        // Regression: accessing $this->customer_source['id'] without a guard caused an
+        // "Undefined array key 'id'" error rather than a clear, actionable message.
+        expect(fn () => $this->client->listPaymentSourceTokens())
+            ->toThrow(RuntimeException::class, 'A customer ID must be set via setCustomerId() before listing payment tokens.');
+    });
+
+    it('listPaymentSourceTokens sends total_required=false when totals disabled', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
+        ]);
+
+        $container = [];
+        $this->client->setClient(
+            $this->mock_http_client_capturing(
+                $this->mockListPaymentMethodsTokensResponse(),
+                $container
+            )
+        );
+
+        $this->client->setCustomerSource('customer_4029352050')
+            ->listPaymentSourceTokens(1, 10, false);
+
+        /** @var \Psr\Http\Message\RequestInterface $request */
+        $request = $container[0]['request'];
+        $url = (string) $request->getUri();
+        expect($url)->toContain('total_required=false');
+        expect($url)->not->toContain('total_required=1');
+        expect($url)->not->toContain('total_required=&');
+    });
+
+    it('can show details for payment method source token', function () {
+        $this->client->setAccessToken([
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2787,18 +2769,16 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showPaymentSourceTokenDetails('8kk8451t');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('customer', $response);
-        $this->assertArrayHasKey('payment_source', $response);
-    }
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('customer');
+        expect($response)->toHaveKey('payment_source');
+    });
 
-    #[Test]
-    public function it_can_delete_a_payment_method_source_token(): void
-    {
+    it('can delete a payment method source token', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2807,15 +2787,13 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->deletePaymentSourceToken('8kk8451t');
 
-        $this->assertEmpty($response);
-    }
+        expect($response)->toBeEmpty();
+    });
 
-    #[Test]
-    public function it_can_show_details_for_payment_setup_token(): void
-    {
+    it('can show details for payment setup token', function () {
         $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
+            'access_token' => $this->access_token,
+            'token_type' => 'Bearer',
         ]);
 
         $this->client->setClient(
@@ -2826,9 +2804,9 @@ class AdapterFeatureTest extends TestCase
 
         $response = $this->client->showPaymentSetupTokenDetails('5C991763VB2781612');
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('customer', $response);
-        $this->assertArrayHasKey('payment_source', $response);
-    }
-}
+        expect($response)->not->toBeEmpty();
+        expect($response)->toHaveKey('id');
+        expect($response)->toHaveKey('customer');
+        expect($response)->toHaveKey('payment_source');
+    });
+});

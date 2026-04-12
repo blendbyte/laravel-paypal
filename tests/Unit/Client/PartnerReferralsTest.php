@@ -1,56 +1,92 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Client;
-
-use GuzzleHttp\Utils;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use GuzzleHttp\Utils;
 
-class PartnerReferralsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_partner_referral(): void
-    {
-        $expectedResponse = $this->mockCreatePartnerReferralsResponse();
+it('can create partner referral', function () {
+    $expectedResponse = $this->mockCreatePartnerReferralsResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/customer/partner-referrals';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockCreatePartnerReferralParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/customer/partner-referrals';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockCreatePartnerReferralParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_referral_details(): void
-    {
-        $expectedResponse = $this->mockShowReferralDataResponse();
+it('can get referral details', function () {
+    $expectedResponse = $this->mockShowReferralDataResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/customer/partner-referrals/ZjcyODU4ZWYtYTA1OC00ODIwLTk2M2EtOTZkZWQ4NmQwYzI3RU12cE5xa0xMRmk1NWxFSVJIT1JlTFdSbElCbFU1Q3lhdGhESzVQcU9iRT0=';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/customer/partner-referrals/ZjcyODU4ZWYtYTA1OC00ODIwLTk2M2EtOTZkZWQ4NmQwYzI3RU12cE5xa0xMRmk1NWxFSVJIT1JlTFdSbElCbFU1Q3lhdGhESzVQcU9iRT0=';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
-}
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can list seller tracking information', function () {
+    $expectedResponse = $this->mockListSellerTrackingInformationResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/partners/6LKMD2ML4NJYU/merchant-integrations?tracking_id=merchantref1';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can show seller status', function () {
+    $expectedResponse = $this->mockShowSellerStatusResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/partners/6LKMD2ML4NJYU/merchant-integrations/8LQLM2ML4ZTYU';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can list merchant credentials', function () {
+    $expectedResponse = $this->mockListMerchantCredentialsResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/partners/6LKMD2ML4NJYU/merchant-integrations/credentials';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});

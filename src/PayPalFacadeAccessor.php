@@ -2,26 +2,27 @@
 
 namespace Srmklive\PayPal;
 
+use Srmklive\PayPal\Services\PayPal;
 use Exception;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalFacadeAccessor
 {
     /**
      * PayPal API provider object.
      *
-     * @var
+     * @var PayPal|null
      */
     public static $provider;
 
     /**
      * Get specific PayPal API provider object to use.
      *
-     * @throws Exception
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return PayPal|null
+     *
+     * @throws Exception
      */
-    public static function getProvider()
+    public static function getProvider(): ?PayPal
     {
         return self::$provider;
     }
@@ -29,15 +30,16 @@ class PayPalFacadeAccessor
     /**
      * Set PayPal API Client to use.
      *
-     * @throws \Exception
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @return PayPal
+     *
+     * @throws Exception
      */
-    public static function setProvider()
+    public static function setProvider(): PayPal
     {
-        // Set default provider. Defaults to ExpressCheckout
-        self::$provider = new PayPalClient();
+        $provider = new PayPal;
+        self::$provider = $provider;
 
-        return self::getProvider();
+        return $provider;
     }
 }

@@ -1,0 +1,30 @@
+name: Support Question
+description: Ask a question about usage, configuration, or integration
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check the [README](https://github.com/blendbyte/laravel-paypal#readme) and existing issues before posting. For PayPal API questions unrelated to this package, the [PayPal Developer Community](https://developer.paypal.com/community/) is the right place.
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: e.g. 1.2.3
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What do you need help with?
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried so far?
+      description: Code snippets, config, or error messages you've encountered.
+      render: php

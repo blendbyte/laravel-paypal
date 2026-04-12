@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait BillingAgreements
 {
-    /**
-     * @return array
-     */
     private function createBillingAgreementTokenParams(): array
     {
         return Utils::jsonDecode('{

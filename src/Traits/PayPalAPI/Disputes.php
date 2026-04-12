@@ -2,14 +2,17 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait Disputes
 {
     /**
      * List disputes.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_list
      */
@@ -25,12 +28,13 @@ trait Disputes
     /**
      * Update a dispute.
      *
-     * @param string $dispute_id
-     * @param array  $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_patch
      */
@@ -48,11 +52,11 @@ trait Disputes
     /**
      * Get dispute details.
      *
-     * @param string $dispute_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_get
      */

@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait CatalogProducts
 {
-    /**
-     * @return array
-     */
     private function createProductParams(): array
     {
         return Utils::jsonDecode('{
@@ -21,9 +18,6 @@ trait CatalogProducts
         }', true);
     }
 
-    /**
-     * @return array
-     */
     private function updateProductParams(): array
     {
         return Utils::jsonDecode('[

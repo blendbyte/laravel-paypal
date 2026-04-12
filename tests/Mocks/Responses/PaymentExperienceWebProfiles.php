@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait PaymentExperienceWebProfiles
 {
-    /**
-     * @return array
-     */
     private function mockListWebProfilesResponse(): array
     {
         return Utils::jsonDecode('[
@@ -59,9 +56,6 @@ trait PaymentExperienceWebProfiles
 ]', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockWebProfileResponse(): array
     {
         return Utils::jsonDecode('{

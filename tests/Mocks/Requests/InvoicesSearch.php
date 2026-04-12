@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait InvoicesSearch
 {
-    /**
-     * @return array
-     */
     private function invoiceSearchParams(): array
     {
         return Utils::jsonDecode('{

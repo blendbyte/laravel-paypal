@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Payouts
 {
-    /**
-     * @return array
-     */
     private function mockCreateBatchPayoutResponse(): array
     {
         return Utils::jsonDecode('{
@@ -24,9 +21,6 @@ trait Payouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function showBatchPayoutResponse(): array
     {
         return Utils::jsonDecode('{
@@ -207,9 +201,6 @@ trait Payouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function showBatchPayoutItemResponse(): array
     {
         return Utils::jsonDecode('{
@@ -248,9 +239,6 @@ trait Payouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCancelUnclaimedBatchItemResponse(): array
     {
         return Utils::jsonDecode('{

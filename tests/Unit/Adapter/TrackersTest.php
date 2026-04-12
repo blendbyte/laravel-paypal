@@ -1,69 +1,77 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class TrackersTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_get_tracking_details_for_tracking_id(): void
-    {
-        $expectedResponse = $this->mockGetTrackingDetailsResponse();
+it('can get tracking details for tracking id', function () {
+    $expectedResponse = $this->mockGetTrackingDetailsResponse();
 
-        $expectedParams = '8MC585209K746392H-443844607820';
+    $expectedParams = '8MC585209K746392H-443844607820';
 
-        $expectedMethod = 'showTrackingDetails';
+    $expectedMethod = 'showTrackingDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_tracking_details_for_tracking_id(): void
-    {
-        $expectedResponse = '';
+it('can update tracking details for tracking id', function () {
+    $expectedResponse = '';
 
-        $expectedData = $this->mockUpdateTrackingDetailsParams();
+    $expectedData = $this->mockUpdateTrackingDetailsParams();
 
-        $expectedParams = '8MC585209K746392H-443844607820';
+    $expectedParams = '8MC585209K746392H-443844607820';
 
-        $expectedMethod = 'updateTrackingDetails';
+    $expectedMethod = 'updateTrackingDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams, $expectedData));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams, $expectedData))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_create_tracking_in_batches(): void
-    {
-        $expectedResponse = $this->mockCreateTrackinginBatchesResponse();
+it('can create tracking in batches', function () {
+    $expectedResponse = $this->mockCreateTrackinginBatchesResponse();
 
-        $expectedParams = $this->mockCreateTrackinginBatchesParams();
+    $expectedParams = $this->mockCreateTrackinginBatchesParams();
 
-        $expectedMethod = 'addBatchTracking';
+    $expectedMethod = 'addBatchTracking';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
-}
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
+
+it('can add tracking for a single transaction', function () {
+    $expectedResponse = $this->mockCreateTrackinginBatchesResponse();
+    $expectedParams   = $this->mockUpdateTrackingDetailsParams();
+    $expectedMethod   = 'addTracking';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
+
+it('can list tracking details', function () {
+    $expectedResponse = $this->mockGetTrackingDetailsResponse();
+    $expectedMethod   = 'listTrackingDetails';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}('8MC585209K746392H', '443844607820'))->toBe($expectedResponse);
+});

@@ -1,63 +1,46 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class DisputesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_list_disputes(): void
-    {
-        $expectedResponse = $this->mockListDisputesResponse();
+it('can list disputes', function () {
+    $expectedResponse = $this->mockListDisputesResponse();
 
-        $expectedMethod = 'listDisputes';
+    $expectedMethod = 'listDisputes';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_partially_update_a_dispute(): void
-    {
-        $expectedResponse = '';
+it('can partially update a dispute', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->updateDisputeParams();
+    $expectedParams = $this->updateDisputeParams();
 
-        $expectedMethod = 'updateDispute';
+    $expectedMethod = 'updateDispute';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('PP-D-27803', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('PP-D-27803', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_details_for_a_dispute(): void
-    {
-        $expectedResponse = $this->mockGetDisputesResponse();
+it('can get details for a dispute', function () {
+    $expectedResponse = $this->mockGetDisputesResponse();
 
-        $expectedMethod = 'showDisputeDetails';
+    $expectedMethod = 'showDisputeDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('PP-D-4012'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('PP-D-4012'))->toBe($expectedResponse);
+});

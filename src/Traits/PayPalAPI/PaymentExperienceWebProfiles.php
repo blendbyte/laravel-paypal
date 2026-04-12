@@ -2,14 +2,27 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
+/**
+ * @deprecated PayPal has deprecated the v1/payment-experience/web-profiles API.
+ *             Use the `experience_context` field on Orders v2 instead, via the
+ *             fluent helpers in PayPalExperienceContext (setReturnUrl(),
+ *             setCancelUrl(), setBrandName(), etc.).
+ *
+ * @see https://developer.paypal.com/docs/api/payment-experience/v1/
+ * @see \Srmklive\PayPal\Traits\PayPalExperienceContext
+ */
 trait PaymentExperienceWebProfiles
 {
     /**
      * List Web Experience Profiles.
      *
-     * @throws \Throwable
+     * @deprecated Use Orders v2 with experience_context instead.
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profiles_get-list
      */
@@ -25,11 +38,13 @@ trait PaymentExperienceWebProfiles
     /**
      * Create a Web Experience Profile.
      *
-     * @param array $data
+     * @deprecated Use Orders v2 with experience_context instead.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profile_create
      */
@@ -47,11 +62,11 @@ trait PaymentExperienceWebProfiles
     /**
      * Delete a Web Experience Profile.
      *
-     * @param string $profile_id
+     * @deprecated Use Orders v2 with experience_context instead.
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profile_delete
      */
@@ -67,12 +82,13 @@ trait PaymentExperienceWebProfiles
     /**
      * Partially update a Web Experience Profile.
      *
-     * @param string $profile_id
-     * @param array  $data
+     * @deprecated Use Orders v2 with experience_context instead.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profile_partial-update
      */
@@ -88,14 +104,15 @@ trait PaymentExperienceWebProfiles
     }
 
     /**
-     * Partially update a Web Experience Profile.
+     * Update a Web Experience Profile.
      *
-     * @param string $profile_id
-     * @param array  $data
+     * @deprecated Use Orders v2 with experience_context instead.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profile_update
      */
@@ -111,13 +128,13 @@ trait PaymentExperienceWebProfiles
     }
 
     /**
-     * Delete a Web Experience Profile.
+     * Show details for a Web Experience Profile.
      *
-     * @param string $profile_id
+     * @deprecated Use Orders v2 with experience_context instead.
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-experience/v1/#web-profile_get
      */

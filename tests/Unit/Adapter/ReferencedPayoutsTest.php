@@ -1,96 +1,77 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class ReferencedPayoutsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_referenced_batch_payout(): void
-    {
-        $expectedResponse = $this->mockCreateReferencedBatchPayoutResponse();
+it('can create referenced batch payout', function () {
+    $expectedResponse = $this->mockCreateReferencedBatchPayoutResponse();
 
-        $expectedParams = $this->mockCreateReferencedBatchPayoutParams();
+    $expectedParams = $this->mockCreateReferencedBatchPayoutParams();
 
-        $expectedMethod = 'createReferencedBatchPayout';
-        $additionalMethod = 'setRequestHeaders';
+    $expectedMethod = 'createReferencedBatchPayout';
+    $additionalMethod = 'setRequestHeaders';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-        $mockClient->{$additionalMethod}([
-            'PayPal-Request-Id'             => 'some-request-id',
-            'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
-        ]);
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+    $mockClient->{$additionalMethod}([
+        'PayPal-Request-Id' => 'some-request-id',
+        'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
+    ]);
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_items_referenced_in_batch_payout(): void
-    {
-        $expectedResponse = $this->mockShowReferencedBatchPayoutResponse();
+it('can list items referenced in batch payout', function () {
+    $expectedResponse = $this->mockShowReferencedBatchPayoutResponse();
 
-        $expectedParams = 'KHbwO28lWlXwi2IlToJ2IYNG4juFv6kpbFx4J9oQ5Hb24RSp96Dk5FudVHd6v4E=';
+    $expectedParams = 'KHbwO28lWlXwi2IlToJ2IYNG4juFv6kpbFx4J9oQ5Hb24RSp96Dk5FudVHd6v4E=';
 
-        $expectedMethod = 'listItemsReferencedInBatchPayout';
+    $expectedMethod = 'listItemsReferencedInBatchPayout';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_create_referenced_batch_payout_item(): void
-    {
-        $expectedResponse = $this->mockCreateReferencedBatchPayoutItemResponse();
+it('can create referenced batch payout item', function () {
+    $expectedResponse = $this->mockCreateReferencedBatchPayoutItemResponse();
 
-        $expectedParams = $this->mockCreateReferencedBatchPayoutItemParams();
+    $expectedParams = $this->mockCreateReferencedBatchPayoutItemParams();
 
-        $expectedMethod = 'createReferencedBatchPayoutItem';
-        $additionalMethod = 'setRequestHeaders';
+    $expectedMethod = 'createReferencedBatchPayoutItem';
+    $additionalMethod = 'setRequestHeaders';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-        $mockClient->{$additionalMethod}([
-            'PayPal-Request-Id'             => 'some-request-id',
-            'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
-        ]);
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+    $mockClient->{$additionalMethod}([
+        'PayPal-Request-Id' => 'some-request-id',
+        'PayPal-Partner-Attribution-Id' => 'some-attribution-id',
+    ]);
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_referenced_payout_item_details(): void
-    {
-        $expectedResponse = $this->mockShowReferencedBatchPayoutItemResponse();
+it('can show referenced payout item details', function () {
+    $expectedResponse = $this->mockShowReferencedBatchPayoutItemResponse();
 
-        $expectedParams = 'CDZEC5MJ8R5HY';
+    $expectedParams = 'CDZEC5MJ8R5HY';
 
-        $expectedMethod = 'showReferencedPayoutItemDetails';
-        $additionalMethod = 'setRequestHeader';
+    $expectedMethod = 'showReferencedPayoutItemDetails';
+    $additionalMethod = 'setRequestHeader';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true, $additionalMethod);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
-        $mockClient->{$additionalMethod}('PayPal-Partner-Attribution-Id', 'some-attribution-id');
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+    $mockClient->{$additionalMethod}('PayPal-Partner-Attribution-Id', 'some-attribution-id');
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
-}
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});

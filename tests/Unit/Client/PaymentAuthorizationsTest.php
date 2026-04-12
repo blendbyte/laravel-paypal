@@ -1,95 +1,76 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Client;
-
-use GuzzleHttp\Utils;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use GuzzleHttp\Utils;
 
-class PaymentAuthorizationsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_show_details_for_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockGetAuthorizedPaymentDetailsResponse();
+it('can show details for an authorized payment', function () {
+    $expectedResponse = $this->mockGetAuthorizedPaymentDetailsResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_capture_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockCaptureAuthorizedPaymentResponse();
+it('can capture an authorized payment', function () {
+    $expectedResponse = $this->mockCaptureAuthorizedPaymentResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/capture';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockCaptureAuthorizedPaymentParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/capture';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockCaptureAuthorizedPaymentParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_reauthorize_an_authorized_payment(): void
-    {
-        $expectedResponse = $this->mockReAuthorizeAuthorizedPaymentResponse();
+it('can reauthorize an authorized payment', function () {
+    $expectedResponse = $this->mockReAuthorizeAuthorizedPaymentResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/reauthorize';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockReAuthorizeAuthorizedPaymentParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/reauthorize';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockReAuthorizeAuthorizedPaymentParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_void_an_authorized_payment(): void
-    {
-        $expectedResponse = '';
+it('can void an authorized payment', function () {
+    $expectedResponse = '';
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/void';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v2/payments/authorizations/0VF52814937998046/void';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
-}
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});

@@ -2,16 +2,20 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait CatalogProducts
 {
     /**
      * Create a product.
      *
-     * @param array $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/catalog-products/v1/#products_create
      */
@@ -29,9 +33,10 @@ trait CatalogProducts
     /**
      * List products.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/catalog-products/v1/#products_list
      */
@@ -47,12 +52,13 @@ trait CatalogProducts
     /**
      * Update a product.
      *
-     * @param string $product_id
-     * @param array  $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/catalog-products/v1/#products_patch
      */
@@ -70,11 +76,11 @@ trait CatalogProducts
     /**
      * Get product details.
      *
-     * @param string $product_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/catalog-products/v1/#products_get
      */

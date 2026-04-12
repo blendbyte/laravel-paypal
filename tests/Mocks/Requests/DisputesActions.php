@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait DisputesActions
 {
-    /**
-     * @return array
-     */
     protected function acceptDisputeClaimParams(): array
     {
         return Utils::jsonDecode('{
@@ -17,9 +14,6 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     protected function acceptDisputeResolutionParams(): array
     {
         return Utils::jsonDecode('{
@@ -27,14 +21,50 @@ trait DisputesActions
 }', true);
     }
 
-    /**
-     * @return array
-     */
     protected function acknowledgeItemReturnedParams(): array
     {
         return Utils::jsonDecode('{
   "note": "I have received the item back.",
   "acknowledgement_type": "ITEM_RECEIVED"
 }', true);
+    }
+
+    protected function sendDisputeMessageParams(): array
+    {
+        return Utils::jsonDecode('{
+  "message": "I have shipped the item. Tracking number: 1234567890."
+}', true);
+    }
+
+    protected function makeOfferToResolveDisputeParams(): array
+    {
+        return [
+            'note'         => 'Full refund to the customer.',
+            'offer_type'   => 'REFUND',
+            'offer_amount' => [
+                'currency_code' => 'USD',
+                'value'         => '10.00',
+            ],
+        ];
+    }
+
+    protected function escalateDisputeToClaimParams(): array
+    {
+        return ['note' => 'Escalating to a claim due to non-resolution.'];
+    }
+
+    protected function updateDisputeStatusParams(): array
+    {
+        return ['action' => 'SELLER_EVIDENCE'];
+    }
+
+    protected function settleDisputeParams(): array
+    {
+        return ['adjudication_outcome' => 'SELLER_FAVOR'];
+    }
+
+    protected function declineDisputeOfferResolutionParams(): array
+    {
+        return ['note' => 'I do not agree with the offer.'];
     }
 }

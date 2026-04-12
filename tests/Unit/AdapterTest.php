@@ -1,83 +1,48 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class AdapterTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+it('can be instantiated', function () {
+    $client = new PayPalClient($this->getMockCredentials());
 
-    #[Test]
-    public function it_can_be_instantiated(): void
-    {
-        $client = new PayPalClient($this->getMockCredentials());
+    expect($client)->toBeInstanceOf(PayPalClient::class);
+});
 
-        $this->assertInstanceOf(PayPalClient::class, $client);
-    }
+it('throws exception if invalid credentials are provided', function () {
+    expect(fn () => new PayPalClient)->toThrow(RuntimeException::class);
+});
 
-    #[Test]
-    public function it_throws_exception_if_invalid_credentials_are_provided(): void
-    {
-        $this->expectException(\RuntimeException::class);
+it('throws exception if invalid mode is provided', function () {
+    $credentials = $this->getMockCredentials();
+    $credentials['mode'] = '';
 
-        $client = new PayPalClient();
-    }
+    expect(fn () => new PayPalClient($credentials))->toThrow(RuntimeException::class);
+});
 
-    #[Test]
-    public function it_throws_exception_if_invalid_mode_is_provided(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+it('throws exception if empty credentials are provided', function () {
+    $credentials = $this->getMockCredentials();
+    $credentials['sandbox'] = [];
 
-        $credentials = $this->getMockCredentials();
-        $credentials['mode'] = '';
+    expect(fn () => new PayPalClient($credentials))->toThrow(RuntimeException::class);
+});
 
-        $client = new PayPalClient($credentials);
-    }
+it('throws exception if credentials items are not provided', function () {
+    $item = 'client_id';
 
-    #[Test]
-    public function it_throws_exception_if_empty_credentials_are_provided(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        // $this->expectErrorMessage('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+    $credentials = $this->getMockCredentials();
+    $credentials['sandbox'][$item] = '';
 
-        $credentials = $this->getMockCredentials();
-        $credentials['sandbox'] = [];
+    expect(fn () => new PayPalClient($credentials))->toThrow(RuntimeException::class);
+});
 
-        $client = new PayPalClient($credentials);
-    }
+it('can get access token', function () {
+    $expectedResponse = $this->mockAccessTokenResponse();
 
-    #[Test]
-    public function it_throws_exception_if_credentials_items_are_not_provided(): void
-    {
-        $item = 'client_id';
+    $expectedMethod = 'getAccessToken';
 
-        $this->expectException(\RuntimeException::class);
-        // $this->expectErrorMessage("{$item} missing from the provided configuration. Please add your application {$item}.");
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, false);
 
-        $credentials = $this->getMockCredentials();
-        $credentials['sandbox'][$item] = '';
+    $mockClient->setApiCredentials($this->getMockCredentials());
 
-        $client = new PayPalClient($credentials);
-    }
-
-    #[Test]
-    public function it_can_get_access_token(): void
-    {
-        $expectedResponse = $this->mockAccessTokenResponse();
-
-        $expectedMethod = 'getAccessToken';
-
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, false);
-
-        $mockClient->setApiCredentials($this->getMockCredentials());
-
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
-}
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});

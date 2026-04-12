@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Reporting
 {
-    /**
-     * @return array
-     */
     private function mockListTransactionsResponse(): array
     {
         return Utils::jsonDecode('{
@@ -164,9 +161,6 @@ trait Reporting
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListBalancesResponse(): array
     {
         return Utils::jsonDecode('{

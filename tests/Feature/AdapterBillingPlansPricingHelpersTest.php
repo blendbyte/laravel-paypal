@@ -1,81 +1,57 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Feature;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Srmklive\PayPal\Tests\MockClientClasses;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class AdapterBillingPlansPricingHelpersTest extends TestCase
-{
-    use MockClientClasses;
-    use MockResponsePayloads;
+beforeEach(function () {
+    $this->client = new PayPalClient($this->getApiCredentials());
+    $this->client->setClient($this->mock_http_client($this->mockAccessTokenResponse()));
+    $response = $this->client->getAccessToken();
+    $this->access_token = $response['access_token'];
+});
 
-    /** @var string */
-    protected static string $access_token = '';
+it('processBillingPlanPricingUpdates throws when no billing plan is set', function () {
+    $client = $this->createPartialMock(\Srmklive\PayPal\Services\PayPal::class, []);
 
-    /** @var PayPalClient */
-    protected PayPalClient $client;
+    expect(fn () => $client->processBillingPlanPricingUpdates())
+        ->toThrow(RuntimeException::class, 'No billing plan set');
+});
 
-    protected function setUp(): void
-    {
-        $this->client = new PayPalClient($this->getApiCredentials());
+it('can update pricing schemes for a billing plan', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockAccessTokenResponse()
-            )
-        );
-        $response = $this->client->getAccessToken();
+    $this->client = $this->client->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
+        ->addPricingScheme('DAY', 7, 0, true)
+        ->addPricingScheme('MONTH', 1, 100);
 
-        self::$access_token = $response['access_token'];
+    $this->client->setClient(
+        $this->mock_http_client(false)
+    );
 
-        parent::setUp();
-    }
+    $response = $this->client->processBillingPlanPricingUpdates();
 
-    #[Test]
-    public function it_can_update_pricing_schemes_for_a_billing_plan(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
+    expect($response)->toBeEmpty();
+});
 
-        $this->client = $this->client->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
-            ->addPricingScheme('DAY', 7, 0, true)
-            ->addPricingScheme('MONTH', 1, 100);
+it('can set custom limits when listing billing plans', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
 
-        $this->client->setClient(
-            $this->mock_http_client(false)
-        );
+    $this->client = $this->client->setPageSize(30)
+        ->showTotals(true);
 
-        $response = $this->client->processBillingPlanPricingUpdates();
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockListPlansResponse()
+        )
+    );
 
-        $this->assertEmpty($response);
-    }
+    $response = $this->client->setCurrentPage(1)->listPlans();
 
-    #[Test]
-    public function it_can_set_custom_limits_when_listing_billing_plans(): void
-    {
-        $this->client->setAccessToken([
-            'access_token'  => self::$access_token,
-            'token_type'    => 'Bearer',
-        ]);
-
-        $this->client = $this->client->setPageSize(30)
-            ->showTotals(true);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockListPlansResponse()
-            )
-        );
-
-        $response = $this->client->setCurrentPage(1)->listPlans();
-
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('plans', $response);
-    }
-}
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('plans');
+});

@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Disputes
 {
-    /**
-     * @return array
-     */
     protected function updateDisputeParams(): array
     {
         return Utils::jsonDecode('[

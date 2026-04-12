@@ -2,14 +2,17 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait Identity
 {
     /**
      * Get user profile information.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/identity/v1/#userinfo_get
      */
@@ -27,17 +30,17 @@ trait Identity
     /**
      * List Users.
      *
-     * @param string $field
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v2/#users_list
      */
     public function listUsers(string $field = 'userName')
     {
-        $this->apiEndPoint = "v2/scim/Users?filter={$field}";
+        $this->apiEndPoint = 'v2/scim/Users?filter='.rawurlencode($field);
 
         $this->setRequestHeader('Content-Type', 'application/scim+json');
 
@@ -49,11 +52,11 @@ trait Identity
     /**
      * Show details for a user by ID.
      *
-     * @param string $user_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v2/#users_get
      */
@@ -71,11 +74,11 @@ trait Identity
     /**
      * Delete a user by ID.
      *
-     * @param string $user_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v2/#users_get
      */
@@ -93,17 +96,14 @@ trait Identity
     /**
      * Create a merchant application.
      *
-     * @param string $client_name
-     * @param array  $redirect_uris
-     * @param array  $contacts
-     * @param string $payer_id
-     * @param string $migrated_app
-     * @param string $application_type
-     * @param string $logo_url
+     *
+     *
+     * @param list<string> $redirect_uris
+     * @param array<string, mixed> $contacts
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v1/#applications_post
      */
@@ -112,13 +112,13 @@ trait Identity
         $this->apiEndPoint = 'v1/identity/applications';
 
         $this->options['json'] = array_filter([
-            'application_type'  => $application_type,
-            'redirect_uris'     => $redirect_uris,
-            'client_name'       => $client_name,
-            'contacts'          => $contacts,
-            'payer_id'          => $payer_id,
-            'migrated_app'      => $migrated_app,
-            'logo_uri'          => $logo_url,
+            'application_type' => $application_type,
+            'redirect_uris' => $redirect_uris,
+            'client_name' => $client_name,
+            'contacts' => $contacts,
+            'payer_id' => $payer_id,
+            'migrated_app' => $migrated_app,
+            'logo_uri' => $logo_url,
         ]);
 
         $this->verb = 'post';
@@ -129,12 +129,13 @@ trait Identity
     /**
      * Create a merchant application.
      *
-     * @param array  $features
-     * @param string $account_property
+     *
+     *
+     * @param list<string> $features
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v1/#account-settings_post
      */
@@ -143,8 +144,8 @@ trait Identity
         $this->apiEndPoint = 'v1/identity/account-settings';
 
         $this->options['json'] = [
-            'account_property'  => $account_property,
-            'features'          => $features,
+            'account_property' => $account_property,
+            'features' => $features,
         ];
 
         $this->verb = 'post';
@@ -155,11 +156,11 @@ trait Identity
     /**
      * Create a merchant application.
      *
-     * @param string $account_property
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/identity/v1/#account-settings_deactivate
      */
@@ -168,7 +169,7 @@ trait Identity
         $this->apiEndPoint = 'v1/identity/account-settings/deactivate';
 
         $this->options['json'] = [
-            'account_property'  => $account_property,
+            'account_property' => $account_property,
         ];
 
         $this->verb = 'post';
@@ -179,9 +180,10 @@ trait Identity
     /**
      * Get a client token.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/multiparty/checkout/advanced/integrate/#link-sampleclienttokenrequest
      */
@@ -192,5 +194,22 @@ trait Identity
         $this->verb = 'post';
 
         return $this->doPayPalRequest();
+    }
+
+    /**
+     * Generate a client token for use with PayPal Fastlane or Advanced Card Payments.
+     *
+     * Alias for getClientToken(). Pass the returned client_token to the
+     * PayPal JS SDK to initialise Fastlane on the client side.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/checkout/fastlane/
+     */
+    public function generateClientToken()
+    {
+        return $this->getClientToken();
     }
 }

@@ -2,21 +2,20 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
-use GuzzleHttp\Psr7;
 use Srmklive\PayPal\Services\VerifyDocuments;
+use GuzzleHttp\Psr7;
+use Psr\Http\Message\StreamInterface;
 
 trait DisputesActions
 {
     /**
      * Acknowledge item has been returned.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
-     * @param string $acknowledgement_type
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes-actions_acknowledge-return-item
      */
@@ -25,8 +24,8 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/acknowledge-return-item";
 
         $this->options['json'] = [
-            'note'                  => $dispute_note,
-            'acknowledgement_type'  => $acknowledgement_type,
+            'note' => $dispute_note,
+            'acknowledgement_type' => $acknowledgement_type,
         ];
 
         $this->verb = 'post';
@@ -37,14 +36,15 @@ trait DisputesActions
     /**
      * Providence evidence in support of a dispute.
      *
-     * @param string $dispute_id
-     * @param array  $file_path
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @param list<string> $files
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_provide-evidence
+     *
+     * @throws \Throwable
      */
     public function provideDisputeEvidence(string $dispute_id, array $files)
     {
@@ -52,7 +52,7 @@ trait DisputesActions
             $this->throwInvalidEvidenceFileException();
         }
 
-        $this->apiEndPoint = "/v1/customer/disputes/{$dispute_id}/provide-evidence";
+        $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/provide-evidence";
 
         $this->setRequestHeader('Content-Type', 'multipart/form-data');
 
@@ -60,7 +60,7 @@ trait DisputesActions
 
         foreach ($files as $file) {
             $this->options['multipart'][] = [
-                'name'     => basename($file),
+                'name' => basename($file),
                 'contents' => Psr7\Utils::tryFopen($file, 'r'),
             ];
         }
@@ -73,14 +73,11 @@ trait DisputesActions
     /**
      * Make offer to resolve dispute claim.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
-     * @param float  $amount
-     * @param string $refund_type
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_make-offer
      */
@@ -92,7 +89,7 @@ trait DisputesActions
         $data['offer_type'] = $refund_type;
         $data['offer_amount'] = [
             'currency_code' => $this->getCurrency(),
-            'value'         => $amount,
+            'value' => number_format($amount, 2, '.', ''),
         ];
 
         $this->options['json'] = $data;
@@ -105,12 +102,11 @@ trait DisputesActions
     /**
      * Escalate dispute to claim.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_escalate
      */
@@ -130,12 +126,11 @@ trait DisputesActions
     /**
      * Accept offer to resolve dispute.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_accept-offer
      */
@@ -144,7 +139,7 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/accept-offer";
 
         $this->options['json'] = [
-            'note'  => $dispute_note,
+            'note' => $dispute_note,
         ];
 
         $this->verb = 'post';
@@ -155,13 +150,15 @@ trait DisputesActions
     /**
      * Accept customer dispute claim.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
-     * @param array  $data
+     * Pass `accept_claim_type` in $data to use a value other than the default
+     * 'REFUND'. PayPal-supported values: REFUND, MERCHANDISE, MISSING_ITEM,
+     * MISSING_REFUND, UNABLE_TO_COMPLETE_REFUND.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_accept-claim
      */
@@ -170,7 +167,7 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/accept-claim";
 
         $data['note'] = $dispute_note;
-        $data['accept_claim_type'] = 'REFUND';
+        $data['accept_claim_type'] ??= 'REFUND';
 
         $this->options['json'] = $data;
 
@@ -182,12 +179,11 @@ trait DisputesActions
     /**
      * Update dispute status.
      *
-     * @param string $dispute_id
-     * @param bool   $merchant
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_require-evidence
      */
@@ -207,12 +203,11 @@ trait DisputesActions
     /**
      * Settle dispute.
      *
-     * @param string $dispute_id
-     * @param bool   $merchant
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_adjudicate
      */
@@ -232,12 +227,11 @@ trait DisputesActions
     /**
      * Decline offer to resolve dispute.
      *
-     * @param string $dispute_id
-     * @param string $dispute_note
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_deny-offer
      */
@@ -246,7 +240,31 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/deny-offer";
 
         $this->options['json'] = [
-            'note'  => $dispute_note,
+            'note' => $dispute_note,
+        ];
+
+        $this->verb = 'post';
+
+        return $this->doPayPalRequest();
+    }
+
+    /**
+     * Send a message about a dispute to the other party.
+     *
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_send-message
+     */
+    public function sendDisputeMessage(string $dispute_id, string $message)
+    {
+        $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/send-message";
+
+        $this->options['json'] = [
+            'message' => $message,
         ];
 
         $this->verb = 'post';

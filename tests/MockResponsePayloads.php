@@ -15,10 +15,10 @@ trait MockResponsePayloads
     use Mocks\Responses\InvoicesTemplates;
     use Mocks\Responses\Orders;
     use Mocks\Responses\PartnerReferrals;
-    use Mocks\Responses\PaymentExperienceWebProfiles;
-    use Mocks\Responses\PaymentMethodsTokens;
     use Mocks\Responses\PaymentAuthorizations;
     use Mocks\Responses\PaymentCaptures;
+    use Mocks\Responses\PaymentExperienceWebProfiles;
+    use Mocks\Responses\PaymentMethodsTokens;
     use Mocks\Responses\PaymentRefunds;
     use Mocks\Responses\Payouts;
     use Mocks\Responses\ReferencedPayouts;
@@ -27,18 +27,15 @@ trait MockResponsePayloads
     use Mocks\Responses\Trackers;
     use Mocks\Responses\WebHooks;
 
-    /**
-     * @return array
-     */
     private function mockAccessTokenResponse(): array
     {
         return [
-            'scope'         => 'some_scope',
-            'access_token'  => 'some_access_token',
-            'token_type'    => 'Bearer',
-            'app_id'        => 'APP-80W284485P519543T',
-            'expires_in'    => 32400,
-            'nonce'         => 'some_nonce',
+            'scope' => 'some_scope',
+            'access_token' => 'some_access_token',
+            'token_type' => 'Bearer',
+            'app_id' => 'APP-80W284485P519543T',
+            'expires_in' => 32400,
+            'nonce' => 'some_nonce',
         ];
     }
 }

@@ -2,16 +2,18 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait PaymentCaptures
 {
     /**
      * Show details for a captured payment.
      *
-     * @param string $capture_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments/v2/#captures_get
      */
@@ -27,14 +29,11 @@ trait PaymentCaptures
     /**
      * Refund a captured payment.
      *
-     * @param string $capture_id
-     * @param string $invoice_id
-     * @param float  $amount
-     * @param string $note
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payments/v2/#captures_refund
      */
@@ -44,10 +43,10 @@ trait PaymentCaptures
 
         $this->options['json'] = [
             'amount' => [
-                'value'         => $amount,
+                'value' => number_format($amount, 2, '.', ''),
                 'currency_code' => $this->currency,
             ],
-            'invoice_id'    => $invoice_id,
+            'invoice_id' => $invoice_id,
             'note_to_payer' => $note,
         ];
 

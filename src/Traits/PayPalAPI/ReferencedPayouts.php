@@ -2,16 +2,20 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Psr\Http\Message\StreamInterface;
+
 trait ReferencedPayouts
 {
     /**
      * Create a referenced Batch Payout.
      *
-     * @param array $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/referenced-payouts/v1/#referenced-payouts_create_batch
      */
@@ -29,11 +33,11 @@ trait ReferencedPayouts
     /**
      * Show Batch Payout details by ID.
      *
-     * @param string $batch_payout_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/referenced-payouts/v1/#referenced-payouts_get_batch_details
      */
@@ -49,11 +53,13 @@ trait ReferencedPayouts
     /**
      * Create a referenced Batch Payout Item.
      *
-     * @param array $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/referenced-payouts/v1/#referenced-payouts-items_create
      */
@@ -71,11 +77,11 @@ trait ReferencedPayouts
     /**
      * Show Payout Item details by ID.
      *
-     * @param string $payout_item_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/referenced-payouts/v1/#referenced-payouts-items_get
      */

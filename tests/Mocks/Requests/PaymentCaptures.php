@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait PaymentCaptures
 {
-    /**
-     * @return array
-     */
     private function mockRefundCapturedPaymentParams(): array
     {
         return Utils::jsonDecode('{

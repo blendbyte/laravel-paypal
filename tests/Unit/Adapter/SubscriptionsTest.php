@@ -1,157 +1,128 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class SubscriptionsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_a_subscription(): void
-    {
-        $expectedResponse = $this->mockCreateSubscriptionResponse();
+it('can create a subscription', function () {
+    $expectedResponse = $this->mockCreateSubscriptionResponse();
 
-        $expectedParams = $this->mockCreateSubscriptionParams();
+    $expectedParams = $this->mockCreateSubscriptionParams();
 
-        $expectedMethod = 'createSubscription';
+    $expectedMethod = 'createSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_a_subscription(): void
-    {
-        $expectedResponse = '';
+it('can update a subscription', function () {
+    $expectedResponse = '';
 
-        $expectedParams = $this->mockUpdateSubscriptionParams();
+    $expectedParams = $this->mockUpdateSubscriptionParams();
 
-        $expectedMethod = 'updateSubscription';
+    $expectedMethod = 'updateSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_details_for_a_subscription(): void
-    {
-        $expectedResponse = $this->mockGetSubscriptionDetailsResponse();
+it('can show details for a subscription', function () {
+    $expectedResponse = $this->mockGetSubscriptionDetailsResponse();
 
-        $expectedMethod = 'showSubscriptionDetails';
+    $expectedMethod = 'showSubscriptionDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G'));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_activate_a_subscription(): void
-    {
-        $expectedResponse = '';
+it('can activate a subscription', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'activateSubscription';
+    $expectedMethod = 'activateSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Reactivating the subscription'));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Reactivating the subscription'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_cancel_a_subscription(): void
-    {
-        $expectedResponse = '';
+it('can cancel a subscription', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'cancelSubscription';
+    $expectedMethod = 'cancelSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Not satisfied with the service'));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Not satisfied with the service'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_suspend_a_subscription(): void
-    {
-        $expectedResponse = '';
+it('can suspend a subscription', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'suspendSubscription';
+    $expectedMethod = 'suspendSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Item out of stock'));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Item out of stock'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_capture_payment_for_a_subscription(): void
-    {
-        $expectedResponse = '';
+it('can capture payment for a subscription', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'captureSubscriptionPayment';
+    $expectedMethod = 'captureSubscriptionPayment';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Charging as the balance reached the limit', 100));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', 'Charging as the balance reached the limit', 100))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_quantity_or_product_for_a_subscription(): void
-    {
-        $expectedResponse = $this->mockUpdateSubscriptionItemsResponse();
+it('can update quantity or product for a subscription', function () {
+    $expectedResponse = $this->mockUpdateSubscriptionItemsResponse();
 
-        $expectedParams = $this->mockUpdateSubscriptionItemsParams();
+    $expectedParams = $this->mockUpdateSubscriptionItemsParams();
 
-        $expectedMethod = 'reviseSubscription';
+    $expectedMethod = 'reviseSubscription';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_transactions_for_a_subscription(): void
-    {
-        $expectedResponse = $this->mockListSubscriptionTransactionsResponse();
+it('can list transactions for a subscription', function () {
+    $expectedResponse = $this->mockListSubscriptionTransactionsResponse();
 
-        $expectedMethod = 'listSubscriptionTransactions';
+    $expectedMethod = 'listSubscriptionTransactions';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('I-BW452GLLEP1G', '2018-01-21T07:50:20.940Z', '2018-08-22T07:50:20.940Z'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('I-BW452GLLEP1G', '2018-01-21T07:50:20.940Z', '2018-08-22T07:50:20.940Z'))->toBe($expectedResponse);
+});

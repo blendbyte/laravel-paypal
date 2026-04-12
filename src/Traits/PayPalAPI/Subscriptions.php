@@ -3,6 +3,8 @@
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Psr\Http\Message\StreamInterface;
 
 trait Subscriptions
 {
@@ -11,11 +13,13 @@ trait Subscriptions
     /**
      * Create a new subscription.
      *
-     * @param array $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_create
      */
@@ -33,12 +37,13 @@ trait Subscriptions
     /**
      * Update an existing billing plan.
      *
-     * @param string $subscription_id
-     * @param array  $data
+     *
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_patch
      */
@@ -56,11 +61,11 @@ trait Subscriptions
     /**
      * Show details for an existing subscription.
      *
-     * @param string $subscription_id
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_get
      */
@@ -76,12 +81,11 @@ trait Subscriptions
     /**
      * Activate an existing subscription.
      *
-     * @param string $subscription_id
-     * @param string $reason
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_activate
      */
@@ -99,12 +103,11 @@ trait Subscriptions
     /**
      * Cancel an existing subscription.
      *
-     * @param string $subscription_id
-     * @param string $reason
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_cancel
      */
@@ -122,12 +125,11 @@ trait Subscriptions
     /**
      * Suspend an existing subscription.
      *
-     * @param string $subscription_id
-     * @param string $reason
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_suspend
      */
@@ -145,13 +147,11 @@ trait Subscriptions
     /**
      * Capture payment for an existing subscription.
      *
-     * @param string $subscription_id
-     * @param string $note
-     * @param float  $amount
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_capture
      */
@@ -160,11 +160,11 @@ trait Subscriptions
         $this->apiEndPoint = "v1/billing/subscriptions/{$subscription_id}/capture";
 
         $this->options['json'] = [
-            'note'          => $note,
-            'capture_type'  => 'OUTSTANDING_BALANCE',
-            'amount'        => [
-                'currency_code'     => $this->currency,
-                'value'             => "{$amount}",
+            'note' => $note,
+            'capture_type' => 'OUTSTANDING_BALANCE',
+            'amount' => [
+                'currency_code' => $this->currency,
+                'value' => number_format($amount, 2, '.', ''),
             ],
         ];
 
@@ -176,12 +176,13 @@ trait Subscriptions
     /**
      * Revise quantity, product or service for an existing subscription.
      *
-     * @param string $subscription_id
-     * @param array  $items
+     *
+     *
+     * @param array<string, mixed> $items
+     *
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_revise
      */
@@ -199,23 +200,21 @@ trait Subscriptions
     /**
      * List transactions for an existing subscription.
      *
-     * @param string                    $subscription_id
-     * @param \DateTimeInterface|string $start_date
-     * @param \DateTimeInterface|string $end_date
+     * @param  \DateTimeInterface|string  $start_date
+     * @param  \DateTimeInterface|string  $end_date
+     * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
-     *
-     * @return array|\Psr\Http\Message\StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_transactions
      */
     public function listSubscriptionTransactions(string $subscription_id, $start_date = '', $end_date = '')
     {
-        if (($start_date instanceof \DateTimeInterface) === false) {
+        if (! ($start_date instanceof CarbonInterface)) {
             $start_date = Carbon::parse($start_date);
         }
 
-        if (($end_date instanceof \DateTimeInterface) === false) {
+        if (! ($end_date instanceof CarbonInterface)) {
             $end_date = Carbon::parse($end_date);
         }
 

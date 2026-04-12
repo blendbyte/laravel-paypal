@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait ReferencedPayouts
 {
-    /**
-     * @return array
-     */
     private function mockCreateReferencedBatchPayoutResponse(): array
     {
         return Utils::jsonDecode('{
@@ -22,9 +19,6 @@ trait ReferencedPayouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockShowReferencedBatchPayoutResponse(): array
     {
         return Utils::jsonDecode('{
@@ -88,9 +82,6 @@ trait ReferencedPayouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCreateReferencedBatchPayoutItemResponse(): array
     {
         return Utils::jsonDecode('{
@@ -105,9 +96,6 @@ trait ReferencedPayouts
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockShowReferencedBatchPayoutItemResponse(): array
     {
         return Utils::jsonDecode('{

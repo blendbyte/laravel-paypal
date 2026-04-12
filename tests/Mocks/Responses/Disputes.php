@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Disputes
 {
-    /**
-     * @return array
-     */
     private function mockListDisputesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -66,9 +63,6 @@ trait Disputes
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetDisputesResponse(): array
     {
         return Utils::jsonDecode('{

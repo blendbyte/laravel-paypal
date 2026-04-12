@@ -2,9 +2,9 @@
 
 namespace Srmklive\PayPal\Services;
 
-use Exception;
 use Srmklive\PayPal\Traits\PayPalRequest as PayPalAPIRequest;
 use Srmklive\PayPal\Traits\PayPalVerifyIPN;
+use Exception;
 
 class PayPal
 {
@@ -14,7 +14,8 @@ class PayPal
     /**
      * PayPal constructor.
      *
-     * @param array $config
+     *
+     * @param array<string, mixed> $config
      *
      * @throws Exception
      */
@@ -33,7 +34,7 @@ class PayPal
     /**
      * Set ExpressCheckout API endpoints & options.
      *
-     * @param array $credentials
+     * @param array<string, mixed> $credentials
      */
     protected function setOptions(array $credentials): void
     {
@@ -54,5 +55,8 @@ class PayPal
         $this->config['payment_action'] = $credentials['payment_action'];
         $this->config['notify_url'] = $credentials['notify_url'];
         $this->config['locale'] = $credentials['locale'];
+        $this->config['timeout'] = (float) ($credentials['timeout'] ?? 30);
+        $this->config['connect_timeout'] = (float) ($credentials['connect_timeout'] ?? 10);
+        $this->config['max_retries'] = (int) ($credentials['max_retries'] ?? 2);
     }
 }

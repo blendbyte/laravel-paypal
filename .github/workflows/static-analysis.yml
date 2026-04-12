@@ -7,10 +7,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1', '8.2', '8.3']
+        php-versions: ['8.3', '8.4', '8.5']
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
     - name: Setup PHP with Composer and extensions
       with:
         php-version: ${{ matrix.php-versions }}
@@ -19,7 +19,7 @@ jobs:
       id: composercache
       run: echo "::set-output name=dir::$(composer config cache-files-dir)"
     - name: Cache Composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v5
       with:
         php-version: ${{ matrix.php-versions }}
         path: ${{ steps.composercache.outputs.dir }}

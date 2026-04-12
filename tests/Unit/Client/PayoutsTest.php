@@ -1,94 +1,75 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Client;
-
-use GuzzleHttp\Utils;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use GuzzleHttp\Utils;
 
-class PayoutsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_batch_payout(): void
-    {
-        $expectedResponse = $this->mockCreateBatchPayoutResponse();
+it('can create batch payout', function () {
+    $expectedResponse = $this->mockCreateBatchPayoutResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->mockCreateBatchPayoutParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->mockCreateBatchPayoutParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_batch_payout_details(): void
-    {
-        $expectedResponse = $this->showBatchPayoutResponse();
+it('can show batch payout details', function () {
+    $expectedResponse = $this->showBatchPayoutResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts/FYXMPQTX4JC9N';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts/FYXMPQTX4JC9N';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_show_batch_payout_item_details(): void
-    {
-        $expectedResponse = $this->showBatchPayoutItemResponse();
+it('can show batch payout item details', function () {
+    $expectedResponse = $this->showBatchPayoutItemResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_cancel_unclaimed_batch_payout_item(): void
-    {
-        $expectedResponse = $this->mockCancelUnclaimedBatchItemResponse();
+it('can cancel unclaimed batch payout item', function () {
+    $expectedResponse = $this->mockCancelUnclaimedBatchItemResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8/cancel';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8/cancel';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
-}
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});

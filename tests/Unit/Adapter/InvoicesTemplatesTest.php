@@ -1,95 +1,74 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Adapter;
-
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
 
-class InvoicesTemplatesTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_invoice_template(): void
-    {
-        $expectedResponse = $this->mockCreateInvoiceTemplateResponse();
+it('can create invoice template', function () {
+    $expectedResponse = $this->mockCreateInvoiceTemplateResponse();
 
-        $expectedParams = $this->mockCreateInvoiceTemplateParams();
+    $expectedParams = $this->mockCreateInvoiceTemplateParams();
 
-        $expectedMethod = 'createInvoiceTemplate';
+    $expectedMethod = 'createInvoiceTemplate';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}($expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_invoice_templates(): void
-    {
-        $expectedResponse = $this->mockListInvoiceTemplateResponse();
+it('can list invoice templates', function () {
+    $expectedResponse = $this->mockListInvoiceTemplateResponse();
 
-        $expectedMethod = 'listInvoiceTemplates';
+    $expectedMethod = 'listInvoiceTemplates';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}());
-    }
+    expect($mockClient->{$expectedMethod}())->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_delete_an_invoice_template(): void
-    {
-        $expectedResponse = '';
+it('can delete an invoice template', function () {
+    $expectedResponse = '';
 
-        $expectedMethod = 'deleteInvoiceTemplate';
+    $expectedMethod = 'deleteInvoiceTemplate';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('TEMP-19V05281TU309413B'));
-    }
+    expect($mockClient->{$expectedMethod}('TEMP-19V05281TU309413B'))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_an_invoice_template(): void
-    {
-        $expectedResponse = $this->mockUpdateInvoiceTemplateResponse();
+it('can update an invoice template', function () {
+    $expectedResponse = $this->mockUpdateInvoiceTemplateResponse();
 
-        $expectedParams = $this->mockUpdateInvoiceTemplateParams();
+    $expectedParams = $this->mockUpdateInvoiceTemplateParams();
 
-        $expectedMethod = 'updateInvoiceTemplate';
+    $expectedMethod = 'updateInvoiceTemplate';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('TEMP-19V05281TU309413B', $expectedParams));
-    }
+    expect($mockClient->{$expectedMethod}('TEMP-19V05281TU309413B', $expectedParams))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_details_for_an_invoice_template(): void
-    {
-        $expectedResponse = $this->mockGetInvoiceTemplateResponse();
+it('can get details for an invoice template', function () {
+    $expectedResponse = $this->mockGetInvoiceTemplateResponse();
 
-        $expectedMethod = 'showInvoiceTemplateDetails';
+    $expectedMethod = 'showInvoiceTemplateDetails';
 
-        $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
 
-        $mockClient->setApiCredentials($this->getMockCredentials());
-        $mockClient->getAccessToken();
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
 
-        $this->assertEquals($expectedResponse, $mockClient->{$expectedMethod}('TEMP-19V05281TU309413B'));
-    }
-}
+    expect($mockClient->{$expectedMethod}('TEMP-19V05281TU309413B'))->toBe($expectedResponse);
+});

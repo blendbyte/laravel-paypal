@@ -1,95 +1,76 @@
 <?php
 
-namespace Srmklive\PayPal\Tests\Unit\Client;
-
-use GuzzleHttp\Utils;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Srmklive\PayPal\Tests\MockClientClasses;
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use Srmklive\PayPal\Tests\MockResponsePayloads;
+use GuzzleHttp\Utils;
 
-class CatalogProductsTest extends TestCase
-{
-    use MockClientClasses;
-    use MockRequestPayloads;
-    use MockResponsePayloads;
+uses(MockRequestPayloads::class);
 
-    #[Test]
-    public function it_can_create_a_product(): void
-    {
-        $expectedResponse = $this->mockCreateCatalogProductsResponse();
+it('can create a product', function () {
+    $expectedResponse = $this->mockCreateCatalogProductsResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->createProductParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->createProductParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_list_products(): void
-    {
-        $expectedResponse = $this->mockListCatalogProductsResponse();
+it('can list products', function () {
+    $expectedResponse = $this->mockListCatalogProductsResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products?page=1&page_size=2&total_required=true';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products?page=1&page_size=2&total_required=true';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_update_a_product(): void
-    {
-        $expectedResponse = '';
+it('can update a product', function () {
+    $expectedResponse = '';
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-            'json' => $this->updateProductParams(),
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+        'json' => $this->updateProductParams(),
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'patch');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'patch');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->patch($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
+    expect(Utils::jsonDecode($mockHttpClient->patch($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
 
-    #[Test]
-    public function it_can_get_details_for_a_product(): void
-    {
-        $expectedResponse = $this->mockGetCatalogProductsResponse();
+it('can get details for a product', function () {
+    $expectedResponse = $this->mockGetCatalogProductsResponse();
 
-        $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
-        $expectedParams = [
-            'headers' => [
-                'Accept'            => 'application/json',
-                'Accept-Language'   => 'en_US',
-                'Authorization'     => 'Bearer some-token',
-            ],
-        ];
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/catalogs/products/72255d4849af8ed6e0df1173';
+    $expectedParams = [
+        'headers' => [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization' => 'Bearer some-token',
+        ],
+    ];
 
-        $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-        $this->assertEquals($expectedResponse, Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true));
-    }
-}
+    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});

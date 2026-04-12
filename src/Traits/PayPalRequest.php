@@ -2,13 +2,14 @@
 
 namespace Srmklive\PayPal\Traits;
 
+use Srmklive\PayPal\Services\PayPal;
 use RuntimeException;
 
 trait PayPalRequest
 {
-    use PayPalHttpClient;
     use PayPalAPI;
     use PayPalExperienceContext;
+    use PayPalHttpClient;
 
     /**
      * PayPal API mode to be used.
@@ -27,21 +28,19 @@ trait PayPalRequest
     /**
      * PayPal API configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $config;
 
     /**
      * Default currency for PayPal.
-     *
-     * @var string
      */
-    protected $currency;
+    protected string $currency = 'USD';
 
     /**
      * Additional options for PayPal API request.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $options;
 
@@ -55,23 +54,22 @@ trait PayPalRequest
     /**
      * Set the current page for list resources API calls.
      *
-     * @var bool
+     * @var int
      */
     protected $current_page = 1;
 
     /**
      * Toggle whether totals for list resources are returned after every API call.
-     *
-     * @var string
      */
     protected string $show_totals;
 
     /**
      * Set PayPal API Credentials.
      *
-     * @param array $credentials
      *
-     * @throws \RuntimeException|\Exception
+     * @param array<string, mixed> $credentials
+     *
+     * @throws RuntimeException|\Exception
      */
     public function setApiCredentials(array $credentials): void
     {
@@ -95,19 +93,20 @@ trait PayPalRequest
     /**
      * Function to set currency.
      *
-     * @param string $currency
      *
-     * @throws \RuntimeException
-     *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @throws RuntimeException
      */
-    public function setCurrency(string $currency = 'USD'): \Srmklive\PayPal\Services\PayPal
+    public function setCurrency(string $currency = 'USD'): PayPal
     {
-        $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD', 'RUB', 'CNY'];
+        // Supported currencies per PayPal REST API docs:
+        // https://developer.paypal.com/reference/currency-codes/
+        // INR is retained for PayPal India (paypal.com/in) domestic accounts.
+        // RUB was removed: PayPal suspended Russian services in March 2022.
+        $allowedCurrencies = ['AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'ILS', 'INR', 'JPY', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'SEK', 'SGD', 'THB', 'TWD', 'USD'];
 
         // Check if provided currency is valid.
-        if (!in_array($currency, $allowedCurrencies, true)) {
-            throw new RuntimeException('Currency is not supported by PayPal.');
+        if (! in_array($currency, $allowedCurrencies, true)) {
+            throw new RuntimeException("'{$currency}' is not a supported PayPal currency code. See https://developer.paypal.com/reference/currency-codes/ for the full list.");
         }
 
         $this->currency = $currency;
@@ -124,14 +123,37 @@ trait PayPalRequest
     }
 
     /**
-     * Function to add request header.
+     * Set a PayPal-Request-Id idempotency key for the next request.
      *
-     * @param string $key
-     * @param string $value
+     * Sending this header allows safe retrying of failed requests without
+     * risk of double-processing (e.g. duplicate charges). The key is
+     * automatically cleared after the next API call.
      *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * Pass null (default) to auto-generate a UUID v4.
      */
-    public function setRequestHeader(string $key, string $value): \Srmklive\PayPal\Services\PayPal
+    public function withIdempotencyKey(?string $key = null): static
+    {
+        $this->setRequestHeader('PayPal-Request-Id', $key ?? $this->generateIdempotencyKey());
+
+        return $this;
+    }
+
+    /**
+     * Generate a random UUID v4 for use as an idempotency key.
+     */
+    private function generateIdempotencyKey(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // version 4
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // variant RFC 4122
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
+     * Function to add request header.
+     */
+    public function setRequestHeader(string $key, string $value): PayPal
     {
         $this->options['headers'][$key] = $value;
 
@@ -141,13 +163,11 @@ trait PayPalRequest
     /**
      * Function to add multiple request headers.
      *
-     * @param array $headers
-     *
-     * @return \Srmklive\PayPal\Services\PayPal
+     * @param array<string, string> $headers
      */
-    public function setRequestHeaders(array $headers): \Srmklive\PayPal\Services\PayPal
+    public function setRequestHeaders(array $headers): PayPal
     {
-        foreach ($headers as $key=>$value) {
+        foreach ($headers as $key => $value) {
             $this->setRequestHeader($key, $value);
         }
 
@@ -157,11 +177,8 @@ trait PayPalRequest
     /**
      * Return request options header.
      *
-     * @param string $key
      *
-     * @throws \RuntimeException
-     *
-     * @return string
+     * @throws RuntimeException
      */
     public function getRequestHeader(string $key): string
     {
@@ -175,14 +192,24 @@ trait PayPalRequest
     /**
      * Function To Set PayPal API Configuration.
      *
-     * @param array $config
+     *
+     * @param array<string, mixed> $config
      *
      * @throws \Exception
      */
     private function setConfig(array $config): void
     {
-        $api_config = empty($config) && function_exists('config') && !empty(config('paypal')) ?
-            config('paypal') : $config;
+        $api_config = $config;
+        if (empty($config) && function_exists('config')) {
+            try {
+                $fromLaravel = config('paypal');
+                if (! empty($fromLaravel)) {
+                    $api_config = $fromLaravel;
+                }
+            } catch (\Throwable) {
+                // Not running in a full Laravel context
+            }
+        }
 
         // Set Api Credentials
         $this->setApiCredentials($api_config);
@@ -191,13 +218,13 @@ trait PayPalRequest
     /**
      * Set API environment to be used by PayPal.
      *
-     * @param array $credentials
+     * @param array<string, mixed> $credentials
      */
     private function setApiEnvironment(array $credentials): void
     {
         $this->mode = 'live';
 
-        if (!empty($credentials['mode'])) {
+        if (! empty($credentials['mode'])) {
             $this->setValidApiEnvironment($credentials['mode']);
         } else {
             $this->throwConfigurationException();
@@ -206,18 +233,17 @@ trait PayPalRequest
 
     /**
      * Validate & set the environment to be used by PayPal.
-     *
-     * @param string $mode
      */
     private function setValidApiEnvironment(string $mode): void
     {
-        $this->mode = !in_array($mode, ['sandbox', 'live']) ? 'live' : $mode;
+        $this->mode = ! in_array($mode, ['sandbox', 'live']) ? 'live' : $mode;
     }
 
     /**
      * Set configuration details for the provider.
      *
-     * @param array $credentials
+     *
+     * @param array<string, mixed> $credentials
      *
      * @throws \Exception
      */
@@ -236,9 +262,9 @@ trait PayPalRequest
             }
         }
 
-        collect($credentials[$this->mode])->map(function ($value, $key) {
+        foreach ($credentials[$this->mode] as $key => $value) {
             $this->config[$key] = $value;
-        });
+        }
 
         $this->paymentAction = $credentials['payment_action'];
 
@@ -253,15 +279,15 @@ trait PayPalRequest
     /**
      * @throws RuntimeException
      */
-    private function throwConfigurationException()
+    private function throwConfigurationException(): never
     {
-        throw new RuntimeException('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://srmklive.github.io/laravel-paypal/docs.html to setup correct configuration.');
+        throw new RuntimeException('Invalid configuration provided. Please provide valid configuration for PayPal API. You can also refer to the documentation at https://blendbyte.github.io/laravel-paypal/docs.html to setup correct configuration.');
     }
 
     /**
      * @throws RuntimeException
      */
-    private function throwInvalidEvidenceFileException()
+    private function throwInvalidEvidenceFileException(): never
     {
         throw new RuntimeException('Invalid evidence file type provided.
         1. The party can upload up to 50 MB of files per request.

@@ -9,13 +9,11 @@ class Str extends \Illuminate\Support\Str
     /**
      * Determine if a given value is valid JSON.
      *
-     * @param mixed $value
-     *
-     * @return bool
+     * @param  mixed  $value
      */
     public static function isJson($value): bool
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
 
@@ -25,7 +23,7 @@ class Str extends \Illuminate\Support\Str
 
         try {
             Utils::jsonDecode($value, true, 512, 4194304);
-        } catch (\JsonException $jsonException) {
+        } catch (\InvalidArgumentException $jsonException) {
             return false;
         }
 

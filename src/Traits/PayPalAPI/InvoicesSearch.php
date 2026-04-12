@@ -3,6 +3,7 @@
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
 use Srmklive\PayPal\Traits\PayPalAPI\InvoiceSearch\Filters;
+use Psr\Http\Message\StreamInterface;
 
 trait InvoicesSearch
 {
@@ -11,15 +12,16 @@ trait InvoicesSearch
     /**
      * Search and return existing invoices.
      *
-     * @throws \Throwable
      *
-     * @return array|\Psr\Http\Message\StreamInterface|string
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_list
      */
     public function searchInvoices()
     {
-        if (collect($this->invoice_search_filters)->count() < 1) {
+        if (empty($this->invoice_search_filters)) {
             $this->invoice_search_filters = [
                 'currency_code' => $this->getCurrency(),
             ];

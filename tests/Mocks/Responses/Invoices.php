@@ -6,9 +6,6 @@ use GuzzleHttp\Utils;
 
 trait Invoices
 {
-    /**
-     * @return array
-     */
     private function mockGenerateInvoiceNumberResponse(): array
     {
         return Utils::jsonDecode('{
@@ -16,9 +13,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockCreateInvoicesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -257,9 +251,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockListInvoicesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -386,9 +377,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockUpdateInvoicesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -617,9 +605,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockGetInvoicesResponse(): array
     {
         return Utils::jsonDecode('{
@@ -858,17 +843,11 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return string
-     */
     private function mockGenerateInvoiceQRCodeResponse(): string
     {
         return '--95dbdbed-7536-4c24-b5ca-bcdbc0006612 Content-Disposition: form-data; name="image" Content-Type: application/octet-stream iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABxUlEQVR42u2WMY7kIBBFq0VA1n0BS1yDjCvZF7DxBdxXIuMaSFzAzgiQaz6t9mxLm1AbrCYYy4H1AlT1f9XHxH89lX7Z/2KJKN3CMIW6FCInYplLPtisoU6FTyHzti6RN5tPm+5ixrtTp0uP8g8s744eMS1yxvikNEOJz966GPTLaOL1fmjaxfAkaLCy2t2Hl10sPUIaNY1araFhCat3TbODDPkZ68Ii1sqfX62c1rzP62W8uWG0aiMaxSyvpS4hez2MzXkZg+FL4NNCwku/XtZ8g/Be550+Pe9jWj0x41rt1ngZyxzYa+NpmDjNMlYx1yhhs2glM8vY3IQ3qGWz9Tqvk7F3cGyYNd3KQDKGSWFGDjFNIZ8yhuWgR8gb5jR8+9bJ8rPUCd3oYbY4VcQqaWSYWRGcdnhnSS+D6lhKJIE5+JrTXtaquDtzuuypXrV0stRKwLAUzFodnYjxERP28ihtLw8WsbQE7JbxCD9SmxMxfsUYpiZ7lxYWMewltzuqKMz4n13tYi3vl6jW2FJQynBH+Za7Zie6sZRhNVXLTkqTmGUE5xSRu5dv3Qz3uYdj0bwkFLGWfxxoJMXx28tO9vu/9oPYF0bR/hBeOiwMAAAAAElFTkSuQmCC --95dbdbed-7536-4c24-b5ca-bcdbc0006612--';
     }
 
-    /**
-     * @return array
-     */
     private function mockInvoiceRegisterPaymentResponse(): array
     {
         return Utils::jsonDecode('{
@@ -876,9 +855,6 @@ trait Invoices
 }', true);
     }
 
-    /**
-     * @return array
-     */
     private function mockInvoiceRefundPaymentResponse(): array
     {
         return Utils::jsonDecode('{
