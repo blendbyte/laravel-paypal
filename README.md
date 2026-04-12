@@ -2,12 +2,15 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/blendbyte/paypal.svg?style=flat-square)](https://packagist.org/packages/blendbyte/paypal)
 [![Tests](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml)
+[![Coverage](https://codecov.io/gh/blendbyte/laravel-paypal/branch/main/graph/badge.svg)](https://codecov.io/gh/blendbyte/laravel-paypal)
 [![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP client without any framework. This is a maintained fork of [srmklive/laravel-paypal](https://github.com/srmklive/laravel-paypal), modernized for current PHP and Laravel versions. It is a **drop-in replacement** — the API is identical, only the package name and root namespace change.
 
 **Supports:** PHP 8.2–8.5 · Laravel 12 / 13
+
+> **PHP 8.2 notice:** PHP 8.2 reached end-of-life in December 2025. While the package still declares `^8.2` compatibility for existing users, development and testing no longer run on 8.2 — the dev tooling (Pest v4, PHPUnit 12) requires PHP 8.3+. If you are on PHP 8.2 you should upgrade. Support for 8.2 will be removed in the next major release.
 
 > **Disclaimer:** This package is an independent community project and is not affiliated with, endorsed by, or supported by PayPal, Inc. "PayPal" is a registered trademark of PayPal, Inc. Use this package at your own risk; no warranty is provided beyond what the MIT license covers.
 

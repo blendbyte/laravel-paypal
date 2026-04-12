@@ -4,8 +4,6 @@ use Blendbyte\PayPal\Tests\MockClientClasses;
 use Blendbyte\PayPal\Tests\MockResponsePayloads;
 use PHPUnit\Framework\TestCase;
 
-uses(
-    TestCase::class,
-    MockClientClasses::class,
-    MockResponsePayloads::class,
-)->in('Unit', 'Feature');
+pest()->extend(TestCase::class)
+    ->use(MockClientClasses::class, MockResponsePayloads::class)
+    ->in('Unit', 'Feature');

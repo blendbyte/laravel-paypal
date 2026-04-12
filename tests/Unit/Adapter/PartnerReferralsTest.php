@@ -33,3 +33,39 @@ it('can get referral details', function () {
 
     expect($mockClient->{$expectedMethod}($expectedParams))->toBe($expectedResponse);
 });
+
+it('can list seller tracking information', function () {
+    $expectedResponse = $this->mockListSellerTrackingInformationResponse();
+    $expectedMethod   = 'listSellerTrackingInformation';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}('6LKMD2ML4NJYU', 'merchantref1'))->toBe($expectedResponse);
+});
+
+it('can show seller status', function () {
+    $expectedResponse = $this->mockShowSellerStatusResponse();
+    $expectedMethod   = 'showSellerStatus';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}('6LKMD2ML4NJYU', '8LQLM2ML4ZTYU'))->toBe($expectedResponse);
+});
+
+it('can list merchant credentials', function () {
+    $expectedResponse = $this->mockListMerchantCredentialsResponse();
+    $expectedMethod   = 'listMerchantCredentials';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}('6LKMD2ML4NJYU'))->toBe($expectedResponse);
+});

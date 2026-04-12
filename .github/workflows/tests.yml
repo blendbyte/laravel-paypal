@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.3', '8.4', '8.5']
 
     name: PHP ${{ matrix.php }}
 
@@ -24,7 +24,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: curl
-          coverage: none
+          coverage: ${{ matrix.php == '8.5' && 'pcov' || 'none' }}
           tools: composer:v2
 
       - name: Cache Composer dependencies
@@ -38,4 +38,12 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader
 
       - name: Run tests
-        run: ./vendor/bin/pest --ci
+        run: ./vendor/bin/pest --ci ${{ matrix.php == '8.5' && '--coverage --coverage-clover coverage.xml' || '' }}
+
+      - name: Upload coverage to Codecov
+        if: matrix.php == '8.5'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false

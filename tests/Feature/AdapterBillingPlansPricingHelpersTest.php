@@ -9,6 +9,13 @@ beforeEach(function () {
     $this->access_token = $response['access_token'];
 });
 
+it('processBillingPlanPricingUpdates throws when no billing plan is set', function () {
+    $client = $this->createPartialMock(\Blendbyte\PayPal\Services\PayPal::class, []);
+
+    expect(fn () => $client->processBillingPlanPricingUpdates())
+        ->toThrow(RuntimeException::class, 'No billing plan set');
+});
+
 it('can update pricing schemes for a billing plan', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,

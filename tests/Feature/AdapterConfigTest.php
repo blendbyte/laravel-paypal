@@ -118,3 +118,23 @@ it('preserves validate_ssl = false from credentials', function () {
 
     expect($prop->getValue($client))->toBeFalse();
 });
+
+it('uses Laravel config when PayPalClient is constructed with an empty array', function () {
+    // Boot a minimal Illuminate container so that config('paypal') returns the
+    // credentials — this exercises the if (!empty($fromLaravel)) branch in
+    // setConfig() (lines 206–207 of PayPalRequest.php).
+    $previous = \Illuminate\Container\Container::getInstance();
+
+    $container = new \Illuminate\Container\Container();
+    $container->instance('config', new \Illuminate\Config\Repository([
+        'paypal' => $this->getApiCredentials(),
+    ]));
+    \Illuminate\Container\Container::setInstance($container);
+
+    try {
+        $client = new PayPalClient([]);
+        expect($client)->toBeInstanceOf(PayPalClient::class);
+    } finally {
+        \Illuminate\Container\Container::setInstance($previous);
+    }
+});

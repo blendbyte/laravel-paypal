@@ -60,15 +60,12 @@ trait MockClientClasses
 
     private function mock_http_request($expectedResponse, $expectedEndpoint, $expectedParams, $expectedMethod = 'post')
     {
-        $mockResponse = $this->getMockBuilder(ResponseInterface::class)
-            ->getMock();
+        $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->expects($this->exactly(1))
             ->method('getBody')
             ->willReturn(new HttpStream(fopen('data://text/plain,'.$expectedResponse, 'r')));
 
-        $mockHttpClient = $this->getMockBuilder(HttpClient::class)
-            ->onlyMethods([$expectedMethod])
-            ->getMock();
+        $mockHttpClient = $this->createPartialMock(HttpClient::class, [$expectedMethod]);
         $mockHttpClient->expects($this->once())
             ->method($expectedMethod)
             ->with($expectedEndpoint, $expectedParams)
@@ -83,9 +80,7 @@ trait MockClientClasses
         $methods[] = ($token) ? 'getAccessToken' : '';
         $methods[] = isset($additionalMethod) ? $additionalMethod : '';
 
-        $mockClient = $this->getMockBuilder(PayPalClient::class)
-            ->onlyMethods(array_filter($methods))
-            ->getMock();
+        $mockClient = $this->createPartialMock(PayPalClient::class, array_filter($methods));
 
         if ($token) {
             $mockClient->expects($this->exactly(1))
