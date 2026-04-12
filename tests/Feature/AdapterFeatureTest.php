@@ -2531,6 +2531,13 @@ it('can list payment methods source tokens', function () {
     expect($url)->not->toContain('total_required=1');
 });
 
+it('throws when listPaymentSourceTokens is called without a customer ID', function () {
+    // Regression: accessing $this->customer_source['id'] without a guard caused an
+    // "Undefined array key 'id'" error rather than a clear, actionable message.
+    expect(fn () => $this->client->listPaymentSourceTokens())
+        ->toThrow(RuntimeException::class, 'A customer ID must be set via setCustomerId() before listing payment tokens.');
+});
+
 it('listPaymentSourceTokens sends total_required=false when totals disabled', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
