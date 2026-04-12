@@ -144,6 +144,36 @@ it('getHttpStatus() returns the correct code for different status codes', functi
     expect($exception->getHttpStatus())->toBe(404);
 });
 
+// ── decode=false error path ───────────────────────────────────────────────
+
+it('returns error string for a decode=false endpoint on failure', function () {
+    // updateBillingPlan() calls doPayPalRequest(false), so errors must still
+    // surface as ['error' => <raw body string>] rather than being decoded.
+    $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
+    $this->client->setClient(mockErrorClient(400, 'Bad Request'));
+
+    $response = $this->client->updatePlan('PLAN-123', []);
+
+    expect($response)->toHaveKey('error');
+    expect($response['error'])->toBe('Bad Request');
+});
+
+// ── JSON non-array/non-string primitive response ──────────────────────────
+
+it('returns an empty array when the API response is the JSON null literal', function () {
+    // Utils::jsonDecode('null', true) returns PHP null — neither array nor
+    // string — so doPayPalRequest() must fall through to the [] branch.
+    $mock    = new MockHandler([new Response(200, [], 'null')]);
+    $handler = HandlerStack::create($mock);
+
+    $this->client->setAccessToken(['access_token' => 'tok', 'token_type' => 'Bearer']);
+    $this->client->setClient(new HttpClient(['handler' => $handler]));
+
+    $response = $this->client->showOrderDetails('some-id');
+
+    expect($response)->toBe([]);
+});
+
 // ── Toggling back ─────────────────────────────────────────────────────────
 
 it('withoutExceptions() reverts to silent error mode', function () {

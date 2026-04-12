@@ -194,6 +194,30 @@ it('addCustomPlan is idempotent when billing plan is already set', function () {
 // Plan creation — delegates to createPlan
 // ---------------------------------------------------------------------------
 
+it('addMonthlyPlan throws RuntimeException when createPlan returns an error response', function () {
+    $client = $this->createPartialMock(PayPalClient::class, ['createPlan', 'getCurrency']);
+    $client->method('getCurrency')->willReturn('USD');
+    $client->method('createPlan')->willReturn([
+        'error' => ['details' => [['description' => 'Plan creation failed']]],
+    ]);
+
+    $client->addProductById('PROD-123');
+
+    expect(fn () => $client->addMonthlyPlan('Monthly Plan', 'Test', 19.99))
+        ->toThrow(RuntimeException::class, 'Plan creation failed');
+});
+
+it('addMonthlyPlan throws RuntimeException when createPlan returns a non-array response', function () {
+    $client = $this->createPartialMock(PayPalClient::class, ['createPlan', 'getCurrency']);
+    $client->method('getCurrency')->willReturn('USD');
+    $client->method('createPlan')->willReturn('unexpected-response');
+
+    $client->addProductById('PROD-123');
+
+    expect(fn () => $client->addMonthlyPlan('Monthly Plan', 'Test', 19.99))
+        ->toThrow(RuntimeException::class, 'unexpected response format');
+});
+
 it('addMonthlyPlan creates a MONTH billing plan', function () {
     $client = $this->createPartialMock(PayPalClient::class, ['createPlan', 'getCurrency']);
     $client->method('getCurrency')->willReturn('USD');
@@ -275,6 +299,24 @@ it('addProduct sets product from API response', function () {
     expect($result)->toBeInstanceOf(PayPalClient::class);
     $product = (new ReflectionProperty(PayPalClient::class, 'product'))->getValue($client);
     expect($product['id'])->toBe('PROD-API123');
+});
+
+it('addProduct throws RuntimeException when createProduct returns an error response', function () {
+    $client = $this->createPartialMock(PayPalClient::class, ['createProduct']);
+    $client->method('createProduct')->willReturn([
+        'error' => ['details' => [['description' => 'Product creation failed']]],
+    ]);
+
+    expect(fn () => $client->addProduct('Demo', 'Desc', 'SERVICE', 'SOFTWARE'))
+        ->toThrow(RuntimeException::class, 'Product creation failed');
+});
+
+it('addProduct throws RuntimeException when createProduct returns a non-array response', function () {
+    $client = $this->createPartialMock(PayPalClient::class, ['createProduct']);
+    $client->method('createProduct')->willReturn('unexpected-response');
+
+    expect(fn () => $client->addProduct('Demo', 'Desc', 'SERVICE', 'SOFTWARE'))
+        ->toThrow(RuntimeException::class, 'unexpected response format');
 });
 
 it('addProduct is idempotent when product is already set', function () {
