@@ -40,6 +40,10 @@ trait PayPalVerifyIPN
 
         $params = json_decode($request->getContent());
 
+        if ($params === null) {
+            return ['error' => 'Invalid or empty request body'];
+        }
+
         $payload = [
             'auth_algo' => $headers['PAYPAL-AUTH-ALGO'][0],
             'cert_url' => $headers['PAYPAL-CERT-URL'][0],
