@@ -245,4 +245,28 @@ trait DisputesActions
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Send a message about a dispute to the other party.
+     *
+     *
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_send-message
+     */
+    public function sendDisputeMessage(string $dispute_id, string $message)
+    {
+        $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/send-message";
+
+        $this->options['json'] = [
+            'message' => $message,
+        ];
+
+        $this->verb = 'post';
+
+        return $this->doPayPalRequest();
+    }
 }

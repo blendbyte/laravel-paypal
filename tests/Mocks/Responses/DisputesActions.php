@@ -44,4 +44,17 @@ trait DisputesActions
   ]
 }', true);
     }
+
+    private function mockSendDisputeMessageResponse(): array
+    {
+        return Utils::jsonDecode('{
+  "links": [
+    {
+      "rel": "self",
+      "method": "GET",
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454"
+    }
+  ]
+}', true);
+    }
 }

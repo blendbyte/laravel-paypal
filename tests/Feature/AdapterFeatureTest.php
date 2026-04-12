@@ -633,6 +633,27 @@ it('can decline dispute offer resolution', function () {
     expect($response)->toHaveKey('links');
 });
 
+it('can send a message about a dispute', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient(
+        $this->mock_http_client(
+            $this->mockSendDisputeMessageResponse()
+        )
+    );
+
+    $response = $this->client->sendDisputeMessage(
+        'PP-000-000-651-454',
+        'I have shipped the item. Tracking number: 1234567890.'
+    );
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('links');
+});
+
 it('can generate unique invoice number', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,

@@ -38,3 +38,16 @@ it('can acknowledge item is returned for raised dispute', function () {
 
     expect($mockClient->{$expectedMethod}('PP-000-000-651-454', 'I have received the item back.', 'ITEM_RECEIVED'))->toBe($expectedResponse);
 });
+
+it('can send a message about a dispute', function () {
+    $expectedResponse = $this->mockSendDisputeMessageResponse();
+
+    $expectedMethod = 'sendDisputeMessage';
+
+    $mockClient = $this->mock_client($expectedResponse, $expectedMethod, true);
+
+    $mockClient->setApiCredentials($this->getMockCredentials());
+    $mockClient->getAccessToken();
+
+    expect($mockClient->{$expectedMethod}('PP-000-000-651-454', 'I have shipped the item. Tracking number: 1234567890.'))->toBe($expectedResponse);
+});
