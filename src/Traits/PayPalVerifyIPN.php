@@ -4,7 +4,6 @@ namespace Blendbyte\PayPal\Traits;
 
 use Blendbyte\PayPal\Services\PayPal;
 use Illuminate\Http\Request;
-use Psr\Http\Message\StreamInterface;
 
 trait PayPalVerifyIPN
 {
@@ -21,7 +20,7 @@ trait PayPalVerifyIPN
      * Verify incoming IPN through a web hook id.
      *
      *
-     * @return array<string, mixed>|StreamInterface|string
+     * @return array<string, mixed>|string
      *
      * @throws \Throwable
      */
@@ -36,8 +35,6 @@ trait PayPalVerifyIPN
             ! isset($headers['PAYPAL-TRANSMISSION-TIME'][0]) ||
             ! isset($this->webhook_id)
         ) {
-            \Log::error('Invalid headers or webhook id supplied for paypal webhook');
-
             return ['error' => 'Invalid headers or webhook id provided'];
         }
 
