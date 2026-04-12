@@ -1173,6 +1173,19 @@ it('throws exception on search invoices with invalid date ranges', function () {
     expect(fn () => $this->client->addInvoiceFilterByDateRange('2018-07-01', '2018-06-21', 'invoice_date')->searchInvoices())->toThrow(Exception::class);
 });
 
+it('normalises non-ISO date strings to Y-m-d format in date range filter', function () {
+    // Regression: Carbon::parse() was used to validate ordering but the raw
+    // input strings were stored verbatim. Passing "January 5 2024" or "2024-1-5"
+    // would store those literals and send them to the PayPal API unchanged.
+    $this->client->addInvoiceFilterByDateRange('January 1 2018', 'June 21 2018', 'invoice_date');
+
+    $prop = (new ReflectionClass($this->client))->getProperty('invoice_search_filters');
+    $filters = $prop->getValue($this->client);
+
+    expect($filters['invoice_date_range']['start'])->toBe('2018-01-01');
+    expect($filters['invoice_date_range']['end'])->toBe('2018-06-21');
+});
+
 it('throws exception on search invoices with invalid date range type', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
