@@ -128,20 +128,27 @@ trait WebHooksVerification
      */
     protected function fetchCert(string $url): string
     {
-        if (! isset(self::$certCache[$url])) {
-            $context = stream_context_create([
-                'ssl' => [
-                    'verify_peer'      => true,
-                    'verify_peer_name' => true,
-                ],
-            ]);
-
-            $pem = file_get_contents($url, false, $context);
-
-            self::$certCache[$url] = $pem !== false ? $pem : '';
+        if (isset(self::$certCache[$url])) {
+            return self::$certCache[$url];
         }
 
-        return self::$certCache[$url];
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer'      => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $pem = file_get_contents($url, false, $context);
+
+        if ($pem === false) {
+            // Do NOT cache failures — let the next request retry the fetch.
+            return '';
+        }
+
+        self::$certCache[$url] = $pem;
+
+        return $pem;
     }
 
     /**
