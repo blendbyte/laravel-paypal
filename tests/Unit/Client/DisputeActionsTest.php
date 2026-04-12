@@ -76,3 +76,93 @@ it('can send a message about a dispute', function () {
 
     expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });
+
+it('can make an offer to resolve a dispute', function () {
+    $expectedResponse = $this->mockAcceptDisputesClaimResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454/make-offer';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+        'json' => $this->makeOfferToResolveDisputeParams(),
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can escalate a dispute to a claim', function () {
+    $expectedResponse = $this->mockAcceptDisputesClaimResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454/escalate';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+        'json' => $this->escalateDisputeToClaimParams(),
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can update dispute status', function () {
+    $expectedResponse = $this->mockAcceptDisputesClaimResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454/require-evidence';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+        'json' => $this->updateDisputeStatusParams(),
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can settle a dispute', function () {
+    $expectedResponse = $this->mockAcceptDisputesClaimResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454/adjudicate';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+        'json' => $this->settleDisputeParams(),
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
+
+it('can decline a dispute offer resolution', function () {
+    $expectedResponse = $this->mockAcceptDisputesClaimResponse();
+
+    $expectedEndpoint = 'https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-000-000-651-454/deny-offer';
+    $expectedParams   = [
+        'headers' => [
+            'Accept'          => 'application/json',
+            'Accept-Language' => 'en_US',
+            'Authorization'   => 'Bearer some-token',
+        ],
+        'json' => $this->declineDisputeOfferResolutionParams(),
+    ];
+
+    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+
+    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+});
