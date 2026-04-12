@@ -25,6 +25,42 @@ trait Helpers
     }
 
     /**
+     * Create an order with the stored payment source automatically injected.
+     *
+     * Use this alongside setPaymentSourceApplePay(), setPaymentSourceGooglePay(),
+     * setPaymentSourceVenmo(), setPaymentSourceCard(), or setPaymentSourcePayPal()
+     * to avoid manually constructing the payment_source key in the order body.
+     *
+     * If an experience_context has been set (via setReturnUrl(), setBrandName(),
+     * etc.), it is nested inside the payment source method — matching the same
+     * behaviour as setupOrderConfirmation().
+     *
+     * @param array<string, mixed> $data Order body (intent, purchase_units, etc.)
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws Throwable
+     */
+    public function createOrderWithPaymentSource(array $data)
+    {
+        $payment_source = $this->payment_source;
+
+        if (! empty($this->experience_context)) {
+            $method = empty($payment_source) ? 'paypal' : (string) array_key_first($payment_source);
+            $payment_source[$method] = array_merge(
+                $payment_source[$method] ?? [],
+                ['experience_context' => $this->experience_context]
+            );
+        }
+
+        if (! empty($payment_source)) {
+            $data['payment_source'] = $payment_source;
+        }
+
+        return $this->createOrder($data);
+    }
+
+    /**
      * Confirm payment for an order.
      *
      *

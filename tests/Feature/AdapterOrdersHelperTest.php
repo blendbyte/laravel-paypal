@@ -48,6 +48,107 @@ it('can set shipping address change callback url', function () {
     expect($response)->toHaveKey('id');
 });
 
+it('can create an order with apple pay payment source', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreateOrdersResponse()));
+
+    $this->client = $this->client->setPaymentSourceApplePay([
+        'token' => ['id' => 'abc123', 'type' => 'APPLE_PAY'],
+    ]);
+
+    $response = $this->client->createOrderWithPaymentSource([
+        'intent' => 'CAPTURE',
+        'purchase_units' => [['amount' => ['currency_code' => 'USD', 'value' => '10.00']]],
+    ]);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
+it('can create an order with google pay payment source', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreateOrdersResponse()));
+
+    $this->client = $this->client->setPaymentSourceGooglePay([
+        'card' => ['name' => 'John Doe'],
+    ]);
+
+    $response = $this->client->createOrderWithPaymentSource([
+        'intent' => 'CAPTURE',
+        'purchase_units' => [['amount' => ['currency_code' => 'USD', 'value' => '10.00']]],
+    ]);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
+it('can create an order with venmo payment source', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreateOrdersResponse()));
+
+    $this->client = $this->client->setPaymentSourceVenmo([
+        'email_address' => 'venmo-user@example.com',
+    ]);
+
+    $response = $this->client->createOrderWithPaymentSource([
+        'intent' => 'CAPTURE',
+        'purchase_units' => [['amount' => ['currency_code' => 'USD', 'value' => '10.00']]],
+    ]);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
+it('can create an order with payment source and experience context', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreateOrdersResponse()));
+
+    $this->client = $this->client
+        ->setPaymentSourceApplePay(['token' => ['id' => 'abc123', 'type' => 'APPLE_PAY']])
+        ->setReturnAndCancelUrl('https://example.com/success', 'https://example.com/cancel');
+
+    $response = $this->client->createOrderWithPaymentSource([
+        'intent' => 'CAPTURE',
+        'purchase_units' => [['amount' => ['currency_code' => 'USD', 'value' => '10.00']]],
+    ]);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
+it('creates order without payment_source when none is set', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreateOrdersResponse()));
+
+    $response = $this->client->createOrderWithPaymentSource([
+        'intent' => 'CAPTURE',
+        'purchase_units' => [['amount' => ['currency_code' => 'USD', 'value' => '10.00']]],
+    ]);
+
+    expect($response)->not->toBeEmpty();
+    expect($response)->toHaveKey('id');
+});
+
 it('can confirm payment for an order', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,

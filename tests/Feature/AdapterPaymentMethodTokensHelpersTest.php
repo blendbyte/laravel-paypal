@@ -129,6 +129,46 @@ it('can set customer id for vault operations', function () {
     expect($response)->toHaveKey('customer');
 });
 
+it('can set payment source for apple pay', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $response_data = $this->mockCreatePaymentSetupTokenResponse();
+    $response_data['payment_source']['apple_pay'] = ['token' => ['id' => 'abc123', 'type' => 'APPLE_PAY']];
+    unset($response_data['payment_source']['card']);
+
+    $this->client->setClient($this->mock_http_client($response_data));
+
+    $this->client = $this->client->setPaymentSourceApplePay(['token' => ['id' => 'abc123', 'type' => 'APPLE_PAY']])
+        ->setCustomerSource('customer_4029352050');
+
+    $response = $this->client->sendPaymentMethodRequest(true);
+
+    expect($response)->toHaveKey('payment_source');
+});
+
+it('can set payment source for google pay', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $response_data = $this->mockCreatePaymentSetupTokenResponse();
+    $response_data['payment_source']['google_pay'] = ['card' => ['name' => 'John Doe']];
+    unset($response_data['payment_source']['card']);
+
+    $this->client->setClient($this->mock_http_client($response_data));
+
+    $this->client = $this->client->setPaymentSourceGooglePay(['card' => ['name' => 'John Doe']])
+        ->setCustomerSource('customer_4029352050');
+
+    $response = $this->client->sendPaymentMethodRequest(true);
+
+    expect($response)->toHaveKey('payment_source');
+});
+
 it('can create payment source from a venmo account', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
