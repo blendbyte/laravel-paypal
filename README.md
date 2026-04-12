@@ -302,6 +302,36 @@ $provider->getAccessToken();
 $provider->setCurrency('EUR');
 ```
 
+### Error Handling
+
+By default, API errors are returned as an array with an `error` key — this preserves backward compatibility with `srmklive/laravel-paypal`:
+
+```php
+$response = $provider->showOrderDetails('bad-id');
+
+if (isset($response['error'])) {
+    // $response['error'] is the decoded PayPal error object or a plain string
+}
+```
+
+Opt in to exceptions with `withExceptions()`. All API errors will then throw `PayPalApiException` instead:
+
+```php
+use Blendbyte\PayPal\Exceptions\PayPalApiException;
+
+$provider->withExceptions();
+
+try {
+    $order = $provider->showOrderDetails('bad-id');
+} catch (PayPalApiException $e) {
+    $e->getMessage();       // JSON-encoded error string
+    $e->getPayPalError();   // decoded array (e.g. ['name' => 'RESOURCE_NOT_FOUND', ...])
+                            // or a plain string for non-JSON errors
+}
+```
+
+Call `withoutExceptions()` to revert to silent mode. Both methods are fluent.
+
 ---
 
 ## PayPal Fastlane

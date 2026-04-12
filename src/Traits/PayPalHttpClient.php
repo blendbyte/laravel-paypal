@@ -2,6 +2,7 @@
 
 namespace Blendbyte\PayPal\Traits;
 
+use Blendbyte\PayPal\Exceptions\PayPalApiException;
 use Blendbyte\PayPal\Services\Str;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
@@ -87,6 +88,39 @@ trait PayPalHttpClient
      * @var string
      */
     protected $verb = 'post';
+
+    /**
+     * When true, doPayPalRequest() throws PayPalApiException on error
+     * instead of returning ['error' => ...].
+     *
+     * @var bool
+     */
+    private bool $throwOnError = false;
+
+    /**
+     * Enable exception mode: API errors throw PayPalApiException instead
+     * of returning ['error' => ...].
+     *
+     * This is opt-in and non-breaking — existing code that checks
+     * $response['error'] continues to work until this is called.
+     */
+    public function withExceptions(): static
+    {
+        $this->throwOnError = true;
+
+        return $this;
+    }
+
+    /**
+     * Revert to the default silent-error mode: API errors return
+     * ['error' => ...] rather than throwing.
+     */
+    public function withoutExceptions(): static
+    {
+        $this->throwOnError = false;
+
+        return $this;
+    }
 
     /**
      * Set curl constants if not defined.
@@ -296,7 +330,17 @@ trait PayPalHttpClient
         } catch (RuntimeException $t) {
             unset($this->options['headers']['PayPal-Request-Id']);
 
-            $error = ($decode === false) || (Str::isJson($t->getMessage()) === false) ? $t->getMessage() : Utils::jsonDecode($t->getMessage(), true);
+            // Decode JSON error bodies; fall back to the raw message string for
+            // non-JSON responses (network timeouts, plain-text errors, etc.).
+            $decoded = ($decode === false) || (Str::isJson($t->getMessage()) === false)
+                ? null
+                : Utils::jsonDecode($t->getMessage(), true);
+
+            $error = is_array($decoded) ? $decoded : $t->getMessage();
+
+            if ($this->throwOnError) {
+                throw new PayPalApiException($error, 0, $t);
+            }
 
             return ['error' => $error];
         }
