@@ -11,7 +11,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "ext-curl": "*",
         "guzzlehttp/guzzle": "^7.9",
         "guzzlehttp/psr7": "^2.0",
         "illuminate/support": "^12.0|^13.0",
@@ -20,9 +19,9 @@
     },
     "require-dev": {
         "larastan/larastan": "^3.0",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^12.0|^13.0",
         "laravel/pint": "^1.29",
-        "orchestra/testbench": "^10.0",
+        "orchestra/testbench": "^10.0|^11.0",
         "pestphp/pest": "^3.0",
         "phpunit/phpunit": "^11.0",
         "symfony/var-dumper": "^7.0"
