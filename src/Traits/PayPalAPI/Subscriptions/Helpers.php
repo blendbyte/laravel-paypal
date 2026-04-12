@@ -270,8 +270,6 @@ trait Helpers
             return $this;
         }
 
-        $request_id = bin2hex(random_bytes(8));
-
         $product = $this->createProduct([
             'name' => $name,
             'description' => $description,
@@ -329,8 +327,6 @@ trait Helpers
         if ($this->product === null) {
             throw new \RuntimeException('No product set. Call addProduct() or addProductById() first.');
         }
-
-        $request_id = bin2hex(random_bytes(8));
 
         $plan_params = [
             'product_id' => $this->product['id'],

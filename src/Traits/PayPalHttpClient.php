@@ -77,10 +77,9 @@ trait PayPalHttpClient
 
     /**
      * Validate SSL details when creating HTTP client.
-     *
-     * @var bool
+     * Null means "not yet set by config"; setDefaultValues() will default it to true.
      */
-    private $validateSSL;
+    private ?bool $validateSSL = null;
 
     /**
      * Request type.
@@ -241,8 +240,10 @@ trait PayPalHttpClient
         $locale = empty($this->locale) ? 'en_US' : $this->locale;
         $this->locale = $locale;
 
-        $validateSSL = empty($this->validateSSL) ? true : $this->validateSSL;
-        $this->validateSSL = $validateSSL;
+        // Use null-coalescing assignment so that an explicit false is preserved.
+        // empty(false) === true, so the old ternary silently reset false to true,
+        // making it impossible to disable SSL verification via config.
+        $this->validateSSL ??= true;
 
         $this->showTotals(true);
     }
@@ -273,6 +274,12 @@ trait PayPalHttpClient
             $request = $request->withHeader($name, $value);
         }
 
+        // Apply HTTP Basic Auth when options['auth'] is set (used by getAccessToken()).
+        if (isset($this->options['auth']) && is_array($this->options['auth'])) {
+            [$user, $pass] = $this->options['auth'];
+            $request = $request->withHeader('Authorization', 'Basic '.base64_encode("{$user}:{$pass}"));
+        }
+
         if (isset($this->options['json'])) {
             $body = Utils::jsonEncode($this->options['json']);
             $request = $request
@@ -285,6 +292,12 @@ trait PayPalHttpClient
             $request = $request
                 ->withBody($multipart)
                 ->withHeader('Content-Type', 'multipart/form-data; boundary='.$multipart->getBoundary());
+        } elseif (isset($this->options['form_params']) && is_array($this->options['form_params'])) {
+            // URL-encoded form body (used by getAccessToken()).
+            $body = http_build_query($this->options['form_params'], '', '&', PHP_QUERY_RFC1738);
+            $request = $request
+                ->withBody($factory->createStream($body))
+                ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
         }
 
         try {

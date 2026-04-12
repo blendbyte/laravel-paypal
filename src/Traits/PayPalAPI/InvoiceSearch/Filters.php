@@ -89,6 +89,7 @@ trait Filters
         foreach ($status as $item) {
             if (! in_array($item, $this->invoices_status_types)) {
                 $invalid_status = true;
+                break;
             }
         }
 
@@ -161,8 +162,8 @@ trait Filters
         }
 
         $this->invoice_search_filters["{$date_type}_range"] = [
-            'start' => $start_date,
-            'end' => $end_date,
+            'start' => $start_date_obj->toDateString(),
+            'end' => $end_date_obj->toDateString(),
         ];
 
         return $this;

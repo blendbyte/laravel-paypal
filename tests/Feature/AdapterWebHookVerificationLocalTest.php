@@ -149,6 +149,47 @@ it('returns false when required headers are missing', function () {
     expect($this->client->verifyWebHookLocally([], TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeFalse();
 });
 
+it('does not cache a failed certificate fetch, allowing retry on next request', function () {
+    // Regression: the old code cached empty string on failure (self::$certCache[$url] = ''),
+    // so a transient network error permanently disabled verification for that URL.
+
+    // Subclass with a controllable fetchCert so no real HTTP request is made.
+    $client = new class ($this->getApiCredentials()) extends \Blendbyte\PayPal\Services\PayPal {
+        public int $fetchCount = 0;
+
+        public string $certToReturn = '';
+
+        protected function fetchCert(string $url): string
+        {
+            $this->fetchCount++;
+
+            return $this->certToReturn;
+        }
+    };
+    $client->setClient($this->mock_http_client($this->mockAccessTokenResponse()));
+    $client->getAccessToken();
+
+    $headers = signedWebHookHeaders(
+        $this->test_key,
+        '69cd13f0-d67a-11e5-baa3-778b53f4ae55',
+        '2016-02-18T20:01:35Z',
+        TEST_WEBHOOK_ID,
+        TEST_RAW_BODY,
+        TEST_CERT_URL,
+    );
+
+    // First call: fetchCert returns '' (simulated network error).
+    $client->certToReturn = '';
+    expect($client->verifyWebHookLocally($headers, TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeFalse();
+    expect($client->fetchCount)->toBe(1);
+
+    // Second call with a valid cert — if the empty string had been cached,
+    // fetchCert would not be called again (count stays 1) and verification would fail.
+    $client->certToReturn = $this->test_cert;
+    expect($client->verifyWebHookLocally($headers, TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeTrue();
+    expect($client->fetchCount)->toBe(2);
+});
+
 it('handles case-insensitive header names', function () {
     injectPayPalCert($this->client, TEST_CERT_URL, $this->test_cert);
 

@@ -67,7 +67,13 @@ trait Trackers
      */
     public function listTrackingDetails(string $transaction_id, ?string $tracking_number = null)
     {
-        $this->apiEndPoint = "v1/shipping/trackers?transaction_id={$transaction_id}".(! empty($tracking_number) ? "&tracking_number={$tracking_number}" : '');
+        $params = ['transaction_id' => $transaction_id];
+
+        if ($tracking_number !== null) {
+            $params['tracking_number'] = $tracking_number;
+        }
+
+        $this->apiEndPoint = 'v1/shipping/trackers?'.http_build_query($params);
 
         $this->verb = 'get';
 

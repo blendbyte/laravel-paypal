@@ -3,7 +3,6 @@
 namespace Blendbyte\PayPal;
 
 use Blendbyte\PayPal\Services\PayPal;
-use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 use Exception;
 
 class PayPalFacadeAccessor
@@ -38,7 +37,7 @@ class PayPalFacadeAccessor
      */
     public static function setProvider(): PayPal
     {
-        $provider = new PayPalClient;
+        $provider = new PayPal;
         self::$provider = $provider;
 
         return $provider;

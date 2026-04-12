@@ -6,6 +6,7 @@ use Blendbyte\PayPal\Services\PayPal as PayPalClient;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler as HttpMockHandler;
 use GuzzleHttp\HandlerStack as HttpHandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response as HttpResponse;
 use GuzzleHttp\Psr7\Stream as HttpStream;
 use GuzzleHttp\Utils;
@@ -28,17 +29,43 @@ trait MockClientClasses
         return new HttpClient(['handler' => $handler]);
     }
 
+    /**
+     * Like mock_http_client() but also captures every PSR-7 transaction into
+     * $container so tests can assert on the exact request that was sent.
+     *
+     * Usage:
+     *   $container = [];
+     *   $this->client->setClient($this->mock_http_client_capturing($response, $container));
+     *   $this->client->someApiCall();
+     *   $request = $container[0]['request']; // PSR-7 RequestInterface
+     *
+     * @param  mixed                                             $response  Same as mock_http_client().
+     * @param  array<int, array{request: mixed, response: mixed}>  $container Populated after the call.
+     */
+    private function mock_http_client_capturing($response, array &$container): HttpClient
+    {
+        $mock = new HttpMockHandler([
+            new HttpResponse(
+                200,
+                [],
+                ($response === false) ? '' : Utils::jsonEncode($response)
+            ),
+        ]);
+
+        $stack = HttpHandlerStack::create($mock);
+        $stack->push(Middleware::history($container));
+
+        return new HttpClient(['handler' => $stack]);
+    }
+
     private function mock_http_request($expectedResponse, $expectedEndpoint, $expectedParams, $expectedMethod = 'post')
     {
-        $mockResponse = $this->getMockBuilder(ResponseInterface::class)
-            ->getMock();
+        $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->expects($this->exactly(1))
             ->method('getBody')
             ->willReturn(new HttpStream(fopen('data://text/plain,'.$expectedResponse, 'r')));
 
-        $mockHttpClient = $this->getMockBuilder(HttpClient::class)
-            ->onlyMethods([$expectedMethod])
-            ->getMock();
+        $mockHttpClient = $this->createPartialMock(HttpClient::class, [$expectedMethod]);
         $mockHttpClient->expects($this->once())
             ->method($expectedMethod)
             ->with($expectedEndpoint, $expectedParams)
@@ -53,9 +80,7 @@ trait MockClientClasses
         $methods[] = ($token) ? 'getAccessToken' : '';
         $methods[] = isset($additionalMethod) ? $additionalMethod : '';
 
-        $mockClient = $this->getMockBuilder(PayPalClient::class)
-            ->onlyMethods(array_filter($methods))
-            ->getMock();
+        $mockClient = $this->createPartialMock(PayPalClient::class, array_filter($methods));
 
         if ($token) {
             $mockClient->expects($this->exactly(1))
