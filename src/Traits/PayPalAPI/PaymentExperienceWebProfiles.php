@@ -4,11 +4,21 @@ namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
 use Psr\Http\Message\StreamInterface;
 
+/**
+ * @deprecated PayPal has deprecated the v1/payment-experience/web-profiles API.
+ *             Use the `experience_context` field on Orders v2 instead, via the
+ *             fluent helpers in PayPalExperienceContext (setReturnUrl(),
+ *             setCancelUrl(), setBrandName(), etc.).
+ *
+ * @see https://developer.paypal.com/docs/api/payment-experience/v1/
+ * @see \Blendbyte\PayPal\Traits\PayPalExperienceContext
+ */
 trait PaymentExperienceWebProfiles
 {
     /**
      * List Web Experience Profiles.
      *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -28,7 +38,7 @@ trait PaymentExperienceWebProfiles
     /**
      * Create a Web Experience Profile.
      *
-     *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @param array<string, mixed> $data
      *
@@ -52,7 +62,7 @@ trait PaymentExperienceWebProfiles
     /**
      * Delete a Web Experience Profile.
      *
-     *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -72,7 +82,7 @@ trait PaymentExperienceWebProfiles
     /**
      * Partially update a Web Experience Profile.
      *
-     *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @param array<string, mixed> $data
      *
@@ -94,9 +104,9 @@ trait PaymentExperienceWebProfiles
     }
 
     /**
-     * Partially update a Web Experience Profile.
+     * Update a Web Experience Profile.
      *
-     *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @param array<string, mixed> $data
      *
@@ -118,9 +128,9 @@ trait PaymentExperienceWebProfiles
     }
 
     /**
-     * Delete a Web Experience Profile.
+     * Show details for a Web Experience Profile.
      *
-     *
+     * @deprecated Use Orders v2 with experience_context instead.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
