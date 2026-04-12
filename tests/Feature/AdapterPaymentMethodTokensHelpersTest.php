@@ -169,6 +169,78 @@ it('can set payment source for google pay', function () {
     expect($response)->toHaveKey('payment_source');
 });
 
+it('can set card billing address for acdc', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreatePaymentSetupTokenResponse()));
+
+    $this->client = $this->client
+        ->setPaymentSourceCard(['name' => 'John Doe'])
+        ->setCardBillingAddress('123 Main St', 'San Jose', 'CA', '95131', 'US');
+
+    $response = $this->client->sendPaymentMethodRequest(true);
+
+    expect($response)->toHaveKey('payment_source');
+});
+
+it('can set card vaulting for acdc', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreatePaymentSetupTokenResponse()));
+
+    $this->client = $this->client
+        ->setPaymentSourceCard(['name' => 'John Doe'])
+        ->setCardVaulting('ON_SUCCESS');
+
+    $response = $this->client->sendPaymentMethodRequest(true);
+
+    expect($response)->toHaveKey('payment_source');
+});
+
+it('can set card verification method for acdc', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreatePaymentSetupTokenResponse()));
+
+    $this->client = $this->client
+        ->setPaymentSourceCard(['name' => 'John Doe'])
+        ->setCardVerification('SCA_ALWAYS');
+
+    $response = $this->client->sendPaymentMethodRequest(true);
+
+    expect($response)->toHaveKey('payment_source');
+});
+
+it('can combine card vaulting and verification without overwriting each other', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $this->client->setClient($this->mock_http_client($this->mockCreatePaymentSetupTokenResponse()));
+
+    $this->client = $this->client
+        ->setPaymentSourceCard(['name' => 'John Doe'])
+        ->setCardVaulting('ON_SUCCESS')
+        ->setCardVerification('SCA_WHEN_REQUIRED');
+
+    // Verify both attributes are set correctly on the payment source
+    $source = $this->client->getPaymentSource();
+    expect($source['card']['attributes'])->toHaveKey('vault');
+    expect($source['card']['attributes'])->toHaveKey('verification');
+    expect($source['card']['attributes']['vault']['store_in_vault'])->toBe('ON_SUCCESS');
+    expect($source['card']['attributes']['verification']['method'])->toBe('SCA_WHEN_REQUIRED');
+});
+
 it('can create payment source from a venmo account', function () {
     $this->client->setAccessToken([
         'access_token' => $this->access_token,
