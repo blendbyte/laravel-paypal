@@ -453,9 +453,11 @@ it('can provide evidence for a dispute claim', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAcceptDisputesClaimResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
         )
     );
 
@@ -472,6 +474,13 @@ it('can provide evidence for a dispute claim', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('links');
+
+    // Regression guard: a leading '/' on the endpoint produces a double-slash
+    // URL (e.g. https://api-m.sandbox.paypal.com//v1/...) which PayPal rejects.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    expect((string) $request->getUri())->not->toContain('//v1/');
+    expect((string) $request->getUri())->toContain('/v1/customer/disputes/PP-D-27803/provide-evidence');
 });
 
 it('throws exception if invalid file as evidence is provided for a dispute claim', function () {
@@ -550,9 +559,11 @@ it('can accept dispute claim', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAcceptDisputesClaimResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
         )
     );
 
@@ -563,6 +574,39 @@ it('can accept dispute claim', function () {
 
     expect($response)->not->toBeEmpty();
     expect($response)->toHaveKey('links');
+
+    // Default claim type must be REFUND when none is supplied.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $body = json_decode((string) $request->getBody(), true);
+    expect($body['accept_claim_type'])->toBe('REFUND');
+});
+
+it('acceptDisputeClaim allows caller to override accept_claim_type', function () {
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockAcceptDisputesClaimResponse(),
+            $container
+        )
+    );
+
+    $this->client->acceptDisputeClaim(
+        'PP-D-27803',
+        'Sending replacement item.',
+        ['accept_claim_type' => 'MERCHANDISE']
+    );
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $body = json_decode((string) $request->getBody(), true);
+    expect($body['accept_claim_type'])->toBe('MERCHANDISE');
+    expect($body['note'])->toBe('Sending replacement item.');
 });
 
 it('can accept dispute offer resolution', function () {
