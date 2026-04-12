@@ -2255,9 +2255,11 @@ it('can list tracking details', function () {
         'token_type' => 'Bearer',
     ]);
 
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockGetTrackingDetailsResponse()
+        $this->mock_http_client_capturing(
+            $this->mockGetTrackingDetailsResponse(),
+            $container
         )
     );
 
@@ -2267,6 +2269,36 @@ it('can list tracking details', function () {
     expect($response)->toBe($this->mockGetTrackingDetailsResponse());
     expect($response)->toHaveKey('transaction_id');
     expect($response)->toHaveKey('tracking_number');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('transaction_id=8MC585209K746392H-443844607820');
+});
+
+it('URL-encodes tracking_number when it contains special characters', function () {
+    // Regression: bare string interpolation left special characters raw in the URL.
+    // Some carrier tracking numbers include spaces or other non-URL-safe characters.
+    $this->client->setAccessToken([
+        'access_token' => $this->access_token,
+        'token_type' => 'Bearer',
+    ]);
+
+    $container = [];
+    $this->client->setClient(
+        $this->mock_http_client_capturing(
+            $this->mockGetTrackingDetailsResponse(),
+            $container
+        )
+    );
+
+    $this->client->listTrackingDetails('8MC585209K746392H', 'TRACK 123+456');
+
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+    $url = (string) $request->getUri();
+    expect($url)->toContain('tracking_number=TRACK+123%2B456');
+    expect($url)->not->toContain('tracking_number=TRACK 123');
 });
 
 it('can get tracking details for tracking id', function () {
