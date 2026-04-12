@@ -32,17 +32,25 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader
 
       - name: Run tests
-        run: ./vendor/bin/pest --ci ${{ matrix.php == '8.5' && '--coverage --coverage-clover coverage.xml' || '' }}
+        run: |
+          if [ "${{ matrix.php }}" = "8.5" ]; then
+            mkdir -p build/logs
+            ./vendor/bin/pest --ci --coverage-clover build/logs/clover.xml
+          else
+            ./vendor/bin/pest --ci
+          fi
 
       - name: Install PHP Coveralls library
+        if: matrix.php == '8.5'
         env:
           PHP_VERSION: ${{ matrix.php }}
         run:
           composer global require --dev php-coveralls/php-coveralls
       - name: Upload coverage results to Coveralls
+        if: matrix.php == '8.5'
         env:
           PHP_VERSION: ${{ matrix.php }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: php-${{ matrix.php }}
         run:
