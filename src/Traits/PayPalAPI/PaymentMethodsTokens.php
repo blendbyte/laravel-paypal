@@ -3,6 +3,7 @@
 namespace Blendbyte\PayPal\Traits\PayPalAPI;
 
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 trait PaymentMethodsTokens
 {
@@ -42,6 +43,10 @@ trait PaymentMethodsTokens
      */
     public function listPaymentSourceTokens(int $page = 1, int $page_size = 10, bool $totals = true)
     {
+        if (empty($this->customer_source['id'])) {
+            throw new RuntimeException('A customer ID must be set via setCustomerId() before listing payment tokens.');
+        }
+
         $total_required = $totals ? 'true' : 'false';
         $this->apiEndPoint = "v3/vault/payment-tokens?customer_id={$this->customer_source['id']}&page={$page}&page_size={$page_size}&total_required={$total_required}";
 
