@@ -54,6 +54,10 @@ trait Helpers
      */
     public function setupSubscription(string $customer_name, string $customer_email, string $start_date = '')
     {
+        if ($this->billing_plan === null) {
+            throw new \RuntimeException('No billing plan set. Call addBillingPlanById() or a plan creation method first.');
+        }
+
         $body = [
             'plan_id' => $this->billing_plan['id'],
             'quantity' => 1,
@@ -322,6 +326,10 @@ trait Helpers
      */
     protected function addBillingPlan(string $name, string $description, array $billing_cycles): void
     {
+        if ($this->product === null) {
+            throw new \RuntimeException('No product set. Call addProduct() or addProductById() first.');
+        }
+
         $request_id = bin2hex(random_bytes(8));
 
         $plan_params = [

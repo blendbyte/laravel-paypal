@@ -30,9 +30,9 @@ class VerifyDocuments
      * Get Mime type from filename.
      *
      * @param  string  $file
-     * @return string
+     * @return string|null
      */
-    public static function getMimeType($file)
+    public static function getMimeType($file): ?string
     {
         return MimeType::fromFilename($file);
     }
@@ -58,7 +58,7 @@ class VerifyDocuments
         foreach ($files as $file) {
             $mime_type = self::getMimeType($file);
 
-            if (! in_array($mime_type, self::$dispute_evidence_types)) {
+            if ($mime_type === null || ! in_array($mime_type, self::$dispute_evidence_types)) {
                 $validFile = false;
                 break;
             }
