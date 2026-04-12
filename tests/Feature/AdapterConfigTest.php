@@ -93,3 +93,28 @@ it('accepts max_retries in credentials and disables retry when zero', function (
 
     expect($client)->toBeInstanceOf(PayPalClient::class);
 });
+
+it('preserves validate_ssl = true from credentials', function () {
+    $credentials = $this->getApiCredentials();
+    $credentials['validate_ssl'] = true;
+
+    $client = new PayPalClient($credentials);
+
+    $prop = (new ReflectionClass($client))->getProperty('validateSSL');
+
+    expect($prop->getValue($client))->toBeTrue();
+});
+
+it('preserves validate_ssl = false from credentials', function () {
+    // Regression: empty(false) === true caused the old ternary in setDefaultValues()
+    // to silently reset false back to true, making SSL verification impossible to
+    // disable regardless of the config value.
+    $credentials = $this->getApiCredentials();
+    $credentials['validate_ssl'] = false;
+
+    $client = new PayPalClient($credentials);
+
+    $prop = (new ReflectionClass($client))->getProperty('validateSSL');
+
+    expect($prop->getValue($client))->toBeFalse();
+});
