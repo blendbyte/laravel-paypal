@@ -35,4 +35,36 @@ trait DisputesActions
   "message": "I have shipped the item. Tracking number: 1234567890."
 }', true);
     }
+
+    protected function makeOfferToResolveDisputeParams(): array
+    {
+        return [
+            'note'         => 'Full refund to the customer.',
+            'offer_type'   => 'REFUND',
+            'offer_amount' => [
+                'currency_code' => 'USD',
+                'value'         => '10.00',
+            ],
+        ];
+    }
+
+    protected function escalateDisputeToClaimParams(): array
+    {
+        return ['note' => 'Escalating to a claim due to non-resolution.'];
+    }
+
+    protected function updateDisputeStatusParams(): array
+    {
+        return ['action' => 'SELLER_EVIDENCE'];
+    }
+
+    protected function settleDisputeParams(): array
+    {
+        return ['adjudication_outcome' => 'SELLER_FAVOR'];
+    }
+
+    protected function declineDisputeOfferResolutionParams(): array
+    {
+        return ['note' => 'I do not agree with the offer.'];
+    }
 }
