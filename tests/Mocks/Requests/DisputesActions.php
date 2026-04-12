@@ -28,4 +28,11 @@ trait DisputesActions
   "acknowledgement_type": "ITEM_RECEIVED"
 }', true);
     }
+
+    protected function sendDisputeMessageParams(): array
+    {
+        return Utils::jsonDecode('{
+  "message": "I have shipped the item. Tracking number: 1234567890."
+}', true);
+    }
 }
