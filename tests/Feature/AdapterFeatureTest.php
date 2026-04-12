@@ -21,9 +21,11 @@ it('returns error if invalid credentials are used to get access token', function
 });
 
 it('can get access token', function () {
+    $container = [];
     $this->client->setClient(
-        $this->mock_http_client(
-            $this->mockAccessTokenResponse()
+        $this->mock_http_client_capturing(
+            $this->mockAccessTokenResponse(),
+            $container
         )
     );
     $response = $this->client->getAccessToken();
@@ -32,6 +34,20 @@ it('can get access token', function () {
 
     expect($response)->toHaveKey('access_token');
     expect($response['access_token'])->not->toBeEmpty();
+
+    // Verify the actual PSR-7 request that was sent carried the right auth
+    // and body — this would have caught the PSR-18 migration regression.
+    /** @var \Psr\Http\Message\RequestInterface $request */
+    $request = $container[0]['request'];
+
+    $credentials = $this->getApiCredentials();
+    $expectedBasic = 'Basic '.base64_encode(
+        $credentials['sandbox']['client_id'].':'.$credentials['sandbox']['client_secret']
+    );
+
+    expect($request->getHeaderLine('Authorization'))->toBe($expectedBasic);
+    expect($request->getHeaderLine('Content-Type'))->toBe('application/x-www-form-urlencoded');
+    expect((string) $request->getBody())->toBe('grant_type=client_credentials');
 });
 
 it('can create a billing agreement token', function () {

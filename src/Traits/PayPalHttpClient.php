@@ -273,6 +273,12 @@ trait PayPalHttpClient
             $request = $request->withHeader($name, $value);
         }
 
+        // Apply HTTP Basic Auth when options['auth'] is set (used by getAccessToken()).
+        if (isset($this->options['auth']) && is_array($this->options['auth'])) {
+            [$user, $pass] = $this->options['auth'];
+            $request = $request->withHeader('Authorization', 'Basic '.base64_encode("{$user}:{$pass}"));
+        }
+
         if (isset($this->options['json'])) {
             $body = Utils::jsonEncode($this->options['json']);
             $request = $request
@@ -285,6 +291,12 @@ trait PayPalHttpClient
             $request = $request
                 ->withBody($multipart)
                 ->withHeader('Content-Type', 'multipart/form-data; boundary='.$multipart->getBoundary());
+        } elseif (isset($this->options['form_params']) && is_array($this->options['form_params'])) {
+            // URL-encoded form body (used by getAccessToken()).
+            $body = http_build_query($this->options['form_params'], '', '&', PHP_QUERY_RFC1738);
+            $request = $request
+                ->withBody($factory->createStream($body))
+                ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
         }
 
         try {

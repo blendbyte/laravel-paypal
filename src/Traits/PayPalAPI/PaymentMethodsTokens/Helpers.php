@@ -18,6 +18,19 @@ trait Helpers
     protected $customer_source = [];
 
     /**
+     * Return the current payment_source array.
+     *
+     * Useful for inspecting what has been built before passing it to
+     * createOrder() or createOrderWithPaymentSource().
+     *
+     * @return array<string, mixed>
+     */
+    public function getPaymentSource(): array
+    {
+        return $this->payment_source;
+    }
+
+    /**
      * Set payment method token by token id.
      */
     public function setTokenSource(string $id, string $type): PayPal
@@ -109,6 +122,70 @@ trait Helpers
     }
 
     /**
+     * Set billing address for the card payment source (ACDC / unbranded card).
+     *
+     * Merges into any existing payment_source.card data set by setPaymentSourceCard().
+     * Pass an empty string for $address_line_2 to omit it.
+     */
+    public function setCardBillingAddress(
+        string $address_line_1,
+        string $admin_area_2,
+        string $admin_area_1,
+        string $postal_code,
+        string $country_code,
+        string $address_line_2 = ''
+    ): PayPal {
+        $address = array_filter([
+            'address_line_1' => $address_line_1,
+            'address_line_2' => $address_line_2,
+            'admin_area_2' => $admin_area_2,
+            'admin_area_1' => $admin_area_1,
+            'postal_code' => $postal_code,
+            'country_code' => $country_code,
+        ]);
+
+        return $this->mergeCardDetails('billing_address', $address);
+    }
+
+    /**
+     * Configure card vaulting for an ACDC order.
+     *
+     * Call before createOrderWithPaymentSource() to instruct PayPal to vault the
+     * card on a successful payment. Use 'ON_SUCCESS' (default) or 'ON_CAPTURE'.
+     *
+     * Can be combined with setCardVerification() — both merge into
+     * payment_source.card.attributes without overwriting each other.
+     *
+     * @see https://developer.paypal.com/docs/checkout/advanced/customize/vault/
+     */
+    public function setCardVaulting(string $store_in_vault = 'ON_SUCCESS'): PayPal
+    {
+        return $this->mergeCardDetails('attributes', array_merge(
+            $this->getCardAttributes(),
+            ['vault' => ['store_in_vault' => $store_in_vault]]
+        ));
+    }
+
+    /**
+     * Set 3DS / SCA verification method for an ACDC order.
+     *
+     * Common values: SCA_ALWAYS (enforce 3DS always), SCA_WHEN_REQUIRED
+     * (only when mandated by issuer/regulation), AUTHENTICATE_IF_REQUIRED.
+     *
+     * Can be combined with setCardVaulting() — both merge into
+     * payment_source.card.attributes without overwriting each other.
+     *
+     * @see https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/
+     */
+    public function setCardVerification(string $method = 'SCA_ALWAYS'): PayPal
+    {
+        return $this->mergeCardDetails('attributes', array_merge(
+            $this->getCardAttributes(),
+            ['verification' => ['method' => $method]]
+        ));
+    }
+
+    /**
      * Set payment source details.
      *
      * @param array<string, mixed> $data
@@ -118,6 +195,36 @@ trait Helpers
         $this->payment_source[$source] = $data;
 
         return $this;
+    }
+
+    /**
+     * Merge a key into the existing payment_source.card object.
+     *
+     * @param array<string, mixed> $value
+     */
+    private function mergeCardDetails(string $key, array $value): PayPal
+    {
+        $current = $this->payment_source['card'] ?? null;
+        $card = is_array($current) ? $current : [];
+        $card[$key] = $value;
+
+        return $this->setPaymentSourceDetails('card', $card);
+    }
+
+    /**
+     * Return the current payment_source.card.attributes array, or [] if not set.
+     *
+     * @return array<string, mixed>
+     */
+    private function getCardAttributes(): array
+    {
+        $card = $this->payment_source['card'] ?? null;
+        if (! is_array($card)) {
+            return [];
+        }
+        $attributes = $card['attributes'] ?? null;
+
+        return is_array($attributes) ? $attributes : [];
     }
 
     /**
