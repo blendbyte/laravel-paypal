@@ -2,6 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/blendbyte/paypal.svg?style=flat-square)](https://packagist.org/packages/blendbyte/paypal)
 [![Tests](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml)
+[![Coverage](https://codecov.io/gh/blendbyte/laravel-paypal/branch/main/graph/badge.svg)](https://codecov.io/gh/blendbyte/laravel-paypal)
 [![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
