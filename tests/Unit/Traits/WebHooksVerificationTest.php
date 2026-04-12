@@ -235,6 +235,22 @@ it('caches the certificate after the first successful fetch', function () {
     expect($result)->toBe($fakeCert);
 });
 
+it('returns false when the cert PEM cannot be parsed as a public key', function () {
+    $client = $this->createPartialMock(PayPalClient::class, ['fetchCert']);
+    // fetchCert returns a non-empty string that is not a valid PEM certificate,
+    // so openssl_pkey_get_public() will return false and the method must return false.
+    $client->method('fetchCert')->willReturn('not-a-valid-pem-certificate');
+
+    $result = $client->verifyWebHookLocally([
+        'PAYPAL-TRANSMISSION-ID'   => 'trans-001',
+        'PAYPAL-TRANSMISSION-TIME' => '2024-01-01T00:00:00Z',
+        'PAYPAL-CERT-URL'          => 'https://api.paypal.com/v1/notifications/certs/test',
+        'PAYPAL-TRANSMISSION-SIG'  => base64_encode('fake-sig'),
+    ], 'WH-001', '{"event":"test"}');
+
+    expect($result)->toBeFalse();
+});
+
 it('does not cache a failed cert fetch so the next call can retry', function () {
     // Use a local path that is guaranteed not to exist — file_get_contents() returns
     // false for it, which is the same failure path as an unreachable HTTPS URL.
