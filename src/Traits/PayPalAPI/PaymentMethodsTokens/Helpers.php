@@ -83,6 +83,32 @@ trait Helpers
     }
 
     /**
+     * Set payment source data for Apple Pay.
+     *
+     * Typically contains a `token` key with the tokenized Apple Pay payment data
+     * returned by the Apple Pay JS/native SDK.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function setPaymentSourceApplePay(array $data): PayPal
+    {
+        return $this->setPaymentSourceDetails('apple_pay', $data);
+    }
+
+    /**
+     * Set payment source data for Google Pay.
+     *
+     * Typically contains a `decrypted_token` key with the decrypted Google Pay
+     * payment data, or a `card` key for network-tokenised cards.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function setPaymentSourceGooglePay(array $data): PayPal
+    {
+        return $this->setPaymentSourceDetails('google_pay', $data);
+    }
+
+    /**
      * Set payment source details.
      *
      * @param array<string, mixed> $data
