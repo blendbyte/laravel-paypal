@@ -1,13 +1,19 @@
-name: Laravel PayPal
-on: [push, pull_request]
+name: Tests
+
+on:
+  push:
+  pull_request:
+
 jobs:
-  paypal:
-    name: PHP ${{ matrix.php }}
+  test:
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         php: ['8.3', '8.4', '8.5']
+
+    name: PHP ${{ matrix.php }}
 
     steps:
       - name: Checkout
@@ -32,35 +38,12 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader
 
       - name: Run tests
-        run: |
-          if [ "${{ matrix.php }}" = "8.5" ]; then
-            mkdir -p build/logs
-            ./vendor/bin/pest --ci --coverage-clover build/logs/clover.xml
-          else
-            ./vendor/bin/pest --ci
-          fi
+        run: ./vendor/bin/pest --ci ${{ matrix.php == '8.5' && '--coverage --coverage-clover coverage.xml' || '' }}
 
-      - name: Install PHP Coveralls library
+      - name: Upload coverage to Codecov
         if: matrix.php == '8.5'
-        env:
-          PHP_VERSION: ${{ matrix.php }}
-        run:
-          composer global require --dev php-coveralls/php-coveralls
-      - name: Upload coverage results to Coveralls
-        if: matrix.php == '8.5'
-        env:
-          PHP_VERSION: ${{ matrix.php }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_PARALLEL: true
-          COVERALLS_FLAG_NAME: php-${{ matrix.php }}
-        run:
-          php-coveralls -v
-  coveralls-finish:
-    needs: [paypal]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        parallel-finished: true
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false
