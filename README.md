@@ -2,25 +2,19 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
 [![Total Downloads](https://img.shields.io/packagist/dt/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
-[![Tests](https://github.com/srmklive/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/srmklive/laravel-paypal/actions/workflows/tests.yml)
-[![Static Analysis](https://github.com/srmklive/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/srmklive/laravel-paypal/actions/workflows/static-analysis.yml)
+[![Tests](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/tests.yml)
+[![Static Analysis](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/blendbyte/laravel-paypal/actions/workflows/static-analysis.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-A PayPal REST API package for Laravel 12+, and also usable as a standalone PHP client without any framework. Version `4.0` brings the package forward for current PHP and Laravel versions while preserving the familiar `srmklive/paypal` package name and API.
-
-Trusted across more than 3.9 million Packagist downloads, `srmklive/paypal` continues forward with the `v4.0` release and the merged modernization work from Daniel's BlendByte fork.
+A PayPal REST API package for Laravel, also usable as a standalone PHP client without any framework.
 
 **Supports:** PHP 8.3–8.5 · Laravel 12 / 13
-
-> **v4.0 note:** A large part of the modernization work that made this release possible was carried out by [Daniel](https://github.com/blendbyte) in the [BlendByte fork](https://github.com/blendbyte/laravel-paypal). Those upgrades have now been merged here for `v4.0`. I appreciate the effort, and if Daniel is open to it, I would be happy to add him as a maintainer so the project can keep moving forward with active stewardship.
-
-> **PHP 8.2 notice:** PHP 8.2 reached end-of-life in December 2025. Development and testing for `v4.0` now target PHP 8.3+, so upgrading is strongly recommended.
 
 > **Disclaimer:** This package is an independent community project and is not affiliated with, endorsed by, or supported by PayPal, Inc. "PayPal" is a registered trademark of PayPal, Inc. Use this package at your own risk; no warranty is provided beyond what the MIT license covers.
 
 ---
 
-- [v4.0 Project Update](#v40-project-update)
+- [Version Compatibility](#version-compatibility)
 - [Moving to Orders v2 (v1 Payments API sunset Jan 2027)](#moving-to-orders-v2-v1-payments-api-sunset-jan-2027)
 - [Installation](#installation)
 - [Standalone Usage (without Laravel)](#standalone-usage-without-laravel)
@@ -51,13 +45,28 @@ Trusted across more than 3.9 million Packagist downloads, `srmklive/paypal` cont
 
 ---
 
-## v4.0 Project Update
+## Version Compatibility
 
-This repository remains the home of `srmklive/paypal`, and the `v4.0` branch contains the merged modernization work for current PHP and Laravel versions.
+| Version | PayPal API | PayPal Deprecation | PHP | Laravel | Maintained |
+|---|---|---|---|---|---|
+| v1.0 | Classic NVP/SOAP (Express Checkout, Adaptive Payments) | Deprecated since 2017, no firm sunset date | 5.6+ | 5.1+ | ❌ |
+| v2.0 | REST v1 Payments + v2 Orders | `/v1/payments` sunset Jan 2027 | 7.2+ | 6+ | ❌ |
+| v3.0 | REST v2 Orders + v2 Subscriptions | Current | 7.4+ | 6–12 | ❌ |
+| **v3.1** | **REST v2 Orders + v2 Subscriptions** | **Current** | **8.3+** | **12–13** | **✅** |
 
-The biggest thanks here goes to [Daniel](https://github.com/blendbyte), whose work in the [BlendByte fork](https://github.com/blendbyte/laravel-paypal) helped push the package much further than I had taken it recently. That work has now been brought back into the main project for `v4.0`.
+### What's new in v3.1
 
-If Daniel is willing, I would also be glad to add him as a maintainer so updates, releases, and long-term package care can continue in a healthy way.
+- **PHP 8.3+** and **Laravel 12 / 13** required (PHP 8.2 reached end-of-life in December 2025)
+- **Standalone usage** — no Laravel dependency required, pass credentials directly
+- **PSR-18 HTTP client** — swap Guzzle for any compliant client via `setClient()`
+- **Configurable timeouts and retries** — `timeout`, `connect_timeout`, `max_retries` in config
+- **Exception-based error handling** — opt in with `withExceptions()` for `PayPalApiException`
+- **Local webhook verification** — `verifyWebHookLocally()` with in-memory cert caching, no API roundtrip
+- **PayPal Fastlane** — `generateClientToken()` for one-click guest checkout
+- **Payment Method Tokens** — full Vault v3 API (setup tokens, permanent tokens, Apple Pay, Google Pay)
+- **`getCaptureIdFromOrder()`** — extract capture/transaction ID from order responses
+- **Bug fixes** — float precision, URL encoding, null guards, invoice date normalization
+- **100% test coverage** with Pest v4 and PHPStan level 7
 
 ---
 
@@ -65,7 +74,7 @@ If Daniel is willing, I would also be glad to add him as a maintainer so updates
 
 PayPal is sunsetting the v1 Payments REST API (`/v1/payments/payment`) in **January 2027**. If your integration uses the old create-payment → redirect → execute-payment flow, or the classic Billing Agreements API (`/v1/billing-agreements/`), you need to migrate before then.
 
-> **This package already uses Orders v2 and Subscriptions v2 throughout.** The migration notes below are for callers who built custom flows against the legacy endpoints or who were previously using `srmklive/laravel-paypal`'s Express Checkout helpers.
+> **This package already uses Orders v2 and Subscriptions v2 throughout.** The migration notes below are for callers who built custom flows against the legacy endpoints or who were previously using the Express Checkout helpers from older versions.
 
 ### Checkout: redirect-based payment flow
 
@@ -284,7 +293,7 @@ $provider->setCurrency('EUR');
 
 ### Error Handling
 
-By default, API errors are returned as an array with an `error` key — this preserves backward compatibility with `srmklive/laravel-paypal`:
+By default, API errors are returned as an array with an `error` key:
 
 ```php
 $response = $provider->showOrderDetails('bad-id');
@@ -868,3 +877,17 @@ $provider->updateWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER', $data);
 $provider->patchWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER', $patchData);
 $provider->deleteWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER');
 ```
+
+---
+
+## Maintained by Blendbyte
+
+<a href="https://www.blendbyte.com">
+  <img src="https://avatars.githubusercontent.com/u/69378377?s=200&v=4" alt="Blendbyte" width="80" align="left" style="margin-right: 16px;">
+</a>
+
+This project is maintained by **[Blendbyte](https://www.blendbyte.com)** — a team of engineers with 20+ years of experience building cloud infrastructure, web applications, and developer tools. We use these packages in production ourselves and actively contribute to the open source ecosystem we rely on every day. Issues and PRs are always welcome.
+
+🌐 [blendbyte.com](https://www.blendbyte.com) · 📧 [hello@blendbyte.com](mailto:hello@blendbyte.com)
+
+<br clear="left">
