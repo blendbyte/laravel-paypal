@@ -1,7 +1,7 @@
 {
     "name": "srmklive/paypal",
     "type": "library",
-    "description": "Laravel package for processing payments through PayPal REST API.",
+    "description": "PayPal REST API client for Laravel and standalone PHP.",
     "keywords": [
         "PayPal",
         "Laravel",
