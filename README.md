@@ -1,3 +1,5 @@
+<img width="2400" height="600" alt="banner-1" src="https://github.com/user-attachments/assets/d1fa2da5-51c7-4528-a969-514664a9c673" />
+
 # Laravel PayPal
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
