@@ -69,7 +69,7 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 - **Payment Method Tokens** — full Vault v3 API (setup tokens, permanent tokens, Apple Pay, Google Pay)
 - **`getCaptureIdFromOrder()`** — extract capture/transaction ID from order responses
 - **Bug fixes** — float precision, URL encoding, null guards, invoice date normalization
-- **100% test coverage** with Pest v4 and PHPStan level 7
+- **100% test coverage** with Pest v3/v4 and PHPStan level 7
 
 ---
 
