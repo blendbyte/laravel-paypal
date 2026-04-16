@@ -119,14 +119,13 @@ trait WebHooks
     /**
      * List events for an existing web hook.
      *
-     * @param  string  $web_hook_id
      * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks_get
      */
-    public function listWebHookEvents($web_hook_id)
+    public function listWebHookEvents(string $web_hook_id)
     {
         $this->apiEndPoint = "v1/notifications/webhooks/{$web_hook_id}/event-types";
 

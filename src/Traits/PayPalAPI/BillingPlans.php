@@ -62,7 +62,7 @@ trait BillingPlans
      *
      * @throws \Throwable
      *
-     * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_update
+     * @see https://developer.paypal.com/docs/api/subscriptions/v1/#plans_patch
      */
     public function updatePlan(string $plan_id, array $data)
     {

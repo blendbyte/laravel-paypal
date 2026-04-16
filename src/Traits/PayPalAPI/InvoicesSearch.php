@@ -33,6 +33,11 @@ trait InvoicesSearch
 
         $this->verb = 'post';
 
-        return $this->doPayPalRequest();
+        $response = $this->doPayPalRequest();
+
+        // Reset filters so a subsequent call on the same instance starts fresh.
+        $this->invoice_search_filters = [];
+
+        return $response;
     }
 }

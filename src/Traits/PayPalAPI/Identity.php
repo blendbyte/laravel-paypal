@@ -127,7 +127,7 @@ trait Identity
     }
 
     /**
-     * Create a merchant application.
+     * Set account properties / features for a merchant account.
      *
      *
      *
@@ -154,7 +154,7 @@ trait Identity
     }
 
     /**
-     * Create a merchant application.
+     * Deactivate account properties / features for a merchant account.
      *
      *
      *

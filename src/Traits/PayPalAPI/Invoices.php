@@ -328,7 +328,7 @@ trait Invoices
      *
      * @throws \Throwable
      *
-     * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_list
+     * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_delete
      */
     public function deleteInvoice(string $invoice_id)
     {

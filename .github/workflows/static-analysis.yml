@@ -17,18 +17,15 @@ jobs:
       uses: shivammathur/setup-php@v2
     - name: Get Composer cache directory
       id: composercache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
     - name: Cache Composer dependencies
       uses: actions/cache@v5
       with:
-        php-version: ${{ matrix.php-versions }}
         path: ${{ steps.composercache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
     - name: Install Composer dependencies
-      env:
-        PHP_VERSION: ${{ matrix.php-versions }}
-      run: composer install --no-progress --prefer-dist --optimize-autoloader $(if [ "$PHP_VERSION" == "8.0" || "$PHP_VERSION" == "8.1" ]; then echo "--ignore-platform-reqs"; fi;)    
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
     - name: Run type checking analysis
       env:
         PHP_VERSION: ${{ matrix.php-versions }}
