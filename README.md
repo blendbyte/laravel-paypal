@@ -11,7 +11,7 @@
 
 A PayPal REST API package for Laravel, also usable as a standalone PHP client without any framework.
 
-**Supports:** PHP 8.3–8.5 · Laravel 12 / 13
+**Supports:** PHP 8.2–8.5 · Laravel 12 / 13
 
 > **Disclaimer:** This package is an independent community project and is not affiliated with, endorsed by, or supported by PayPal, Inc. "PayPal" is a registered trademark of PayPal, Inc. Use this package at your own risk; no warranty is provided beyond what the MIT license covers.
 
@@ -55,11 +55,11 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 | v1.0 | Classic NVP/SOAP (Express Checkout, Adaptive Payments) | Deprecated since 2017, no firm sunset date | 5.6+ | 5.1+ | ❌ |
 | v2.0 | REST v1 Payments + v2 Orders | `/v1/payments` sunset Jan 2027 | 7.2+ | 6+ | ❌ |
 | v3.0 | REST v2 Orders + v2 Subscriptions | Current | 7.4+ | 6–12 | ❌ |
-| **v3.1** | **REST v2 Orders + v2 Subscriptions** | **Current** | **8.3+** | **12–13** | **✅** |
+| **v3.1** | **REST v2 Orders + v2 Subscriptions** | **Current** | **8.2+** | **12–13** | **✅** |
 
 ### What's new in v3.1
 
-- **PHP 8.3+** and **Laravel 12 / 13** required (PHP 8.2 reached end-of-life in December 2025)
+- **PHP 8.2+** and **Laravel 12 / 13** required
 - **Standalone usage** — no Laravel dependency required, pass credentials directly
 - **PSR-18 HTTP client** — swap Guzzle for any compliant client via `setClient()`
 - **Configurable timeouts and retries** — `timeout`, `connect_timeout`, `max_retries` in config
