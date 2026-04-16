@@ -40,6 +40,11 @@ trait PricingSchemes
             throw new \RuntimeException('No billing plan set. Call addBillingPlanById() first.');
         }
 
-        return $this->updatePlanPricing($this->billing_plan['id'], $this->pricing_schemes);
+        $response = $this->updatePlanPricing($this->billing_plan['id'], $this->pricing_schemes);
+
+        // Reset so accumulated schemes don't bleed into subsequent calls.
+        $this->pricing_schemes = [];
+
+        return $response;
     }
 }

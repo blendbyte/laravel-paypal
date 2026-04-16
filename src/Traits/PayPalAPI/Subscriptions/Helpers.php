@@ -106,6 +106,11 @@ trait Helpers
         $this->billing_plan = null;
         $this->trial_pricing = [];
         $this->experience_context = [];
+        $this->shipping_address = null;
+        $this->payment_preferences = [];
+        $this->has_setup_fee = false;
+        $this->taxes = null;
+        $this->custom_id = null;
 
         return $subscription;
     }
