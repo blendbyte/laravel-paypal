@@ -21,7 +21,7 @@
 >
 > Upgrading from v3.0 is straightforward — the API surface is compatible. The main requirements are:
 > - PHP 8.2+ and Laravel 12+ (or use standalone without Laravel)
-> - Update your `composer.json` to require `blendbyte/laravel-paypal:^3.1`
+> - Update your `composer.json` to require `srmklive/paypal:^3.1`
 >
 > See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation and usage documentation.
 
