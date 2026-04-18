@@ -26,6 +26,7 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 - [PayPal Fastlane](#paypal-fastlane)
 - [Subscription Helpers](#subscription-helpers)
 - [Billing Plans](#billing-plans)
+  - [BillingPlanBuilder](#billingplanbuilder)
 - [Catalog Products](#catalog-products)
 - [Orders](#orders)
 - [Payments](#payments)
@@ -455,6 +456,67 @@ $response = $provider->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
 ---
 
 ## Billing Plans
+
+### BillingPlanBuilder
+
+Building a billing plan payload by hand is error-prone — cycles need correct sequences, prices must be strings, and the nesting is deep. `BillingPlanBuilder` handles all of that:
+
+```php
+use Srmklive\PayPal\Builders\BillingPlanBuilder;
+
+$response = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Premium Plan', 'Monthly premium access')
+    ->monthly(9.99)
+    ->create($provider);
+```
+
+With a trial period and setup fee:
+
+```php
+$response = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Video Streaming Plan', 'Video Streaming Service basic plan')
+    ->trialMonthly(3.00, totalCycles: 2)   // $3/mo for 2 months
+    ->trialMonthly(6.00, totalCycles: 3)   // $6/mo for 3 months
+    ->monthly(10.00, totalCycles: 12)      // $10/mo for 12 months
+    ->withSetupFee(10.00)
+    ->withTax(10.0)
+    ->create($provider);
+```
+
+Cycles are sequenced automatically in the order they are added. Use `build()` instead of `create()` to get the raw array without making an API call:
+
+```php
+$payload = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Annual Plan')
+    ->annual(99.00)
+    ->withCurrency('EUR')
+    ->withFailureThreshold(5)
+    ->build(); // returns array<string, mixed>
+
+$provider->createPlan($payload);
+```
+
+**Available cycle methods:**
+
+| Method | Interval | Tenure |
+|---|---|---|
+| `daily(price, totalCycles)` | DAY / 1 | REGULAR |
+| `weekly(price, totalCycles)` | WEEK / 1 | REGULAR |
+| `monthly(price, totalCycles)` | MONTH / 1 | REGULAR |
+| `annual(price, totalCycles)` | YEAR / 1 | REGULAR |
+| `trialDaily(price, totalCycles)` | DAY / 1 | TRIAL |
+| `trialWeekly(price, totalCycles)` | WEEK / 1 | TRIAL |
+| `trialMonthly(price, totalCycles)` | MONTH / 1 | TRIAL |
+| `trialAnnual(price, totalCycles)` | YEAR / 1 | TRIAL |
+| `regularCycle(unit, count, price, totalCycles)` | custom | REGULAR |
+| `trialCycle(unit, count, price, totalCycles)` | custom | TRIAL |
+
+`totalCycles: 0` means the cycle repeats indefinitely.
+
+### Raw API
 
 ```php
 // List (page, count, show_total, fields)
