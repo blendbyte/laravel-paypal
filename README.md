@@ -23,7 +23,7 @@
 > - PHP 8.2+ and Laravel 12+ (or use standalone without Laravel)
 > - Update your `composer.json` to require `srmklive/paypal:^3.1`
 >
-> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation and usage documentation.
+> See the [README](https://github.com/blendbyte/laravel-paypal/blob/main/README.md) for full installation and usage documentation.
 
     
 <a name="introduction"></a>
