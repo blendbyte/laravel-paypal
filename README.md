@@ -937,10 +937,19 @@ $response = $provider->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
 ```php
 use Carbon\Carbon;
 
+// Raw filter array (full control)
 $provider->listTransactions([
-    'start_date' => Carbon::now()->toIso8601String(),
-    'end_date'   => Carbon::now()->addDays(30)->toIso8601String(),
+    'start_date' => Carbon::now()->subDays(30)->toIso8601String(),
+    'end_date'   => Carbon::now()->toIso8601String(),
 ]);
+
+// Convenience helpers
+$provider->getTransactionDetails('5TY05013RG002845M');        // searches last 31 days
+$provider->getTransactionDetails('5TY05013RG002845M', 7);    // searches last 7 days
+
+$provider->listTransactionsForDateRange('2024-07-01', '2024-07-31');
+$provider->listTransactionsByType('T0006', '2024-07-01', '2024-07-31'); // e.g. express checkout sales
+$provider->listTransactionsByStatus('S', '2024-07-01', '2024-07-31');  // 'S'=success, 'V'=reversed, 'P'=pending
 
 $provider->listBalances('2024-01-01');
 $provider->listBalances('2024-01-01', 'EUR');
