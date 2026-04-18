@@ -1,5 +1,19 @@
 # Laravel PayPal
 
+> [!WARNING]
+> **This branch (v1.0) is deprecated and no longer maintained.**
+>
+> v1.0 uses the classic PayPal NVP/SOAP API (Express Checkout, Adaptive Payments), which PayPal deprecated in 2017. No bug fixes, security patches, or new features will be made to this branch.
+>
+> **Upgrade to [v3.1](https://github.com/blendbyte/laravel-paypal)** — the actively maintained release built on PayPal's current REST API (Orders v2, Subscriptions v2).
+>
+> Migration requires a full rewrite of your checkout flow:
+> - Replace `SetExpressCheckout` / `DoExpressCheckoutPayment` with `createOrder()` → `capturePaymentOrder()`
+> - Replace `CreateRecurringPaymentsProfile` with the Subscriptions v2 helpers (`addProduct()` → `setupSubscription()`)
+> - Replace NVP/SOAP credentials with a REST API Client ID and Secret from [developer.paypal.com](https://developer.paypal.com)
+>
+> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation and usage documentation.
+
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
 [![Total Downloads](https://img.shields.io/packagist/dt/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
