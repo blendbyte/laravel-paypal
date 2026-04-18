@@ -123,6 +123,22 @@ trait PayPalRequest
     }
 
     /**
+     * Set the PayPal-Partner-Attribution-Id (BN code) for all subsequent requests.
+     *
+     * PayPal uses this header to attribute transactions to a partner or platform.
+     * Unlike the idempotency key, this header persists for the lifetime of the
+     * provider instance — set it once after initialisation.
+     *
+     * @see https://developer.paypal.com/docs/api/reference/api-requests/#http-request-headers
+     */
+    public function setPartnerAttributionId(string $id): static
+    {
+        $this->setRequestHeader('PayPal-Partner-Attribution-Id', $id);
+
+        return $this;
+    }
+
+    /**
      * Set a PayPal-Request-Id idempotency key for the next request.
      *
      * Sending this header allows safe retrying of failed requests without

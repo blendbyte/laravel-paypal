@@ -305,6 +305,16 @@ $provider->getAccessToken();
 $provider->setCurrency('EUR');
 ```
 
+### Partner Attribution ID (BN code)
+
+PayPal uses the `PayPal-Partner-Attribution-Id` header to attribute transactions to a partner or platform. Set it once after initialisation — it persists for the lifetime of the provider instance:
+
+```php
+$provider->setPartnerAttributionId('YourPlatform_SP');
+```
+
+All subsequent API calls will include the header automatically.
+
 ### Error Handling
 
 By default, API errors are returned as an array with an `error` key:
