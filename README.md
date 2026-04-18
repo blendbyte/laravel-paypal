@@ -12,7 +12,7 @@
 > - Replace `/v1/billing-agreements/` with the Subscriptions v2 helpers (`addProduct()` → `setupSubscription()`)
 > - Requires PHP 8.2+ and Laravel 12+
 >
-> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation, migration guidance, and usage documentation.
+> See the [README](https://github.com/blendbyte/laravel-paypal/blob/main/README.md) for full installation, migration guidance, and usage documentation.
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
