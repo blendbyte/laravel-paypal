@@ -933,16 +933,31 @@ $provider->setAccessToken(['access_token' => 'mock-token', 'token_type' => 'Bear
 $provider->setClient($mock);
 ```
 
----
-
 ## Maintained by Blendbyte
 
-<a href="https://www.blendbyte.com">
-  <img src="https://avatars.githubusercontent.com/u/69378377?s=200&v=4" alt="Blendbyte" width="80" align="left" style="margin-right: 16px;">
-</a>
+<br>
 
-This project is maintained by **[Blendbyte](https://www.blendbyte.com)** — a team of engineers with 20+ years of experience building cloud infrastructure, web applications, and developer tools. We use these packages in production ourselves and actively contribute to the open source ecosystem we rely on every day. Issues and PRs are always welcome.
+<p align="center">
+  <a href="https://www.blendbyte.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://www.blendbyte.com/logo_horizontal_light.png">
+      <img src="https://www.blendbyte.com/logo_horizontal.png" alt="Blendbyte" width="360">
+    </picture>
+  </a>
+</p>
 
-🌐 [blendbyte.com](https://www.blendbyte.com) · 📧 [hello@blendbyte.com](mailto:hello@blendbyte.com)
+<p align="center">
+  <strong><a href="https://www.blendbyte.com">Blendbyte</a></strong> builds cloud infrastructure, web apps, and developer tools.<br>
+  We've been shipping software to production for 20+ years.
+</p>
 
-<br clear="left">
+<p align="center">
+  This package runs in our own stack, which is why we keep it maintained.<br>
+  Issues and PRs get read. Good ones get merged.
+</p>
+
+<br>
+
+<p align="center">
+  <a href="https://www.blendbyte.com">blendbyte.com</a> · <a href="mailto:hello@blendbyte.com">hello@blendbyte.com</a>
+</p>
