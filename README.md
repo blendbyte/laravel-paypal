@@ -1,5 +1,19 @@
 # Laravel PayPal
 
+> [!WARNING]
+> **This branch (v2.0) is deprecated and no longer maintained.**
+>
+> v2.0 uses the PayPal REST v1 Payments API (`/v1/payments/payment`), which PayPal is sunsetting in **January 2027**. No bug fixes, security patches, or new features will be made to this branch.
+>
+> **Upgrade to [v3.1](https://github.com/blendbyte/laravel-paypal)** — the actively maintained release that uses Orders v2 and Subscriptions v2 throughout.
+>
+> Key changes when migrating:
+> - Replace the create-payment → redirect → execute-payment flow with `createOrder()` → `capturePaymentOrder()`
+> - Replace `/v1/billing-agreements/` with the Subscriptions v2 helpers (`addProduct()` → `setupSubscription()`)
+> - Requires PHP 8.2+ and Laravel 12+
+>
+> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation, migration guidance, and usage documentation.
+
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
 [![Total Downloads](https://img.shields.io/packagist/dt/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
