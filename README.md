@@ -863,6 +863,46 @@ $valid = $provider->verifyWebHookLocally(
 > processes (serverless, etc.) will still fetch the cert on each cold start. The cert URL is
 > validated against PayPal's known API domains before any request is made (SSRF guard).
 
+### Handling webhook events
+
+After verification, parse the raw body into a typed `WebhookEvent` and route by event type:
+
+```php
+use Srmklive\PayPal\Events\WebhookEvent;
+
+$rawBody = $request->getContent();
+
+if (! $provider->verifyWebHookLocally($request->headers->all(), 'your-webhook-id', $rawBody)) {
+    return response()->json(['error' => 'Invalid signature'], 401);
+}
+
+$event = WebhookEvent::fromRawBody($rawBody);
+
+if ($event->is('PAYMENT.CAPTURE.COMPLETED')) {
+    // $event->resource contains the capture object
+    $this->handleCapture($event->resource);
+}
+
+if ($event->is('BILLING.SUBSCRIPTION.CANCELLED')) {
+    $this->handleCancellation($event->resource);
+}
+
+// Available properties:
+// $event->id           — webhook notification ID
+// $event->eventType    — e.g. 'PAYMENT.CAPTURE.COMPLETED'
+// $event->resourceType — e.g. 'capture'
+// $event->summary      — human-readable summary
+// $event->createTime   — ISO 8601 timestamp
+// $event->resource     — event-specific resource array
+// $event->rawPayload   — full decoded payload array
+```
+
+You can also build from an already-decoded array:
+
+```php
+$event = WebhookEvent::fromArray($request->json()->all());
+```
+
 ---
 
 ## Payment Method Tokens
