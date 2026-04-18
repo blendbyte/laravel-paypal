@@ -24,6 +24,7 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [PayPal Fastlane](#paypal-fastlane)
+- [Pay Upon Invoice (Buy Now, Pay Later — DE/AT)](#pay-upon-invoice-buy-now-pay-later--deat)
 - [Subscription Helpers](#subscription-helpers)
 - [Billing Plans](#billing-plans)
   - [BillingPlanBuilder](#billingplanbuilder)
@@ -395,6 +396,45 @@ $capture = $provider->capturePaymentOrder($order['id']);
 
 // Extract the transaction/capture ID
 $captureId = $provider->getCaptureIdFromOrder($capture);
+```
+
+---
+
+## Pay Upon Invoice (Buy Now, Pay Later — DE/AT)
+
+[Pay Upon Invoice](https://developer.paypal.com/docs/checkout/pay-upon-invoice/) (Rechnungskauf) lets buyers in Germany and Austria pay after receiving goods. PayPal collects the payment and the merchant is paid upfront.
+
+**Requirements:** DE/AT merchant account, buyer name, email, date of birth, phone number, and billing address.
+
+```php
+$provider->getAccessToken();
+
+$provider->setPaymentSourcePayUponInvoice([
+    'name'       => ['given_name' => 'John', 'surname' => 'Doe'],
+    'email'      => 'john.doe@example.com',
+    'birth_date' => '1990-01-01',
+    'phone'      => ['country_code' => '49', 'national_number' => '1234567890'],
+    'billing_address' => [
+        'address_line_1' => 'Hauptstraße 1',
+        'admin_area_2'   => 'Berlin',
+        'postal_code'    => '10115',
+        'country_code'   => 'DE',
+    ],
+    'experience_context' => [
+        'locale'     => 'de-DE',
+        'return_url' => 'https://example.com/paypal-success',
+        'cancel_url' => 'https://example.com/paypal-cancel',
+    ],
+]);
+
+$order = $provider->createOrderWithPaymentSource([
+    'intent'         => 'CAPTURE',
+    'purchase_units' => [
+        ['amount' => ['currency_code' => 'EUR', 'value' => '99.00']],
+    ],
+]);
+
+$capture = $provider->capturePaymentOrder($order['id']);
 ```
 
 ---

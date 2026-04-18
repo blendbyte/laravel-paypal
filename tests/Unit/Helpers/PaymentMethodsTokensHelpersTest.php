@@ -56,6 +56,22 @@ it('setPaymentSourceGooglePay sets google_pay as payment source', function () {
     expect($client->getPaymentSource())->toBe(['google_pay' => $data]);
 });
 
+it('setPaymentSourcePayUponInvoice sets pay_upon_invoice as payment source', function () {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+    $data   = [
+        'name'            => ['given_name' => 'John', 'surname' => 'Doe'],
+        'email'           => 'john.doe@example.com',
+        'birth_date'      => '1990-01-01',
+        'phone'           => ['country_code' => '49', 'national_number' => '1234567890'],
+        'billing_address' => ['address_line_1' => 'Hauptstraße 1', 'admin_area_2' => 'Berlin', 'postal_code' => '10115', 'country_code' => 'DE'],
+    ];
+
+    $result = $client->setPaymentSourcePayUponInvoice($data);
+
+    expect($result)->toBeInstanceOf(PayPalClient::class);
+    expect($client->getPaymentSource())->toBe(['pay_upon_invoice' => $data]);
+});
+
 it('setTokenSource sets token as payment source', function () {
     $client = $this->createPartialMock(PayPalClient::class, []);
 
