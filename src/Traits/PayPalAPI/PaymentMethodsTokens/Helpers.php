@@ -122,6 +122,22 @@ trait Helpers
     }
 
     /**
+     * Set payment source data for Pay Upon Invoice (Rechnungskauf).
+     *
+     * Available for DE/AT merchants only. The $data array must include the
+     * buyer's name, email, birth_date, phone, and billing_address. An
+     * experience_context (locale, return_url, cancel_url) is recommended.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @see https://developer.paypal.com/docs/checkout/pay-upon-invoice/
+     */
+    public function setPaymentSourcePayUponInvoice(array $data): PayPal
+    {
+        return $this->setPaymentSourceDetails('pay_upon_invoice', $data);
+    }
+
+    /**
      * Set billing address for the card payment source (ACDC / unbranded card).
      *
      * Merges into any existing payment_source.card data set by setPaymentSourceCard().

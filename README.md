@@ -1,4 +1,4 @@
-<img width="2400" height="600" alt="banner-1" src="https://github.com/user-attachments/assets/d1fa2da5-51c7-4528-a969-514664a9c673" />
+<img alt="banner-1" src="https://github.com/user-attachments/assets/d1fa2da5-51c7-4528-a969-514664a9c673" />
 
 # Laravel PayPal
 
@@ -24,8 +24,10 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [PayPal Fastlane](#paypal-fastlane)
+- [Pay Upon Invoice (Buy Now, Pay Later — DE/AT)](#pay-upon-invoice-buy-now-pay-later--deat)
 - [Subscription Helpers](#subscription-helpers)
 - [Billing Plans](#billing-plans)
+  - [BillingPlanBuilder](#billingplanbuilder)
 - [Catalog Products](#catalog-products)
 - [Orders](#orders)
 - [Payments](#payments)
@@ -227,7 +229,7 @@ return [
     'validate_ssl'    => env('PAYPAL_VALIDATE_SSL', true),
     'timeout'         => env('PAYPAL_TIMEOUT', 30),         // total request timeout (seconds)
     'connect_timeout' => env('PAYPAL_CONNECT_TIMEOUT', 10), // connection timeout (seconds)
-    'max_retries'     => env('PAYPAL_MAX_RETRIES', 2),      // retries on 5xx / network errors (0 to disable)
+    'max_retries'     => env('PAYPAL_MAX_RETRIES', 2),      // retries on 5xx / 429 / network errors (0 to disable)
 ];
 ```
 
@@ -259,6 +261,16 @@ $provider->setClient(new Psr18Client());
 Pass `null` (or call with no argument) to restore the default Guzzle client with the configured timeout and retry middleware.
 
 > **Note:** The built-in retry middleware runs only on the default Guzzle client. When you inject a custom client, handle retries in that client's own middleware stack.
+
+### Retry Behaviour
+
+The default Guzzle client automatically retries failed requests up to `max_retries` times (default: 2) for:
+
+- **5xx server errors** — PayPal-side failures (500, 502, 503, …)
+- **429 Too Many Requests** — rate-limit responses; the `Retry-After` header is read and honoured when present
+- **Network/connection errors** — DNS failures, connection refused, etc.
+
+The delay between attempts uses exponential backoff (500 ms → 1 s → 2 s → 4 s, capped at 8 s) unless a `Retry-After` header overrides it. Set `max_retries` to `0` to disable retries entirely.
 
 ---
 
@@ -293,6 +305,16 @@ $provider->getAccessToken();
 ```php
 $provider->setCurrency('EUR');
 ```
+
+### Partner Attribution ID (BN code)
+
+PayPal uses the `PayPal-Partner-Attribution-Id` header to attribute transactions to a partner or platform. Set it once after initialisation — it persists for the lifetime of the provider instance:
+
+```php
+$provider->setPartnerAttributionId('YourPlatform_SP');
+```
+
+All subsequent API calls will include the header automatically.
 
 ### Error Handling
 
@@ -378,6 +400,45 @@ $captureId = $provider->getCaptureIdFromOrder($capture);
 
 ---
 
+## Pay Upon Invoice (Buy Now, Pay Later — DE/AT)
+
+[Pay Upon Invoice](https://developer.paypal.com/docs/checkout/pay-upon-invoice/) (Rechnungskauf) lets buyers in Germany and Austria pay after receiving goods. PayPal collects the payment and the merchant is paid upfront.
+
+**Requirements:** DE/AT merchant account, buyer name, email, date of birth, phone number, and billing address.
+
+```php
+$provider->getAccessToken();
+
+$provider->setPaymentSourcePayUponInvoice([
+    'name'       => ['given_name' => 'John', 'surname' => 'Doe'],
+    'email'      => 'john.doe@example.com',
+    'birth_date' => '1990-01-01',
+    'phone'      => ['country_code' => '49', 'national_number' => '1234567890'],
+    'billing_address' => [
+        'address_line_1' => 'Hauptstraße 1',
+        'admin_area_2'   => 'Berlin',
+        'postal_code'    => '10115',
+        'country_code'   => 'DE',
+    ],
+    'experience_context' => [
+        'locale'     => 'de-DE',
+        'return_url' => 'https://example.com/paypal-success',
+        'cancel_url' => 'https://example.com/paypal-cancel',
+    ],
+]);
+
+$order = $provider->createOrderWithPaymentSource([
+    'intent'         => 'CAPTURE',
+    'purchase_units' => [
+        ['amount' => ['currency_code' => 'EUR', 'value' => '99.00']],
+    ],
+]);
+
+$capture = $provider->capturePaymentOrder($order['id']);
+```
+
+---
+
 ## Subscription Helpers
 
 A fluent helper API for creating subscriptions without manually building plan/product payloads.
@@ -455,6 +516,67 @@ $response = $provider->addBillingPlanById('P-5ML4271244454362WXNWU5NQ')
 ---
 
 ## Billing Plans
+
+### BillingPlanBuilder
+
+Building a billing plan payload by hand is error-prone — cycles need correct sequences, prices must be strings, and the nesting is deep. `BillingPlanBuilder` handles all of that:
+
+```php
+use Srmklive\PayPal\Builders\BillingPlanBuilder;
+
+$response = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Premium Plan', 'Monthly premium access')
+    ->monthly(9.99)
+    ->create($provider);
+```
+
+With a trial period and setup fee:
+
+```php
+$response = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Video Streaming Plan', 'Video Streaming Service basic plan')
+    ->trialMonthly(3.00, totalCycles: 2)   // $3/mo for 2 months
+    ->trialMonthly(6.00, totalCycles: 3)   // $6/mo for 3 months
+    ->monthly(10.00, totalCycles: 12)      // $10/mo for 12 months
+    ->withSetupFee(10.00)
+    ->withTax(10.0)
+    ->create($provider);
+```
+
+Cycles are sequenced automatically in the order they are added. Use `build()` instead of `create()` to get the raw array without making an API call:
+
+```php
+$payload = BillingPlanBuilder::make()
+    ->forProduct('PROD-XXCD1234QWER65782')
+    ->named('Annual Plan')
+    ->annual(99.00)
+    ->withCurrency('EUR')
+    ->withFailureThreshold(5)
+    ->build(); // returns array<string, mixed>
+
+$provider->createPlan($payload);
+```
+
+**Available cycle methods:**
+
+| Method | Interval | Tenure |
+|---|---|---|
+| `daily(price, totalCycles)` | DAY / 1 | REGULAR |
+| `weekly(price, totalCycles)` | WEEK / 1 | REGULAR |
+| `monthly(price, totalCycles)` | MONTH / 1 | REGULAR |
+| `annual(price, totalCycles)` | YEAR / 1 | REGULAR |
+| `trialDaily(price, totalCycles)` | DAY / 1 | TRIAL |
+| `trialWeekly(price, totalCycles)` | WEEK / 1 | TRIAL |
+| `trialMonthly(price, totalCycles)` | MONTH / 1 | TRIAL |
+| `trialAnnual(price, totalCycles)` | YEAR / 1 | TRIAL |
+| `regularCycle(unit, count, price, totalCycles)` | custom | REGULAR |
+| `trialCycle(unit, count, price, totalCycles)` | custom | TRIAL |
+
+`totalCycles: 0` means the cycle repeats indefinitely.
+
+### Raw API
 
 ```php
 // List (page, count, show_total, fields)
@@ -691,6 +813,12 @@ $provider->suspendSubscription('I-BW452GLLEP1G', 'Item out of stock');
 $provider->captureSubscriptionPayment('I-BW452GLLEP1G', 'Balance reached limit', 100);
 $provider->reviseSubscription('I-BW452GLLEP1G', $data);
 $provider->listSubscriptionTransactions('I-BW452GLLEP1G', '2024-01-01T00:00:00Z', '2024-12-31T23:59:59Z');
+
+// Lifecycle helpers
+$provider->reactivateSubscription('I-BW452GLLEP1G');                          // default reason
+$provider->reactivateSubscription('I-BW452GLLEP1G', 'Customer requested');   // custom reason
+
+$isActive = $provider->isSubscriptionActive('I-BW452GLLEP1G'); // bool
 ```
 
 ---
@@ -785,6 +913,46 @@ $valid = $provider->verifyWebHookLocally(
 > processes (serverless, etc.) will still fetch the cert on each cold start. The cert URL is
 > validated against PayPal's known API domains before any request is made (SSRF guard).
 
+### Handling webhook events
+
+After verification, parse the raw body into a typed `WebhookEvent` and route by event type:
+
+```php
+use Srmklive\PayPal\Events\WebhookEvent;
+
+$rawBody = $request->getContent();
+
+if (! $provider->verifyWebHookLocally($request->headers->all(), 'your-webhook-id', $rawBody)) {
+    return response()->json(['error' => 'Invalid signature'], 401);
+}
+
+$event = WebhookEvent::fromRawBody($rawBody);
+
+if ($event->is('PAYMENT.CAPTURE.COMPLETED')) {
+    // $event->resource contains the capture object
+    $this->handleCapture($event->resource);
+}
+
+if ($event->is('BILLING.SUBSCRIPTION.CANCELLED')) {
+    $this->handleCancellation($event->resource);
+}
+
+// Available properties:
+// $event->id           — webhook notification ID
+// $event->eventType    — e.g. 'PAYMENT.CAPTURE.COMPLETED'
+// $event->resourceType — e.g. 'capture'
+// $event->summary      — human-readable summary
+// $event->createTime   — ISO 8601 timestamp
+// $event->resource     — event-specific resource array
+// $event->rawPayload   — full decoded payload array
+```
+
+You can also build from an already-decoded array:
+
+```php
+$event = WebhookEvent::fromArray($request->json()->all());
+```
+
 ---
 
 ## Payment Method Tokens
@@ -819,10 +987,19 @@ $response = $provider->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
 ```php
 use Carbon\Carbon;
 
+// Raw filter array (full control)
 $provider->listTransactions([
-    'start_date' => Carbon::now()->toIso8601String(),
-    'end_date'   => Carbon::now()->addDays(30)->toIso8601String(),
+    'start_date' => Carbon::now()->subDays(30)->toIso8601String(),
+    'end_date'   => Carbon::now()->toIso8601String(),
 ]);
+
+// Convenience helpers
+$provider->getTransactionDetails('5TY05013RG002845M');        // searches last 31 days
+$provider->getTransactionDetails('5TY05013RG002845M', 7);    // searches last 7 days
+
+$provider->listTransactionsForDateRange('2024-07-01', '2024-07-31');
+$provider->listTransactionsByType('T0006', '2024-07-01', '2024-07-31'); // e.g. express checkout sales
+$provider->listTransactionsByStatus('S', '2024-07-01', '2024-07-31');  // 'S'=success, 'V'=reversed, 'P'=pending
 
 $provider->listBalances('2024-01-01');
 $provider->listBalances('2024-01-01', 'EUR');
@@ -883,14 +1060,81 @@ $provider->deleteWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER');
 
 ---
 
+## Testing
+
+Use `MockPayPalClient` to write unit tests against your PayPal integration without hitting the sandbox API:
+
+```php
+use Srmklive\PayPal\Testing\MockPayPalClient;
+
+$mock = new MockPayPalClient();
+$mock->addResponse(['id' => '5O190127TN364715T', 'status' => 'CREATED']);
+
+// mockProvider() returns a ready PayPal instance — credentials and access token pre-set
+$provider = $mock->mockProvider();
+$order = $provider->createOrder($data);
+
+expect($order['id'])->toBe('5O190127TN364715T');
+```
+
+Queue multiple responses in order — one is consumed per API call:
+
+```php
+$mock = new MockPayPalClient();
+$mock->addResponse(['id' => 'ORDER-1', 'status' => 'CREATED']);
+$mock->addResponse(['id' => 'ORDER-2', 'status' => 'CREATED']);
+```
+
+Pass `false` as the body for empty-response operations (e.g. `updateOrder`, which returns 204):
+
+```php
+$mock->addResponse(false, 204);
+```
+
+Inspect what was sent to assert on headers, method, or payload:
+
+```php
+$request = $mock->lastRequest();           // Psr\Http\Message\RequestInterface
+$mock->requests();                         // all captured requests, in order
+$mock->requestCount();                     // int
+
+$request->getHeaderLine('Authorization'); // 'Bearer mock-access-token'
+$request->getMethod();                    // 'POST'
+(string) $request->getUri();              // 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
+```
+
+If you need to inject the mock into a provider you've already constructed, pass it to `setClient()` directly — `MockPayPalClient` implements `Psr\Http\Client\ClientInterface`:
+
+```php
+$provider->setAccessToken(['access_token' => 'mock-token', 'token_type' => 'Bearer']);
+$provider->setClient($mock);
+```
+
 ## Maintained by Blendbyte
 
-<a href="https://www.blendbyte.com">
-  <img src="https://avatars.githubusercontent.com/u/69378377?s=200&v=4" alt="Blendbyte" width="80" align="left" style="margin-right: 16px;">
-</a>
+<br>
 
-This project is maintained by **[Blendbyte](https://www.blendbyte.com)** — a team of engineers with 20+ years of experience building cloud infrastructure, web applications, and developer tools. We use these packages in production ourselves and actively contribute to the open source ecosystem we rely on every day. Issues and PRs are always welcome.
+<p align="center">
+  <a href="https://www.blendbyte.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://www.blendbyte.com/logo_horizontal_light.png">
+      <img src="https://www.blendbyte.com/logo_horizontal.png" alt="Blendbyte" width="360">
+    </picture>
+  </a>
+</p>
 
-🌐 [blendbyte.com](https://www.blendbyte.com) · 📧 [hello@blendbyte.com](mailto:hello@blendbyte.com)
+<p align="center">
+  <strong><a href="https://www.blendbyte.com">Blendbyte</a></strong> builds cloud infrastructure, web apps, and developer tools.<br>
+  We've been shipping software to production for 20+ years.
+</p>
 
-<br clear="left">
+<p align="center">
+  This package runs in our own stack, which is why we keep it maintained.<br>
+  Issues and PRs get read. Good ones get merged.
+</p>
+
+<br>
+
+<p align="center">
+  <a href="https://www.blendbyte.com">blendbyte.com</a> · <a href="mailto:hello@blendbyte.com">hello@blendbyte.com</a>
+</p>
