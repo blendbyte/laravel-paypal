@@ -763,6 +763,12 @@ $provider->suspendSubscription('I-BW452GLLEP1G', 'Item out of stock');
 $provider->captureSubscriptionPayment('I-BW452GLLEP1G', 'Balance reached limit', 100);
 $provider->reviseSubscription('I-BW452GLLEP1G', $data);
 $provider->listSubscriptionTransactions('I-BW452GLLEP1G', '2024-01-01T00:00:00Z', '2024-12-31T23:59:59Z');
+
+// Lifecycle helpers
+$provider->reactivateSubscription('I-BW452GLLEP1G');                          // default reason
+$provider->reactivateSubscription('I-BW452GLLEP1G', 'Customer requested');   // custom reason
+
+$isActive = $provider->isSubscriptionActive('I-BW452GLLEP1G'); // bool
 ```
 
 ---

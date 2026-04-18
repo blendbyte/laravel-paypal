@@ -123,6 +123,36 @@ trait Subscriptions
     }
 
     /**
+     * Reactivate a suspended subscription with an optional reason.
+     *
+     * Convenience wrapper around activateSubscription() for the common
+     * "resume after suspend" case — the reason defaults to a sensible value
+     * so callers do not need to supply one.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_activate
+     */
+    public function reactivateSubscription(string $subscription_id, string $reason = 'Reactivating subscription'): array|StreamInterface|string
+    {
+        return $this->activateSubscription($subscription_id, $reason);
+    }
+
+    /**
+     * Return true if the subscription's current status is ACTIVE.
+     *
+     * @throws \Throwable
+     */
+    public function isSubscriptionActive(string $subscription_id): bool
+    {
+        $details = $this->showSubscriptionDetails($subscription_id);
+
+        return is_array($details) && ($details['status'] ?? '') === 'ACTIVE';
+    }
+
+    /**
      * Suspend an existing subscription.
      *
      *
