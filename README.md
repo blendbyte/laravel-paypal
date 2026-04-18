@@ -12,10 +12,18 @@
 - [Usage](#usage)
 - [Support](#support)
 
-> [!IMPORTANT]
-> Laravel 12 will be the last version supported for v3.0, and package will not be actively maintained moving forward. For Laravel 13+ or PHP 8.2+, you must use the following fork:
-
-https://github.com/blendbyte/laravel-paypal
+> [!WARNING]
+> **This branch (v3.0) is deprecated and no longer maintained.**
+>
+> No bug fixes, security patches, or new features will be made to this branch.
+>
+> **Upgrade to [v3.1](https://github.com/blendbyte/laravel-paypal)** — the actively maintained release with PHP 8.2+, Laravel 12–13, standalone usage (no Laravel required), PSR-18 HTTP client support, exception-based error handling, and 100% test coverage.
+>
+> Upgrading from v3.0 is straightforward — the API surface is compatible. The main requirements are:
+> - PHP 8.2+ and Laravel 12+ (or use standalone without Laravel)
+> - Update your `composer.json` to require `blendbyte/laravel-paypal:^3.1`
+>
+> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation and usage documentation.
 
     
 <a name="introduction"></a>
