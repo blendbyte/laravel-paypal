@@ -3,9 +3,9 @@
 namespace Srmklive\PayPal\Traits;
 
 use Srmklive\PayPal\Exceptions\PayPalApiException;
+use Srmklive\PayPal\Services\RetryPolicy;
 use Srmklive\PayPal\Services\Str;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
@@ -13,7 +13,6 @@ use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Utils;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
@@ -180,18 +179,8 @@ trait PayPalHttpClient
 
         if ($maxRetries > 0) {
             $stack->push(Middleware::retry(
-                static function (int $retries, mixed $request, mixed $response, mixed $exception) use ($maxRetries): bool {
-                    if ($retries >= $maxRetries) {
-                        return false; // @codeCoverageIgnore
-                    }
-
-                    return $exception instanceof ConnectException
-                        || ($response instanceof ResponseInterface && $response->getStatusCode() >= 500);
-                },
-                static function (int $retries): int {
-                    // Exponential backoff: 500ms, 1s, 2s, 4s — capped at 8s.
-                    return (int) min(500 * (2 ** ($retries - 1)), 8000); // @codeCoverageIgnore
-                }
+                RetryPolicy::decider($maxRetries),
+                RetryPolicy::delay()
             ));
         }
 

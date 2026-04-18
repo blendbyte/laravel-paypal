@@ -228,7 +228,7 @@ return [
     'validate_ssl'    => env('PAYPAL_VALIDATE_SSL', true),
     'timeout'         => env('PAYPAL_TIMEOUT', 30),         // total request timeout (seconds)
     'connect_timeout' => env('PAYPAL_CONNECT_TIMEOUT', 10), // connection timeout (seconds)
-    'max_retries'     => env('PAYPAL_MAX_RETRIES', 2),      // retries on 5xx / network errors (0 to disable)
+    'max_retries'     => env('PAYPAL_MAX_RETRIES', 2),      // retries on 5xx / 429 / network errors (0 to disable)
 ];
 ```
 
@@ -260,6 +260,16 @@ $provider->setClient(new Psr18Client());
 Pass `null` (or call with no argument) to restore the default Guzzle client with the configured timeout and retry middleware.
 
 > **Note:** The built-in retry middleware runs only on the default Guzzle client. When you inject a custom client, handle retries in that client's own middleware stack.
+
+### Retry Behaviour
+
+The default Guzzle client automatically retries failed requests up to `max_retries` times (default: 2) for:
+
+- **5xx server errors** — PayPal-side failures (500, 502, 503, …)
+- **429 Too Many Requests** — rate-limit responses; the `Retry-After` header is read and honoured when present
+- **Network/connection errors** — DNS failures, connection refused, etc.
+
+The delay between attempts uses exponential backoff (500 ms → 1 s → 2 s → 4 s, capped at 8 s) unless a `Retry-After` header overrides it. Set `max_retries` to `0` to disable retries entirely.
 
 ---
 
