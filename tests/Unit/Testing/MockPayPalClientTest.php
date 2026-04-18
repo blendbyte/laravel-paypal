@@ -103,4 +103,9 @@ describe('MockPayPalClient', function () {
 
         expect($mock->requestCount())->toBe(1);
     });
+
+    it('throws when sendRequest is called with no queued responses', function () {
+        $mock = new MockPayPalClient();
+        $mock->sendRequest(new \GuzzleHttp\Psr7\Request('GET', 'https://example.com'));
+    })->throws(\UnderflowException::class);
 });
