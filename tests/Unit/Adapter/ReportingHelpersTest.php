@@ -40,6 +40,13 @@ describe('getTransactionDetails', function () {
         expect($provider->getTransactionDetails('BAD-ID'))->toBeNull();
     });
 
+    it('returns null when listTransactions returns a non-array (e.g. StreamInterface)', function () {
+        $mockClient = $this->mock_client('non-array-response', 'listTransactions');
+        $mockClient->setApiCredentials($this->getMockCredentials());
+
+        expect($mockClient->getTransactionDetails('TXN-123'))->toBeNull();
+    });
+
     it('clamps daysBack to the 1–31 range', function () {
         $mock = new MockPayPalClient();
         $mock->addResponse(['transaction_details' => [], 'total_items' => 0]);
