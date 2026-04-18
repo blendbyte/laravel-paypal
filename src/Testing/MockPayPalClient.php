@@ -2,63 +2,55 @@
 
 namespace Srmklive\PayPal\Testing;
 
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Utils;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Srmklive\PayPal\Services\PayPal;
 
-class MockPayPalClient
+class MockPayPalClient implements ClientInterface
 {
-    private MockHandler $handler;
+    /** @var ResponseInterface[] */
+    private array $responseQueue = [];
 
-    /** @var array<int, array{request: RequestInterface, response: \Psr\Http\Message\ResponseInterface}> */
+    /** @var RequestInterface[] */
     private array $history = [];
-
-    private ?GuzzleClient $guzzle = null;
-
-    public function __construct()
-    {
-        $this->handler = new MockHandler();
-    }
 
     /**
      * Queue a response for the next HTTP call.
      *
      * Pass an array for a JSON body, or false for an empty body (e.g. 204 No Content).
+     *
+     * @param array<string, mixed>|false $body
      */
     public function addResponse(array|false $body = [], int $statusCode = 200): static
     {
-        $this->handler->append(new Response(
+        $this->responseQueue[] = new Response(
             $statusCode,
             ['Content-Type' => 'application/json'],
             $body === false ? '' : Utils::jsonEncode($body),
-        ));
+        );
 
         return $this;
     }
 
-    /**
-     * Returns a PSR-18 ClientInterface to pass to PayPal::setClient().
-     */
-    public function getClient(): ClientInterface
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        if ($this->guzzle === null) {
-            $stack = HandlerStack::create($this->handler);
-            $stack->push(Middleware::history($this->history));
-            $this->guzzle = new GuzzleClient(['handler' => $stack]);
+        $this->history[] = $request;
+
+        if ($this->responseQueue === []) {
+            throw new \UnderflowException('MockPayPalClient has no more queued responses.');
         }
 
-        return $this->guzzle;
+        return array_shift($this->responseQueue);
     }
 
     /**
-     * Convenience method: wire the mock client into a PayPal provider instance
+     * Convenience method: wire this mock into a PayPal provider instance
      * and pre-set a fake access token so callers skip the auth round-trip.
+     *
+     * @param array<string, mixed> $config
      */
     public function mockProvider(array $config = []): PayPal
     {
@@ -78,7 +70,7 @@ class MockPayPalClient
 
         $provider = new PayPal($config);
         $provider->setAccessToken(['access_token' => 'mock-access-token', 'token_type' => 'Bearer']);
-        $provider->setClient($this->getClient());
+        $provider->setClient($this);
 
         return $provider;
     }
@@ -90,16 +82,16 @@ class MockPayPalClient
      */
     public function requests(): array
     {
-        return array_map(fn ($h) => $h['request'], $this->history);
+        return $this->history;
     }
 
     public function lastRequest(): ?RequestInterface
     {
-        if (empty($this->history)) {
+        if ($this->history === []) {
             return null;
         }
 
-        return end($this->history)['request'];
+        return end($this->history);
     }
 
     public function requestCount(): int
