@@ -883,6 +883,58 @@ $provider->deleteWebExperienceProfile('XP-A88A-LYLW-8Y3X-E5ER');
 
 ---
 
+## Testing
+
+Use `MockPayPalClient` to write unit tests against your PayPal integration without hitting the sandbox API:
+
+```php
+use Srmklive\PayPal\Testing\MockPayPalClient;
+
+$mock = new MockPayPalClient();
+$mock->addResponse(['id' => '5O190127TN364715T', 'status' => 'CREATED']);
+
+// mockProvider() returns a ready PayPal instance — credentials and access token pre-set
+$provider = $mock->mockProvider();
+$order = $provider->createOrder($data);
+
+expect($order['id'])->toBe('5O190127TN364715T');
+```
+
+Queue multiple responses in order — one is consumed per API call:
+
+```php
+$mock = new MockPayPalClient();
+$mock->addResponse(['id' => 'ORDER-1', 'status' => 'CREATED']);
+$mock->addResponse(['id' => 'ORDER-2', 'status' => 'CREATED']);
+```
+
+Pass `false` as the body for empty-response operations (e.g. `updateOrder`, which returns 204):
+
+```php
+$mock->addResponse(false, 204);
+```
+
+Inspect what was sent to assert on headers, method, or payload:
+
+```php
+$request = $mock->lastRequest();           // Psr\Http\Message\RequestInterface
+$mock->requests();                         // all captured requests, in order
+$mock->requestCount();                     // int
+
+$request->getHeaderLine('Authorization'); // 'Bearer mock-access-token'
+$request->getMethod();                    // 'POST'
+(string) $request->getUri();              // 'https://api-m.sandbox.paypal.com/v2/checkout/orders'
+```
+
+If you need to inject the mock into a provider you've already constructed, pass it to `setClient()` directly — `MockPayPalClient` implements `Psr\Http\Client\ClientInterface`:
+
+```php
+$provider->setAccessToken(['access_token' => 'mock-token', 'token_type' => 'Bearer']);
+$provider->setClient($mock);
+```
+
+---
+
 ## Maintained by Blendbyte
 
 <a href="https://www.blendbyte.com">
