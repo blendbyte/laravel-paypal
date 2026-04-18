@@ -12,7 +12,7 @@
 > - Replace `CreateRecurringPaymentsProfile` with the Subscriptions v2 helpers (`addProduct()` → `setupSubscription()`)
 > - Replace NVP/SOAP credentials with a REST API Client ID and Secret from [developer.paypal.com](https://developer.paypal.com)
 >
-> See the [v3.1 README](https://github.com/blendbyte/laravel-paypal/blob/v3.1/README.md) for full installation and usage documentation.
+> See the [README](https://github.com/blendbyte/laravel-paypal/blob/main/README.md) for full installation and usage documentation.
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/srmklive/paypal.svg?style=flat-square)](https://packagist.org/packages/srmklive/paypal)
