@@ -28,6 +28,8 @@ trait WebHooksEvents
     /**
      * List all events notifications for web hooks.
      *
+     * @param array<string, string|int> $filters Optional filters: page_size, start_time, end_time
+     *                                           (RFC 3339 date-times), transaction_id, event_type.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -35,9 +37,11 @@ trait WebHooksEvents
      *
      * @see https://developer.paypal.com/docs/api/webhooks/v1/#webhooks-events_list
      */
-    public function listEvents()
+    public function listEvents(array $filters = [])
     {
-        $this->apiEndPoint = 'v1/notifications/webhooks-events';
+        $query = http_build_query($filters, '', '&', PHP_QUERY_RFC3986);
+
+        $this->apiEndPoint = 'v1/notifications/webhooks-events'.($query !== '' ? "?{$query}" : '');
 
         $this->verb = 'get';
 

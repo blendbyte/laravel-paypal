@@ -62,7 +62,7 @@ trait Subscriptions
     /**
      * Show details for an existing subscription.
      *
-     *
+     * @param list<string> $fields Additional fields to return: 'last_failed_payment' and/or 'plan'.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -70,9 +70,9 @@ trait Subscriptions
      *
      * @see https://developer.paypal.com/docs/api/subscriptions/v1/#subscriptions_get
      */
-    public function showSubscriptionDetails(string $subscription_id)
+    public function showSubscriptionDetails(string $subscription_id, array $fields = [])
     {
-        $this->apiEndPoint = "v1/billing/subscriptions/{$subscription_id}";
+        $this->apiEndPoint = "v1/billing/subscriptions/{$subscription_id}".($fields !== [] ? '?fields='.implode(',', $fields) : '');
 
         $this->verb = 'get';
 

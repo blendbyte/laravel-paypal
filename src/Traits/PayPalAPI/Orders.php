@@ -35,7 +35,7 @@ trait Orders
     /**
      * Shows details for an order.
      *
-     *
+     * @param list<string> $fields Additional fields to return; PayPal supports 'payment_source'.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -43,9 +43,9 @@ trait Orders
      *
      * @see https://developer.paypal.com/docs/api/orders/v2/#orders_get
      */
-    public function showOrderDetails(string $order_id)
+    public function showOrderDetails(string $order_id, array $fields = [])
     {
-        $this->apiEndPoint = "v2/checkout/orders/{$order_id}";
+        $this->apiEndPoint = "v2/checkout/orders/{$order_id}".($fields !== [] ? '?fields='.implode(',', $fields) : '');
 
         $this->verb = 'get';
 

@@ -588,7 +588,8 @@ $provider->createPlan($payload);
 ```php
 // List (page, count, show_total, fields)
 $plans = $provider->listPlans();
-$plans = $provider->listPlans(1, 30, true, ['id', 'name', 'description']);
+$plans = $provider->setCurrentPage(2)->setPageSize(20)->listPlans(); // page size max. 20
+$plans = $provider->listPlansForProduct('PROD-XXCD1234QWER65782');
 
 // Create
 $plan = $provider->createPlan($data);
@@ -640,6 +641,7 @@ $order = $provider->createOrder([
 // Update, show, authorize
 $provider->updateOrder('5O190127TN364715T', $patchData);
 $order = $provider->showOrderDetails('5O190127TN364715T');
+$order = $provider->showOrderDetails('5O190127TN364715T', ['payment_source']); // include payment source details
 $provider->authorizePaymentOrder('5O190127TN364715T');
 
 // Capture — and extract the capture/transaction ID from the response
@@ -680,6 +682,7 @@ $provider->voidAuthorizedPayment('0VF52814937998046');
 ```php
 $provider->showCapturedPaymentDetails('2GG279541U471931P');
 $provider->refundCapturedPayment('2GG279541U471931P', 'INVOICE-123', 10.99, 'Defective product');
+$provider->refundCapturedPaymentInFull('2GG279541U471931P'); // refunds the remaining captured amount
 $provider->showRefundDetails('1JU08902781691411');
 ```
 
@@ -850,6 +853,7 @@ $provider->updateSubscription('I-BW452GLLEP1G', [
 ]);
 
 $provider->showSubscriptionDetails('I-BW452GLLEP1G');
+$provider->showSubscriptionDetails('I-BW452GLLEP1G', ['last_failed_payment', 'plan']); // include extra fields
 $provider->activateSubscription('I-BW452GLLEP1G', 'Reactivating the subscription');
 $provider->cancelSubscription('I-BW452GLLEP1G', 'Not satisfied with the service');
 $provider->suspendSubscription('I-BW452GLLEP1G', 'Item out of stock');
@@ -949,6 +953,7 @@ $provider->deleteWebHook('webhook-id');
 $provider->listWebHookEvents('webhook-id');
 $provider->listEventTypes();
 $provider->listEvents();
+$provider->listEvents(['event_type' => 'PAYMENT.CAPTURE.COMPLETED', 'start_time' => '2026-09-01T00:00:00Z']);
 $provider->showEventDetails('event-id');
 $provider->resendEventNotification('event-id', ['webhook-id']);
 

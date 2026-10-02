@@ -55,4 +55,31 @@ trait PaymentCaptures
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Refund the remaining amount of a captured payment.
+     *
+     * Omits the amount, so PayPal refunds the captured amount minus any
+     * previous refunds. Empty $invoice_id / $note values are omitted.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/payments/v2/#captures_refund
+     */
+    public function refundCapturedPaymentInFull(string $capture_id, string $invoice_id = '', string $note = '')
+    {
+        $this->apiEndPoint = "v2/payments/captures/{$capture_id}/refund";
+
+        // The request body must be a JSON object, also when empty.
+        $this->options['json'] = (object) array_filter([
+            'invoice_id' => $invoice_id,
+            'note_to_payer' => $note,
+        ], fn ($value) => $value !== '');
+
+        $this->verb = 'post';
+
+        return $this->doPayPalRequest();
+    }
 }

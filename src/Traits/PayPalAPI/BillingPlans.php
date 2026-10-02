@@ -35,6 +35,8 @@ trait BillingPlans
     /**
      * List all billing plans.
      *
+     * The shared page size (setPageSize()) is capped at 20, the maximum for
+     * this endpoint. To filter by product use listPlansForProduct().
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -44,7 +46,33 @@ trait BillingPlans
      */
     public function listPlans()
     {
-        $this->apiEndPoint = "v1/billing/plans?page={$this->current_page}&page_size={$this->page_size}&total_required={$this->show_totals}";
+        return $this->requestPlanList('');
+    }
+
+    /**
+     * List the billing plans of a product.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/subscriptions/v1/#plans_list
+     */
+    public function listPlansForProduct(string $product_id)
+    {
+        return $this->requestPlanList('&product_id='.rawurlencode($product_id));
+    }
+
+    /**
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     */
+    private function requestPlanList(string $filter)
+    {
+        $page_size = max(1, min($this->page_size, 20));
+
+        $this->apiEndPoint = "v1/billing/plans?page={$this->current_page}&page_size={$page_size}&total_required={$this->show_totals}{$filter}";
 
         $this->verb = 'get';
 
