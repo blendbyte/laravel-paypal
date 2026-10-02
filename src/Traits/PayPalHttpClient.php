@@ -228,6 +228,7 @@ trait PayPalHttpClient
 
         $locale = empty($this->locale) ? 'en_US' : $this->locale;
         $this->locale = $locale;
+        $this->setRequestHeader('Accept-Language', $this->locale);
 
         // Use null-coalescing assignment so that an explicit false is preserved.
         // empty(false) === true, so the old ternary silently reset false to true,

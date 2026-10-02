@@ -1,6 +1,7 @@
 <?php
 
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Srmklive\PayPal\Testing\MockPayPalClient;
 
 beforeEach(function () {
     $this->client = new PayPalClient($this->getApiCredentials());
@@ -137,4 +138,27 @@ it('uses Laravel config when PayPalClient is constructed with an empty array', f
     } finally {
         \Illuminate\Container\Container::setInstance($previous);
     }
+});
+
+it('sends the configured locale as Accept-Language header', function () {
+    // Regression: the constructor wiped the options (and with them the
+    // Accept-Language header) right after setConfig() had set it.
+    $mock = new MockPayPalClient();
+    $client = $mock->mockProvider(['locale' => 'de_DE']);
+
+    expect($client->getRequestHeader('Accept-Language'))->toBe('de_DE');
+
+    $mock->addResponse(['id' => 'O-1']);
+    $client->showOrderDetails('O-1');
+
+    expect($mock->lastRequest()->getHeaderLine('Accept-Language'))->toBe('de_DE');
+});
+
+it('falls back to en_US for the Accept-Language header when no locale is configured', function () {
+    $credentials = $this->getApiCredentials();
+    $credentials['locale'] = '';
+
+    $client = new PayPalClient($credentials);
+
+    expect($client->getRequestHeader('Accept-Language'))->toBe('en_US');
 });
