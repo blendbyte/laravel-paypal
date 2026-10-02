@@ -84,8 +84,14 @@ trait Helpers
             $body['subscriber']['shipping_address'] = $this->shipping_address;
         }
 
-        if (! empty($this->experience_context)) {
-            $body['application_context'] = $this->experience_context;
+        // Subscriptions use application_context, which supports fewer fields
+        // than the Orders experience_context.
+        $application_context = array_intersect_key($this->experience_context, array_flip([
+            'brand_name', 'locale', 'shipping_preference', 'user_action', 'payment_method', 'return_url', 'cancel_url',
+        ]));
+
+        if (! empty($application_context)) {
+            $body['application_context'] = $application_context;
         }
 
         // Taxes are part of the plan override; there is no top-level field.

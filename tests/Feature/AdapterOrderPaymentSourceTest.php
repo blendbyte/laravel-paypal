@@ -82,3 +82,55 @@ it('never sends stored_payment_source inside the experience context', function (
 
     expect(sentBody($this->mock)['payment_source']['paypal']['experience_context'])->toBe(['brand_name' => 'Acme']);
 });
+
+it('only sends the experience context fields each payment source supports', function (string $setter, array $data, string $key, ?array $expected) {
+    $this->mock->addResponse(['id' => 'O-1']);
+
+    $this->client->{$setter}($data)
+        ->setBrandName('Acme')
+        ->setReturnAndCancelUrl('https://example.com/ok', 'https://example.com/cancel')
+        ->setShippingAddressChangeCallback('https://example.com/cb')
+        ->createOrderWithPaymentSource($this->order);
+
+    $source = sentBody($this->mock)['payment_source'][$key];
+
+    if ($expected === null) {
+        expect($source)->not->toHaveKey('experience_context');
+    } else {
+        expect(array_keys($source['experience_context']))->toBe($expected);
+    }
+})->with([
+    'paypal' => ['setPaymentSourcePayPal', ['vault_id' => 'V-1'], 'paypal', ['brand_name', 'return_url', 'cancel_url', 'order_update_callback_config']],
+    'card' => ['setPaymentSourceCard', ['vault_id' => 'V-1'], 'card', ['return_url', 'cancel_url']],
+    'apple pay' => ['setPaymentSourceApplePay', ['id' => 'A-1'], 'apple_pay', ['return_url', 'cancel_url']],
+    'google pay' => ['setPaymentSourceGooglePay', ['card' => ['name' => 'X']], 'google_pay', ['return_url', 'cancel_url']],
+    'venmo' => ['setPaymentSourceVenmo', ['vault_id' => 'V-1'], 'venmo', ['brand_name', 'order_update_callback_config']],
+]);
+
+it('passes the experience context through unfiltered for sources not in the spec', function () {
+    $this->mock->addResponse(['id' => 'O-1']);
+
+    $this->client->setPaymentSourcePayUponInvoice(['email' => 'buyer@example.com'])
+        ->setBrandName('Acme')
+        ->createOrderWithPaymentSource($this->order);
+
+    expect(sentBody($this->mock)['payment_source']['pay_upon_invoice']['experience_context'])->toBe(['brand_name' => 'Acme']);
+});
+
+it('only sends supported application_context fields for subscriptions', function () {
+    $this->mock->addResponse(['id' => 'I-1']);
+
+    $this->client->addProductById('PROD-1')
+        ->addBillingPlanById('P-1')
+        ->setBrandName('Acme')
+        ->setReturnAndCancelUrl('https://example.com/ok', 'https://example.com/cancel')
+        ->setShippingAddressChangeCallback('https://example.com/cb')
+        ->setStoredPaymentSource('CUSTOMER', 'ONE_TIME', 'IMMEDIATE')
+        ->setupSubscription('John Doe', 'john@example.com');
+
+    expect(sentBody($this->mock)['application_context'])->toBe([
+        'brand_name' => 'Acme',
+        'return_url' => 'https://example.com/ok',
+        'cancel_url' => 'https://example.com/cancel',
+    ]);
+});

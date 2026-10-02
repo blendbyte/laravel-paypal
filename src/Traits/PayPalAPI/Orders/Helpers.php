@@ -7,6 +7,34 @@ use Throwable;
 
 trait Helpers
 {
+    private const EXPERIENCE_CONTEXT_BASE_FIELDS = ['brand_name', 'locale', 'shipping_preference', 'return_url', 'cancel_url'];
+
+    /**
+     * experience_context fields supported per payment source (Orders v2).
+     * Sources not listed here receive the experience context unfiltered.
+     */
+    private const EXPERIENCE_CONTEXT_FIELDS = [
+        'paypal' => [
+            'brand_name', 'locale', 'shipping_preference', 'contact_preference', 'return_url', 'cancel_url',
+            'app_switch_context', 'landing_page', 'user_action', 'payment_method_preference', 'order_update_callback_config',
+        ],
+        'venmo' => ['brand_name', 'shipping_preference', 'order_update_callback_config', 'user_action'],
+        'card' => ['return_url', 'cancel_url'],
+        'apple_pay' => ['return_url', 'cancel_url'],
+        'google_pay' => ['return_url', 'cancel_url'],
+        'token' => [],
+        'crypto' => ['locale', 'return_url', 'cancel_url'],
+        'blik' => [...self::EXPERIENCE_CONTEXT_BASE_FIELDS, 'consumer_ip', 'consumer_user_agent'],
+        'bancontact' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'eps' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'giropay' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'ideal' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'mybank' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'p24' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'sofort' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+        'trustly' => self::EXPERIENCE_CONTEXT_BASE_FIELDS,
+    ];
+
     /**
      * Extract the capture (transaction) ID from a captured order response.
      *
@@ -31,9 +59,9 @@ trait Helpers
      * setPaymentSourceVenmo(), setPaymentSourceCard(), or setPaymentSourcePayPal()
      * to avoid manually constructing the payment_source key in the order body.
      *
-     * If an experience_context has been set (via setReturnUrl(), setBrandName(),
-     * etc.), it is nested inside the payment source method — matching the same
-     * behaviour as setupOrderConfirmation().
+     * If an experience_context has been set (via setReturnAndCancelUrl(),
+     * setBrandName(), etc.), the fields supported by the payment source are
+     * nested inside it — matching the behaviour of setupOrderConfirmation().
      *
      * @param array<string, mixed> $data Order body (intent, purchase_units, etc.)
      *
@@ -80,6 +108,7 @@ trait Helpers
      * PayPal deprecated the top-level application_context in Orders v2:
      * experience_context and stored_credential are nested within the payment
      * source method. When no payment source is set, the paypal wallet is used.
+     * Only the experience_context fields the payment source supports are sent.
      *
      * @return array<string, mixed>
      */
@@ -94,8 +123,10 @@ trait Helpers
         $method = empty($payment_source) ? 'paypal' : (string) array_key_first($payment_source);
         $details = $payment_source[$method] ?? [];
 
-        if (! empty($this->experience_context)) {
-            $details = array_merge($details, ['experience_context' => $this->experience_context]);
+        $experience_context = $this->experienceContextFor($method);
+
+        if (! empty($experience_context)) {
+            $details = array_merge($details, ['experience_context' => $experience_context]);
         }
 
         $stored_credential = $this->storedCredentialFor($method);
@@ -107,6 +138,20 @@ trait Helpers
         $payment_source[$method] = $details;
 
         return $payment_source;
+    }
+
+    /**
+     * Filter the experience context to the fields the payment source supports.
+     *
+     * @return array<string, mixed>
+     */
+    private function experienceContextFor(string $method): array
+    {
+        if (! isset(self::EXPERIENCE_CONTEXT_FIELDS[$method])) {
+            return $this->experience_context;
+        }
+
+        return array_intersect_key($this->experience_context, array_flip(self::EXPERIENCE_CONTEXT_FIELDS[$method]));
     }
 
     /**

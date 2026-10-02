@@ -7,8 +7,8 @@ use Psr\Http\Message\StreamInterface;
 /**
  * @deprecated PayPal has deprecated the v1/payment-experience/web-profiles API.
  *             Use the `experience_context` field on Orders v2 instead, via the
- *             fluent helpers in PayPalExperienceContext (setReturnUrl(),
- *             setCancelUrl(), setBrandName(), etc.).
+ *             fluent helpers in PayPalExperienceContext (setReturnAndCancelUrl(),
+ *             setBrandName(), etc.).
  *
  * @see https://developer.paypal.com/docs/api/payment-experience/v1/
  * @see \Srmklive\PayPal\Traits\PayPalExperienceContext
