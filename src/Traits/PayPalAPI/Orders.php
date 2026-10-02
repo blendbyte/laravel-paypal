@@ -169,4 +169,47 @@ trait Orders
 
         return $this->doPayPalRequest();
     }
+
+    /**
+     * Update tracking information for an Order.
+     *
+     * Sends a JSON Patch array. PayPal supports replacing `items`, replacing or
+     * adding `notify_payer`, and replacing `status` with CANCELLED (see
+     * cancelTrackingForOrder()). The tracker ID is returned by
+     * addTrackingForOrder() in purchase_units[].shipping.trackers[].id.
+     *
+     * @param list<array<string, mixed>> $patch JSON Patch operations.
+     *
+     * @return array<string, mixed>|StreamInterface|string Empty array on success (204).
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_trackers_patch
+     */
+    public function updateTrackingForOrder(string $order_id, string $tracker_id, array $patch)
+    {
+        $this->apiEndPoint = "v2/checkout/orders/{$order_id}/trackers/{$tracker_id}";
+
+        $this->options['json'] = $patch;
+
+        $this->verb = 'patch';
+
+        return $this->doPayPalRequest();
+    }
+
+    /**
+     * Cancel tracking information for an Order.
+     *
+     * @return array<string, mixed>|StreamInterface|string Empty array on success (204).
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#orders_trackers_patch
+     */
+    public function cancelTrackingForOrder(string $order_id, string $tracker_id)
+    {
+        return $this->updateTrackingForOrder($order_id, $tracker_id, [
+            ['op' => 'replace', 'path' => '/status', 'value' => 'CANCELLED'],
+        ]);
+    }
 }

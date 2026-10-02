@@ -654,6 +654,12 @@ $provider->addTrackingForOrder($order['id'], [
     'tracking_number' => '1Z999AA10123456784',
     'carrier'         => 'UPS',
 ]);
+
+// Update or cancel it later (tracker ID: purchase_units[].shipping.trackers[].id of the response)
+$provider->updateTrackingForOrder($order['id'], $trackerId, [
+    ['op' => 'replace', 'path' => '/notify_payer', 'value' => true],
+]);
+$provider->cancelTrackingForOrder($order['id'], $trackerId);
 ```
 
 ---
