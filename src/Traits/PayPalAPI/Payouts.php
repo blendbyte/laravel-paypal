@@ -33,7 +33,9 @@ trait Payouts
     /**
      * Show Batch Payout details by ID.
      *
-     *
+     * @param int|null $page           Page of payout items to return (1-1000).
+     * @param int|null $page_size      Payout items per page (1-1000).
+     * @param bool     $total_required Include the total item count in the response.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -41,9 +43,15 @@ trait Payouts
      *
      * @see https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_get
      */
-    public function showBatchPayoutDetails(string $payout_id)
+    public function showBatchPayoutDetails(string $payout_id, ?int $page = null, ?int $page_size = null, bool $total_required = false)
     {
-        $this->apiEndPoint = "v1/payments/payouts/{$payout_id}";
+        $query = http_build_query(array_filter([
+            'page' => $page,
+            'page_size' => $page_size,
+            'total_required' => $total_required ? 'true' : null,
+        ], fn ($value) => $value !== null));
+
+        $this->apiEndPoint = "v1/payments/payouts/{$payout_id}".($query !== '' ? "?{$query}" : '');
 
         $this->verb = 'get';
 

@@ -24,7 +24,8 @@ trait WebHooks
         $this->apiEndPoint = 'v1/notifications/webhooks';
 
         $data = ['url' => $url];
-        $data['event_types'] = array_map(fn ($item) => ['name' => $item], $events);
+        // array_values() so event_types is always encoded as a JSON array.
+        $data['event_types'] = array_map(fn ($item) => ['name' => $item], array_values($events));
 
         $this->options['json'] = $data;
 

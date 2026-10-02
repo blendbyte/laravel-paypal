@@ -9,6 +9,13 @@ trait Disputes
     /**
      * List disputes.
      *
+     * The shared page size (setPageSize()) is capped at 50, the maximum for
+     * this endpoint.
+     *
+     * @param array<string, string|list<string>> $filters Optional query filters: dispute_state
+     *                                                    (string or list), disputed_transaction_id,
+     *                                                    update_time_before, update_time_after,
+     *                                                    next_page_token.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -16,9 +23,15 @@ trait Disputes
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_list
      */
-    public function listDisputes()
+    public function listDisputes(array $filters = [])
     {
-        $this->apiEndPoint = "v1/customer/disputes?page_size={$this->page_size}";
+        $query = ['page_size' => max(1, min($this->page_size, 50))];
+
+        foreach ($filters as $name => $value) {
+            $query[$name] = is_array($value) ? implode(',', $value) : $value;
+        }
+
+        $this->apiEndPoint = 'v1/customer/disputes?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986);
 
         $this->verb = 'get';
 

@@ -48,10 +48,13 @@ trait Reporting
     {
         $daysBack = max(1, min($daysBack, 31));
 
+        // A single "now" keeps the window within the API's 31-day maximum.
+        $now = Carbon::now();
+
         $response = $this->listTransactions([
             'transaction_id' => $transactionId,
-            'start_date'     => Carbon::now()->subDays($daysBack)->toIso8601ZuluString(),
-            'end_date'       => Carbon::now()->toIso8601ZuluString(),
+            'start_date'     => $now->copy()->subDays($daysBack)->toIso8601ZuluString(),
+            'end_date'       => $now->toIso8601ZuluString(),
         ]);
 
         if (! is_array($response)) {

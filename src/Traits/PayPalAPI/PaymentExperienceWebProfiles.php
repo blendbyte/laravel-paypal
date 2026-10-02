@@ -52,6 +52,11 @@ trait PaymentExperienceWebProfiles
     {
         $this->apiEndPoint = 'v1/payment-experience/web-profiles';
 
+        // PayPal-Request-Id is required for this call.
+        if (! isset($this->options['headers']['PayPal-Request-Id'])) {
+            $this->withIdempotencyKey();
+        }
+
         $this->options['json'] = $data;
 
         $this->verb = 'post';

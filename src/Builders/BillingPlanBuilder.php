@@ -192,7 +192,13 @@ final class BillingPlanBuilder
     {
         $billingCycles = [];
 
-        foreach ($this->cycles as $i => $cycle) {
+        // Trial cycles must come first: PayPal runs cycles in sequence order.
+        $cycles = array_merge(
+            array_filter($this->cycles, fn ($cycle) => $cycle['tenure_type'] === 'TRIAL'),
+            array_filter($this->cycles, fn ($cycle) => $cycle['tenure_type'] !== 'TRIAL'),
+        );
+
+        foreach ($cycles as $i => $cycle) {
             $billingCycles[] = [
                 'frequency' => [
                     'interval_unit' => $cycle['interval_unit'],

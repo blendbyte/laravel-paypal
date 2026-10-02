@@ -75,6 +75,11 @@ trait Helpers
 
         if (! empty($payment_source)) {
             $data['payment_source'] = $payment_source;
+
+            // PayPal-Request-Id is mandatory for single-step create order calls.
+            if (! isset($this->options['headers']['PayPal-Request-Id'])) {
+                $this->withIdempotencyKey();
+            }
         }
 
         return $this->createOrder($data);

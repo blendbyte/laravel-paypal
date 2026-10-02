@@ -232,6 +232,9 @@ trait Subscriptions
     /**
      * List transactions for an existing subscription.
      *
+     * An empty $end_date means now; an empty $start_date means 30 days
+     * before the end date.
+     *
      * @param  \DateTimeInterface|string  $start_date
      * @param  \DateTimeInterface|string  $end_date
      * @return array<string, mixed>|StreamInterface|string
@@ -242,12 +245,17 @@ trait Subscriptions
      */
     public function listSubscriptionTransactions(string $subscription_id, $start_date = '', $end_date = '')
     {
-        if (! ($start_date instanceof CarbonInterface)) {
-            $start_date = Carbon::parse($start_date);
+        if ($end_date === '') {
+            $end_date = Carbon::now();
+        } elseif (! ($end_date instanceof CarbonInterface)) {
+            $end_date = Carbon::parse($end_date);
         }
 
-        if (! ($end_date instanceof CarbonInterface)) {
-            $end_date = Carbon::parse($end_date);
+        // Both are required by the API; an empty start used to produce an empty range.
+        if ($start_date === '') {
+            $start_date = $end_date->copy()->subDays(30);
+        } elseif (! ($start_date instanceof CarbonInterface)) {
+            $start_date = Carbon::parse($start_date);
         }
 
         $start_date = $start_date->toIso8601ZuluString();
