@@ -323,7 +323,20 @@ trait PayPalHttpClient
                 return $response->getContents();
             }
 
-            $decoded = json_decode((string) $response, true, 512, JSON_THROW_ON_ERROR);
+            $body = (string) $response;
+
+            // 204 No Content and other empty success responses.
+            if ($body === '') {
+                return [];
+            }
+
+            try {
+                $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                // Route malformed success bodies through the regular error
+                // handling below instead of leaking a JsonException.
+                throw new RuntimeException($body);
+            }
 
             return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
