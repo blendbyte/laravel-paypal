@@ -30,7 +30,7 @@ trait PaymentCaptures
     /**
      * Refund a captured payment.
      *
-     *
+     * Empty $invoice_id / $note values are omitted (PayPal rejects empty strings).
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -42,14 +42,14 @@ trait PaymentCaptures
     {
         $this->apiEndPoint = "v2/payments/captures/{$capture_id}/refund";
 
-        $this->options['json'] = [
+        $this->options['json'] = array_filter([
             'amount' => [
                 'value' => Amount::format($amount, $this->currency),
                 'currency_code' => $this->currency,
             ],
             'invoice_id' => $invoice_id,
             'note_to_payer' => $note,
-        ];
+        ], fn ($value) => $value !== '');
 
         $this->verb = 'post';
 

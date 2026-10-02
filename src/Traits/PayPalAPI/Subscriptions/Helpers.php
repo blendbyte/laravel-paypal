@@ -283,12 +283,18 @@ trait Helpers
             return $this;
         }
 
-        $product = $this->createProduct([
+        $product_params = [
             'name' => $name,
-            'description' => $description,
             'type' => $type,
             'category' => $category,
-        ]);
+        ];
+
+        // PayPal rejects an empty description, so omit it.
+        if ($description !== '') {
+            $product_params['description'] = $description;
+        }
+
+        $product = $this->createProduct($product_params);
 
         if ($error = data_get($product, 'error', false)) {
             throw new \RuntimeException(data_get($error, 'details.0.description', 'Failed to add product'));
@@ -344,7 +350,6 @@ trait Helpers
         $plan_params = [
             'product_id' => $this->product['id'],
             'name' => $name,
-            'description' => $description,
             'status' => 'ACTIVE',
             'billing_cycles' => $billing_cycles,
             'payment_preferences' => [
@@ -353,6 +358,11 @@ trait Helpers
                 'payment_failure_threshold' => $this->payment_failure_threshold,
             ],
         ];
+
+        // PayPal rejects an empty description, so omit it.
+        if ($description !== '') {
+            $plan_params['description'] = $description;
+        }
 
         $billingPlan = $this->createPlan($plan_params);
         if ($error = data_get($billingPlan, 'error', false)) {

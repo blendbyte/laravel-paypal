@@ -30,7 +30,10 @@ trait PaymentAuthorizations
     /**
      * Capture an authorized payment.
      *
+     * Empty $invoice_id / $note values are omitted (PayPal rejects empty strings).
      *
+     * @param bool $final_capture Close the authorization after this capture. Pass false
+     *                            to capture further amounts against it later.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -38,19 +41,18 @@ trait PaymentAuthorizations
      *
      * @see https://developer.paypal.com/docs/api/payments/v2/#authorizations_capture
      */
-    public function captureAuthorizedPayment(string $authorization_id, string $invoice_id, float $amount, string $note)
+    public function captureAuthorizedPayment(string $authorization_id, string $invoice_id, float $amount, string $note, bool $final_capture = true)
     {
         $this->apiEndPoint = "v2/payments/authorizations/{$authorization_id}/capture";
 
-        $this->options['json'] = [
+        $this->options['json'] = array_filter([
             'amount' => [
                 'value' => Amount::format($amount, $this->currency),
                 'currency_code' => $this->currency,
             ],
             'invoice_id' => $invoice_id,
             'note_to_payer' => $note,
-            'final_capture' => true,
-        ];
+        ], fn ($value) => $value !== '') + ['final_capture' => $final_capture];
 
         $this->verb = 'post';
 
