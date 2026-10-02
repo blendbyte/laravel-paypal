@@ -162,3 +162,20 @@ it('falls back to en_US for the Accept-Language header when no locale is configu
 
     expect($client->getRequestHeader('Accept-Language'))->toBe('en_US');
 });
+
+it('works with a minimal configuration and applies defaults', function () {
+    // Regression: payment_action, notify_url, currency, locale and validate_ssl
+    // were read without defaults, so omitting any of them raised an
+    // "Undefined array key" error.
+    $client = new PayPalClient([
+        'mode' => 'sandbox',
+        'sandbox' => [
+            'client_id' => 'some-client-id',
+            'client_secret' => 'some-client-secret',
+        ],
+    ]);
+
+    expect($client->getCurrency())->toBe('USD')
+        ->and($client->getRequestHeader('Accept-Language'))->toBe('en_US')
+        ->and((new ReflectionClass($client))->getProperty('validateSSL')->getValue($client))->toBeTrue();
+});

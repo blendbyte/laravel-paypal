@@ -84,7 +84,7 @@ trait PayPalRequest
         $this->setApiProviderConfiguration($credentials);
 
         // Set default currency.
-        $this->setCurrency($credentials['currency']);
+        $this->setCurrency($credentials['currency'] ?? 'USD');
 
         // Set Http Client configuration.
         $this->setHttpClientConfiguration();
@@ -282,11 +282,9 @@ trait PayPalRequest
             $this->config[$key] = $value;
         }
 
-        $this->paymentAction = $credentials['payment_action'];
+        $this->locale = $credentials['locale'] ?? 'en_US';
 
-        $this->locale = $credentials['locale'];
-
-        $this->validateSSL = $credentials['validate_ssl'];
+        $this->validateSSL = $credentials['validate_ssl'] ?? true;
 
         $this->setOptions($credentials);
     }

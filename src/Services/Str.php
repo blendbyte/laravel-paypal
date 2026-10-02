@@ -2,6 +2,11 @@
 
 namespace Srmklive\PayPal\Services;
 
+/**
+ * @deprecated No longer used by this package. Use json_validate() (PHP 8.3+)
+ *             or json_decode() with JSON_THROW_ON_ERROR instead. Will be
+ *             removed in the next major version.
+ */
 class Str extends \Illuminate\Support\Str
 {
     /**

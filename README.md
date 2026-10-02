@@ -172,9 +172,7 @@ $provider->setApiCredentials([
         'client_secret' => 'YOUR_LIVE_CLIENT_SECRET',
         'app_id'        => 'YOUR_LIVE_APP_ID',
     ],
-    'payment_action' => 'Sale',
     'currency'       => 'USD',
-    'notify_url'     => '',
     'locale'         => 'en_US',
     'validate_ssl'   => true,
 ]);
@@ -222,9 +220,7 @@ return [
         'client_secret' => env('PAYPAL_LIVE_CLIENT_SECRET', ''),
         'app_id'        => env('PAYPAL_LIVE_APP_ID', ''),
     ],
-    'payment_action'  => env('PAYPAL_PAYMENT_ACTION', 'Sale'), // 'Sale', 'Authorization', or 'Order'
     'currency'        => env('PAYPAL_CURRENCY', 'USD'),
-    'notify_url'      => env('PAYPAL_NOTIFY_URL', ''),
     'locale'          => env('PAYPAL_LOCALE', 'en_US'),
     'validate_ssl'    => env('PAYPAL_VALIDATE_SSL', true),
     'timeout'         => env('PAYPAL_TIMEOUT', 30),         // total request timeout (seconds)
@@ -293,9 +289,7 @@ $provider->setApiCredentials([
         'client_secret' => 'PAYPAL_LIVE_CLIENT_SECRET',
         'app_id'        => 'PAYPAL_LIVE_APP_ID',
     ],
-    'payment_action' => 'Sale',
     'currency'       => 'USD',
-    'notify_url'     => 'https://your-site.com/paypal/notify',
     'locale'         => 'en_US',
     'validate_ssl'   => true,
 ]);

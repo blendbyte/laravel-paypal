@@ -60,9 +60,7 @@ class MockPayPalClient implements ClientInterface
                 'client_secret' => 'mock-client-secret',
                 'app_id' => 'APP-MOCK',
             ],
-            'payment_action' => 'Sale',
             'currency' => 'USD',
-            'notify_url' => '',
             'locale' => 'en_US',
             'validate_ssl' => true,
         ], $config);

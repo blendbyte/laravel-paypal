@@ -45,27 +45,6 @@ trait PayPalHttpClient
     private $apiEndPoint;
 
     /**
-     * IPN notification url for PayPal.
-     *
-     * @var string
-     */
-    private $notifyUrl;
-
-    /**
-     * Http Client request body parameter name.
-     *
-     * @var string
-     */
-    private $httpBodyParam;
-
-    /**
-     * Default payment action for PayPal.
-     *
-     * @var string
-     */
-    private $paymentAction;
-
-    /**
      * Default locale for PayPal.
      *
      * @var string
@@ -121,6 +100,9 @@ trait PayPalHttpClient
     /**
      * Set curl constants if not defined.
      *
+     * @deprecated No longer used: the HTTP client is configured via Guzzle
+     *             request options. Will be removed in the next major version.
+     *
      * @return void
      */
     protected function setCurlConstants()
@@ -140,7 +122,8 @@ trait PayPalHttpClient
     /**
      * Declare a curl constant.
      *
-     * @param  string  $value
+     * @deprecated No longer used. Will be removed in the next major version.
+     *
      * @return bool
      */
     protected function defineCurlConstant(string $key, string|int $value)
@@ -196,8 +179,6 @@ trait PayPalHttpClient
      */
     protected function setHttpClientConfiguration()
     {
-        $this->setCurlConstants();
-
         // Guzzle 8 rejects CURLOPT_SSLVERSION / CURLOPT_SSL_VERIFYPEER in the
         // "curl" option, so use the equivalent Guzzle request options instead.
         $this->httpClientConfig = [
@@ -210,9 +191,6 @@ trait PayPalHttpClient
 
         // Set default values.
         $this->setDefaultValues();
-
-        // Set PayPal IPN Notification URL
-        $this->notifyUrl = $this->config['notify_url'];
     }
 
     /**
@@ -222,9 +200,6 @@ trait PayPalHttpClient
      */
     private function setDefaultValues()
     {
-        $paymentAction = empty($this->paymentAction) ? 'Sale' : $this->paymentAction;
-        $this->paymentAction = $paymentAction;
-
         $locale = empty($this->locale) ? 'en_US' : $this->locale;
         $this->locale = $locale;
         $this->setRequestHeader('Accept-Language', $this->locale);

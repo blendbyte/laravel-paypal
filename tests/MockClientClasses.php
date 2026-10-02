@@ -109,9 +109,7 @@ trait MockClientClasses
                 'client_secret' => 'some-access-token',
                 'app_id' => 'some-app-id',
             ],
-            'payment_action' => 'Sale',
             'currency' => 'USD',
-            'notify_url' => '',
             'locale' => 'en_US',
             'validate_ssl' => true,
         ];
@@ -126,9 +124,7 @@ trait MockClientClasses
                 'client_secret' => 'EPd_XBNkfhU3-MlSw6gpa6EJj9x8QBdsC3o77jZZWjcFy_hrjR4kzBP8QN3MPPH4g52U_acG4-ogWUxI',
                 'app_id' => 'APP-80W284485P519543T',
             ],
-            'payment_action' => 'Sale',
             'currency' => 'USD',
-            'notify_url' => '',
             'locale' => 'en_US',
             'validate_ssl' => true,
         ];
