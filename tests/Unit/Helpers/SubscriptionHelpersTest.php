@@ -63,7 +63,16 @@ it('addTaxes sets taxes state', function () {
 
     expect($result)->toBeInstanceOf(PayPalClient::class);
     $taxes = (new ReflectionProperty(PayPalClient::class, 'taxes'))->getValue($client);
-    expect($taxes)->toBe(['percentage' => 7.5, 'inclusive' => false]);
+    expect($taxes)->toBe(['percentage' => '7.50', 'inclusive' => false]);
+});
+
+it('addTaxes supports the inclusive flag', function () {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+
+    $client->addTaxes(19, true);
+
+    $taxes = (new ReflectionProperty(PayPalClient::class, 'taxes'))->getValue($client);
+    expect($taxes)->toBe(['percentage' => '19.00', 'inclusive' => true]);
 });
 
 it('addCustomId sets custom_id state', function () {

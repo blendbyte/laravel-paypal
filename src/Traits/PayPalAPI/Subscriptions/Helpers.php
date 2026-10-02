@@ -88,8 +88,9 @@ trait Helpers
             $body['application_context'] = $this->experience_context;
         }
 
+        // Taxes are part of the plan override; there is no top-level field.
         if (isset($this->taxes)) {
-            $body['taxes'] = $this->taxes;
+            $body['plan']['taxes'] = $this->taxes;
         }
 
         if (isset($this->custom_id)) {
@@ -413,14 +414,15 @@ trait Helpers
     /**
      * Add taxes when creating a subscription.
      *
+     * @param bool $inclusive Whether the tax is already included in the billing amount.
      *
      * @return PayPal
      */
-    public function addTaxes(float $percentage)
+    public function addTaxes(float $percentage, bool $inclusive = false)
     {
         $this->taxes = [
-            'percentage' => $percentage,
-            'inclusive' => false,
+            'percentage' => number_format($percentage, 2, '.', ''),
+            'inclusive' => $inclusive,
         ];
 
         return $this;
