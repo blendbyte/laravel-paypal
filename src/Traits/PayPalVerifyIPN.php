@@ -38,9 +38,9 @@ trait PayPalVerifyIPN
             return ['error' => 'Invalid headers or webhook id provided'];
         }
 
-        $params = json_decode($request->getContent());
+        $body = $request->getContent();
 
-        if ($params === null) {
+        if (json_decode($body) === null) {
             return ['error' => 'Invalid or empty request body'];
         }
 
@@ -51,7 +51,8 @@ trait PayPalVerifyIPN
             'transmission_sig' => $headers['PAYPAL-TRANSMISSION-SIG'][0],
             'transmission_time' => $headers['PAYPAL-TRANSMISSION-TIME'][0],
             'webhook_id' => $this->webhook_id,
-            'webhook_event' => $params,
+            // Raw body: PayPal requires the event exactly as received.
+            'webhook_event' => $body,
         ];
 
         return $this->verifyWebHook($payload);

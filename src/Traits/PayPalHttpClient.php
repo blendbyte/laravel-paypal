@@ -244,7 +244,12 @@ trait PayPalHttpClient
             $request = $request->withHeader('Authorization', 'Basic '.base64_encode("{$user}:{$pass}"));
         }
 
-        if (isset($this->options['json'])) {
+        if (isset($this->options['raw_json']) && is_string($this->options['raw_json'])) {
+            // Pre-encoded JSON body, sent byte for byte (see verifyWebHook()).
+            $request = $request
+                ->withBody($factory->createStream($this->options['raw_json']))
+                ->withHeader('Content-Type', 'application/json');
+        } elseif (isset($this->options['json'])) {
             $body = json_encode($this->options['json'], JSON_THROW_ON_ERROR);
             $request = $request
                 ->withBody($factory->createStream($body))
@@ -350,6 +355,7 @@ trait PayPalHttpClient
     {
         unset(
             $this->options['json'],
+            $this->options['raw_json'],
             $this->options['multipart'],
             $this->options['form_params'],
             $this->options['auth'],

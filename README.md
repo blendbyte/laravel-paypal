@@ -912,7 +912,7 @@ $provider->verifyWebHook([
     'transmission_sig'  => $request->header('PAYPAL-TRANSMISSION-SIG'),
     'transmission_time' => $request->header('PAYPAL-TRANSMISSION-TIME'),
     'webhook_id'        => 'your-webhook-id',
-    'webhook_event'     => $request->all(),
+    'webhook_event'     => $request->getContent(), // raw body: PayPal requires the event exactly as received
 ]);
 
 // Verify locally (offline — no API roundtrip, faster for high-volume webhooks)

@@ -160,6 +160,6 @@ it('delegates to verifyWebHook with the correct payload structure', function () 
     expect($capturedPayload['transmission_id'])->toBe('trans-456');
     expect($capturedPayload['cert_url'])->toBe('https://api.paypal.com/cert');
     expect($capturedPayload['webhook_id'])->toBe('WH-CAPTURE-TEST');
-    expect($capturedPayload['webhook_event'])->toBeObject();
-    expect($capturedPayload['webhook_event']->event_type)->toBe('PAYMENT.CAPTURE.COMPLETED');
+    // The raw body is passed on unchanged: PayPal requires the event exactly as received.
+    expect($capturedPayload['webhook_event'])->toBe($body);
 });

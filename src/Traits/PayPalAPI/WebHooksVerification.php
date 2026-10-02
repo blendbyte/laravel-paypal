@@ -16,6 +16,11 @@ trait WebHooksVerification
     /**
      * Verify a web hook from PayPal.
      *
+     * PayPal requires webhook_event to be posted back exactly as received;
+     * re-serializing a decoded event (escaped slashes, unicode, number
+     * formatting) can make verification fail. Pass the raw request body as a
+     * string (e.g. $request->getContent()) to send it unchanged. Arrays and
+     * objects are still accepted and JSON-encoded.
      *
      * @param array<string, mixed> $data
      *
@@ -29,11 +34,37 @@ trait WebHooksVerification
     {
         $this->apiEndPoint = 'v1/notifications/verify-webhook-signature';
 
-        $this->options['json'] = $data;
+        if (isset($data['webhook_event']) && is_string($data['webhook_event'])) {
+            $event = $data['webhook_event'];
+
+            if (! $this->isJsonObject($event)) {
+                return ['error' => 'Invalid webhook_event: expected the raw JSON request body'];
+            }
+
+            unset($data['webhook_event']);
+
+            // Splice the raw event into the JSON body without re-encoding it.
+            $fields = $data === [] ? '' : substr(json_encode($data, JSON_THROW_ON_ERROR), 1, -1).',';
+            $this->options['raw_json'] = '{'.$fields.'"webhook_event":'.$event.'}';
+        } else {
+            $this->options['json'] = $data;
+        }
 
         $this->verb = 'post';
 
         return $this->doPayPalRequest();
+    }
+
+    /**
+     * Whether $json is a valid JSON object.
+     */
+    private function isJsonObject(string $json): bool
+    {
+        try {
+            return json_decode($json, false, 512, JSON_THROW_ON_ERROR) instanceof \stdClass;
+        } catch (\JsonException) {
+            return false;
+        }
     }
 
     /**
