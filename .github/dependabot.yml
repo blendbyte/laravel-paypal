@@ -10,3 +10,14 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+    # Library without a committed composer.lock: widen constraints to allow
+    # new majors (e.g. "^12.0|^13.0" -> "^12.0|^13.0|^14.0") instead of
+    # raising the floor for every release.
+    versioning-strategy: "widen"
