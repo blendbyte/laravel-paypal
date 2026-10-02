@@ -36,12 +36,14 @@ trait PaymentMethodsTokens
     /**
      * List all the payment tokens.
      *
+     * @param int $page      Page number (1-10).
+     * @param int $page_size Results per page (1-5).
      *
      * @return array<string, mixed>|StreamInterface|string
      *
      * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#customer_payment-tokens_get
      */
-    public function listPaymentSourceTokens(int $page = 1, int $page_size = 10, bool $totals = true)
+    public function listPaymentSourceTokens(int $page = 1, int $page_size = 5, bool $totals = true)
     {
         if (empty($this->customer_source['id'])) {
             throw new RuntimeException('A customer ID must be set via setCustomerId() before listing payment tokens.');
@@ -133,10 +135,11 @@ trait PaymentMethodsTokens
     /**
      * Delete a payment setup token.
      *
+     * @deprecated PayPal's Vault v3 API has no endpoint to delete setup tokens
+     *             (they expire automatically), so this call returns an error.
+     *             Will be removed in the next major version.
      *
      * @return array<string, mixed>|string
-     *
-     * @see https://developer.paypal.com/docs/api/payment-tokens/v3/#setup-tokens_delete
      */
     public function deletePaymentSetupToken(string $token)
     {

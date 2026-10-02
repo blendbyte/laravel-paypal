@@ -73,3 +73,20 @@ it('sends product and plan descriptions when given', function () {
     expect(lastBody($this->mock, 0)['description'])->toBe('A product')
         ->and(lastBody($this->mock, 1)['description'])->toBe('A plan');
 });
+
+it('lists payment tokens with the API default page size of 5', function () {
+    $this->mock->addResponse(['payment_tokens' => []]);
+
+    $this->client->setCustomerId('customer_1')->listPaymentSourceTokens();
+
+    expect((string) $this->mock->lastRequest()->getUri())
+        ->toEndWith('/v3/vault/payment-tokens?customer_id=customer_1&page=1&page_size=5&total_required=true');
+});
+
+it('passes an explicit payment token page size through unchanged', function () {
+    $this->mock->addResponse(['payment_tokens' => []]);
+
+    $this->client->setCustomerId('customer_1')->listPaymentSourceTokens(2, 3, false);
+
+    expect((string) $this->mock->lastRequest()->getUri())->toContain('page=2&page_size=3&total_required=false');
+});

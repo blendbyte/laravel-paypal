@@ -978,14 +978,13 @@ $event = WebhookEvent::fromArray($request->json()->all());
 // Payment tokens (permanent)
 $provider->createPaymentSourceToken($data);
 $provider->setCustomerId('customer_4029352050');  // required before listPaymentSourceTokens()
-$provider->listPaymentSourceTokens(1, 10, true);
+$provider->listPaymentSourceTokens(1, 5, true); // page 1-10, page size 1-5
 $provider->showPaymentSourceTokenDetails('token-id');
 $provider->deletePaymentSourceToken('token-id');
 
-// Setup tokens (single-use, used to create a payment token)
+// Setup tokens (single-use, used to create a payment token; they expire automatically)
 $provider->createPaymentSetupToken($data);
 $provider->showPaymentSetupTokenDetails('token-id');
-$provider->deletePaymentSetupToken('token-id');
 ```
 
 Using the fluent helpers to create a token:
