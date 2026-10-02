@@ -87,3 +87,16 @@ it('keeps persistent headers across requests', function () {
         ->and($request->getHeaderLine('Accept'))->toBe('application/json')
         ->and($request->getHeaderLine('PayPal-Partner-Attribution-Id'))->toBe('Platform_SP');
 });
+
+it('sends the token request as POST after a GET request', function () {
+    // Regression: getAccessToken() never set the verb and reused the previous one.
+    $this->mock->addResponse(['id' => 'O-1']);
+    $this->client->showOrderDetails('O-1');
+
+    $this->mock->addResponse(['access_token' => 'new-token', 'token_type' => 'Bearer']);
+    $this->client->getAccessToken();
+
+    $request = $this->mock->lastRequest();
+    expect($request->getMethod())->toBe('POST')
+        ->and((string) $request->getUri())->toEndWith('/v1/oauth2/token');
+});

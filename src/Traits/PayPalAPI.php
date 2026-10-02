@@ -47,6 +47,8 @@ trait PayPalAPI
     {
         $this->apiEndPoint = 'v1/oauth2/token';
 
+        $this->verb = 'post';
+
         $this->options['auth'] = [$this->config['client_id'], $this->config['client_secret']];
         $this->options['form_params'] = [
             'grant_type' => 'client_credentials',
