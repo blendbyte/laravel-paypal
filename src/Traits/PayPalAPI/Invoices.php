@@ -36,7 +36,7 @@ trait Invoices
      *
      *
      *
-     * @param list<string> $fields
+     * @param list<string> $fields PayPal only accepts ['all'] (default) or ['none'].
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -335,7 +335,8 @@ trait Invoices
     /**
      * Update an existing invoice.
      *
-     *
+     * By default PayPal emails both the recipient and the merchant about the
+     * update; pass false to suppress either notification.
      *
      * @param array<string, mixed> $data
      *
@@ -345,9 +346,15 @@ trait Invoices
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_update
      */
-    public function updateInvoice(string $invoice_id, array $data)
+    public function updateInvoice(string $invoice_id, array $data, bool $send_to_recipient = true, bool $send_to_invoicer = true)
     {
-        $this->apiEndPoint = "v2/invoicing/invoices/{$invoice_id}";
+        // Both default to true on PayPal's side, so only send them when disabled.
+        $query = http_build_query(array_filter([
+            'send_to_recipient' => $send_to_recipient ? null : 'false',
+            'send_to_invoicer' => $send_to_invoicer ? null : 'false',
+        ]));
+
+        $this->apiEndPoint = "v2/invoicing/invoices/{$invoice_id}".($query !== '' ? "?{$query}" : '');
 
         $this->options['json'] = $data;
 

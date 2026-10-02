@@ -729,11 +729,12 @@ $provider->cancelBillingAgreement('agreement-id');
 $invoiceNo = $provider->generateInvoiceNumber();
 
 $invoices = $provider->listInvoices();
-$invoices = $provider->listInvoices(2, 50);
+$invoices = $provider->setCurrentPage(2)->setPageSize(50)->listInvoices();
 
 $invoice = $provider->createInvoice($data);
 $provider->deleteInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 $provider->updateInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $data);
+$provider->updateInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $data, false, false); // update without emailing recipient/merchant
 $invoice = $provider->showInvoiceDetails('INV2-Z56S-5LLA-Q52L-CPZ5');
 
 $provider->cancelInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
@@ -763,7 +764,7 @@ $provider->deleteRefundInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-2LG703375E47744
 
 ```php
 $invoices = $provider->searchInvoices();
-$invoices = $provider->searchInvoices(1, 50, false);
+$invoices = $provider->setCurrentPage(1)->setPageSize(50)->showTotals(false)->searchInvoices();
 ```
 
 Available filters (chainable, call `searchInvoices()` at the end):

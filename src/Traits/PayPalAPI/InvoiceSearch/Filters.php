@@ -39,6 +39,10 @@ trait Filters
         'MARKED_AS_REFUNDED',
         'UNPAID',
         'PAYMENT_PENDING',
+        'AUTO_CANCELLED',
+        'PAID_EXTERNAL',
+        'REFUNDED_EXTERNAL',
+        'SHARED',
     ];
 
     public function addInvoiceFilterByRecipientEmail(string $email): PayPal
@@ -147,6 +151,14 @@ trait Filters
     }
 
     /**
+     * Filter by a date range.
+     *
+     * invoice_date and due_date filter by date (YYYY-MM-DD). payment_date and
+     * creation_date filter by date-time: date-only values cover the whole day
+     * (00:00:00 to 23:59:59 UTC), values with a time are converted to UTC.
+     *
+     * @param string $date_type invoice_date, due_date, payment_date or creation_date
+     *
      * @throws \Exception
      */
     public function addInvoiceFilterByDateRange(string $start_date, string $end_date, string $date_type): PayPal
@@ -162,12 +174,37 @@ trait Filters
             throw new \Exception('date type should be always one of these: '.implode(',', $this->invoices_date_types));
         }
 
+        // payment_date and creation_date are date-time ranges in the API.
+        if (in_array($date_type, ['payment_date', 'creation_date'], true)) {
+            $this->invoice_search_filters["{$date_type}_range"] = [
+                'start' => $this->toInvoiceSearchDateTime($start_date, false),
+                'end' => $this->toInvoiceSearchDateTime($end_date, true),
+            ];
+
+            return $this;
+        }
+
         $this->invoice_search_filters["{$date_type}_range"] = [
             'start' => $start_date_obj->toDateString(),
             'end' => $end_date_obj->toDateString(),
         ];
 
         return $this;
+    }
+
+    /**
+     * Convert a date or date-time string to an RFC 3339 UTC date-time.
+     * Date-only values become the start or end of that day.
+     */
+    private function toInvoiceSearchDateTime(string $value, bool $end_of_day): string
+    {
+        if (preg_match('/\d{1,2}:\d{2}/', $value) === 1) {
+            return Carbon::parse($value)->utc()->toIso8601ZuluString();
+        }
+
+        $date = Carbon::parse($value, 'UTC');
+
+        return ($end_of_day ? $date->endOfDay() : $date->startOfDay())->toIso8601ZuluString();
     }
 
     public function addInvoiceFilterByArchivedStatus(?bool $archived = null): PayPal
