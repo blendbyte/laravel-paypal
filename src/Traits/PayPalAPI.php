@@ -21,6 +21,7 @@ trait PayPalAPI
     use PayPalAPI\PaymentAuthorizations;
     use PayPalAPI\PaymentCaptures;
     use PayPalAPI\PaymentExperienceWebProfiles;
+    use PayPalAPI\PaymentMethodsEligibility;
     use PayPalAPI\PaymentMethodsTokens;
     use PayPalAPI\PaymentRefunds;
     use PayPalAPI\Payouts;

@@ -41,6 +41,7 @@ arch('PayPal API endpoint traits are Laravel-agnostic')
         'Srmklive\PayPal\Traits\PayPalAPI\PaymentAuthorizations',
         'Srmklive\PayPal\Traits\PayPalAPI\PaymentCaptures',
         'Srmklive\PayPal\Traits\PayPalAPI\PaymentExperienceWebProfiles',
+        'Srmklive\PayPal\Traits\PayPalAPI\PaymentMethodsEligibility',
         'Srmklive\PayPal\Traits\PayPalAPI\PaymentMethodsTokens',
         'Srmklive\PayPal\Traits\PayPalAPI\PaymentRefunds',
         'Srmklive\PayPal\Traits\PayPalAPI\Payouts',

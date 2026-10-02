@@ -683,6 +683,24 @@ $provider->refundCapturedPayment('2GG279541U471931P', 'INVOICE-123', 10.99, 'Def
 $provider->showRefundDetails('1JU08902781691411');
 ```
 
+### Eligible Payment Methods
+
+```php
+// Which payment methods can this buyer use? (all fields optional)
+$methods = $provider->findEligiblePaymentMethods([
+    'customer' => [
+        'country_code' => 'US',
+        'channel'      => ['browser_type' => 'SAFARI', 'device_type' => 'MOBILE', 'client_os' => 'IOS'],
+    ],
+    'purchase_units' => [
+        ['amount' => ['currency_code' => 'USD', 'value' => '100.00']],
+    ],
+    'preferences' => [
+        'payment_source_constraint' => ['constraint_type' => 'EXCLUDE', 'payment_sources' => ['PAYPAL']],
+    ],
+]);
+```
+
 ---
 
 ## Payouts
