@@ -111,8 +111,8 @@ trait Reporting
     /**
      * List transactions filtered by status code.
      *
-     * Common codes: 'S' (success), 'V' (reversed/cancelled), 'P' (pending),
-     * 'D' (denied), 'F' (partially refunded).
+     * Status codes: 'S' (success), 'V' (reversed), 'P' (pending),
+     * 'D' (denied).
      *
      * @param  \DateTimeInterface|string  $startDate
      * @param  \DateTimeInterface|string  $endDate

@@ -178,8 +178,9 @@ trait DisputesActions
      * Accept customer dispute claim.
      *
      * Pass `accept_claim_type` in $data to use a value other than the default
-     * 'REFUND'. PayPal-supported values: REFUND, MERCHANDISE, MISSING_ITEM,
-     * MISSING_REFUND, UNABLE_TO_COMPLETE_REFUND.
+     * 'REFUND'. Supported values: REFUND, REFUND_WITH_RETURN, PARTIAL_REFUND
+     * (include `refund_amount`) and REFUND_WITH_RETURN_SHIPMENT_LABEL. Other
+     * fields such as `return_shipping_address` can be passed in $data too.
      *
      * @param array<string, mixed> $data
      *

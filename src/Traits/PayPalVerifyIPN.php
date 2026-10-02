@@ -17,8 +17,10 @@ trait PayPalVerifyIPN
     }
 
     /**
-     * Verify incoming IPN through a web hook id.
+     * Verify an incoming PayPal REST webhook request through the webhook ID.
      *
+     * Despite the name, this verifies REST webhooks (via
+     * verify-webhook-signature), not classic IPN messages.
      *
      * @return array<string, mixed>|string
      *

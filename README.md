@@ -647,6 +647,13 @@ $capture = $provider->capturePaymentOrder($order['id']);
 $captureId = $provider->getCaptureIdFromOrder($capture);
 // $captureId is the value you store in your database and use for refunds,
 // dispute lookups, and shipment tracking (see Trackers section).
+
+// Add shipment tracking to the order (Orders v2 tracking)
+$provider->addTrackingForOrder($order['id'], [
+    'capture_id'      => $captureId,
+    'tracking_number' => '1Z999AA10123456784',
+    'carrier'         => 'UPS',
+]);
 ```
 
 ---
@@ -882,8 +889,9 @@ $provider->provideDisputeEvidence('PP-D-27803', ['/path/to/proof-of-delivery.pdf
 
 The `transaction-id` used here is the capture ID — get it via `getCaptureIdFromOrder()` after calling `capturePaymentOrder()` (see [Orders](#orders)).
 
+For Orders v2 payments, prefer `addTrackingForOrder($orderId, $data)` (see [Orders](#orders)); PayPal has deprecated the batch endpoint behind `addBatchTracking()`.
+
 ```php
-$provider->addBatchTracking($data);
 $provider->addTracking($data);
 $provider->listTrackingDetails($captureId);
 $provider->listTrackingDetails($captureId, 'tracking-number');
@@ -1000,8 +1008,9 @@ Using the fluent helpers to create a token:
 ```php
 $response = $provider->setTokenSource('5C991763VB2781612', 'SETUP_TOKEN')
     ->setCustomerId('customer_4029352050')
-    ->sendPaymentMethodRequest();
-// or ->sendPaymentMethodRequest(true) to create a setup token instead
+    ->sendPaymentMethodRequest(); // converts the setup token into a payment token
+// ->sendPaymentMethodRequest(true) creates a setup token instead; use it with
+// card/PayPal/Venmo sources (setPaymentSourceCard() etc.), not with a token source
 ```
 
 ---

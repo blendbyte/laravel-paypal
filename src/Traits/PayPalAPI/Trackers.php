@@ -9,7 +9,8 @@ trait Trackers
     /**
      * Adds tracking information, with or without tracking numbers, for multiple PayPal transactions.
      *
-     *
+     * @deprecated PayPal has deprecated /v1/shipping/trackers-batch as a legacy integration.
+     *             Use addTrackingForOrder() (Orders v2 tracking) instead.
      *
      * @param array<string, mixed> $data
      *
