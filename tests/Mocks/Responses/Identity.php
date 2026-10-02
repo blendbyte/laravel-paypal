@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait Identity
 {
     private function mockShowProfileInfoResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "address": {
     "street_address": "7917394 Annursnac Hill Road Unit 0C",
     "locality": "Ventura",
@@ -21,7 +20,7 @@ trait Identity
 
     private function mocklistUsersResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "schemas": [
     "http://example.com"
   ],
@@ -88,7 +87,7 @@ trait Identity
 
     private function mocklistUserResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "schemas": [
     "http://example.com"
   ],
@@ -145,7 +144,7 @@ trait Identity
 
     private function mockCreateMerchantApplicationResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "client_id": "AeTeCqaPp7JZBfUUb2d21cQ2KqyQGVhonfiUOJu99kgLhFFSrE59ruvhLOT4K3NzQoErgsUH6MY9uRqD",
   "client_secret": "cf136dc3c1fc93f31185e5885805d",
   "client_id_issued_at": 2893256800,
@@ -174,7 +173,7 @@ trait Identity
 
     private function mockGetClientTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "client_token": "eyJicmFpbnRyZWUiOnsiYXV0aG9yaXphdGlvbkZpbmdlcnByaW50IjoiYjA0MWE2M2JlMTM4M2NlZGUxZTI3OWFlNDlhMWIyNzZlY2FjOTYzOWU2NjlhMGIzODQyYTdkMTY3NzcwYmY0OHxtZXJjaGFudF9pZD1yd3dua3FnMnhnNTZobTJuJnB1YmxpY19rZXk9czlic3BuaGtxMmYzaDk0NCZjcmVhdGVkX2F0PTIwMTgtMTEtMTRUMTE6MTg6MDAuMTU3WiIsInZlcnNpb24iOiIzLXBheXBhbCJ9LCJwYXlwYWwiOnsiYWNjZXNzVG9rZW4iOiJBMjFBQUhNVExyMmctVDlhSTJacUZHUmlFZ0ZFZGRHTGwxTzRlX0lvdk9ESVg2Q3pSdW5BVy02TzI2MjdiWUJ2cDNjQ0FNWi1lTFBNc2NDWnN0bDUyNHJyUGhUQklJNlBBIn19",
   "expires_in": 3600
 }', true);

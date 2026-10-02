@@ -11,8 +11,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "guzzlehttp/guzzle": "^7.9",
-        "guzzlehttp/psr7": "^2.0",
+        "guzzlehttp/guzzle": "^7.15.2|^8.0.1",
+        "guzzlehttp/psr7": "^2.12.3|^3.0",
         "illuminate/support": "^12.0|^13.0",
         "nesbot/carbon": "^3.0",
         "psr/http-client": "^1.0"
@@ -22,9 +22,8 @@
         "laravel/framework": "^12.0|^13.0",
         "laravel/pint": "^1.29",
         "orchestra/testbench": "^10.0|^11.0",
-        "pestphp/pest": "^3.0|^4.0",
-        "phpunit/phpunit": "^11.0|^12.0",
-        "symfony/var-dumper": "^7.0"
+        "pestphp/pest": "^3.8|^4.0|^5.0",
+        "phpunit/phpunit": "^11.5.50|^12.5.22|^13.1.6"
     },
     "autoload": {
         "psr-4": {
@@ -40,12 +39,6 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true
-        },
-        "audit": {
-            "ignore": [
-                "PKSA-5jz8-6tcw-pbk4",
-                "PKSA-z3gr-8qht-p93v"
-            ]
         }
     },
     "extra": {

@@ -2,8 +2,6 @@
 
 namespace Srmklive\PayPal\Services;
 
-use GuzzleHttp\Utils;
-
 class Str extends \Illuminate\Support\Str
 {
     /**
@@ -22,8 +20,8 @@ class Str extends \Illuminate\Support\Str
         }
 
         try {
-            Utils::jsonDecode($value, true, 512, 4194304);
-        } catch (\InvalidArgumentException $jsonException) {
+            json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
             return false;
         }
 

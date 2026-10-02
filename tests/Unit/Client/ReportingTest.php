@@ -1,7 +1,6 @@
 <?php
 
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -17,10 +16,10 @@ it('can list transactions', function () {
         ],
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
     $mockResponse = $mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody();
 
-    expect(Utils::jsonDecode($mockResponse, true))->toHaveKey('transaction_details');
+    expect(json_decode($mockResponse, true))->toHaveKey('transaction_details');
 });
 
 it('can list balances', function () {
@@ -35,7 +34,7 @@ it('can list balances', function () {
         ],
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });

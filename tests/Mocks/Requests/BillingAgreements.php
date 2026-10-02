@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Requests;
 
-use GuzzleHttp\Utils;
 
 trait BillingAgreements
 {
     private function createBillingAgreementTokenParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "payer": {
     "payment_method": "PAYPAL"
   },
@@ -37,7 +36,7 @@ trait BillingAgreements
 
     private function updateBillingAgreementParams(): array
     {
-        return Utils::jsonDecode('[
+        return json_decode('[
   {
     "op": "replace",
     "path": "/",

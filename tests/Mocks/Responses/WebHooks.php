@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait WebHooks
 {
     private function mockCreateWebHookResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "0EH40505U7160970P",
   "url": "https://example.com/example_webhook",
   "event_types": [
@@ -43,7 +42,7 @@ trait WebHooks
 
     private function mockListWebHookResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "webhooks": [
     {
       "id": "40Y916089Y8324740",
@@ -113,7 +112,7 @@ trait WebHooks
 
     private function mockUpdateWebHookResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "0EH40505U7160970P",
   "url": "https://example.com/example_webhook_2",
   "event_types": [
@@ -144,7 +143,7 @@ trait WebHooks
 
     private function mockGetWebHookResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "0EH40505U7160970P",
   "url": "https://example.com/example_webhook",
   "event_types": [
@@ -181,7 +180,7 @@ trait WebHooks
 
     private function mockListWebHookEventsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "event_types": [
     {
       "name": "PAYMENT.AUTHORIZATION.CREATED",
@@ -204,7 +203,7 @@ trait WebHooks
 
     private function mockListWebHookEventsTypesResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "event_types": [
     {
       "name": "PAYMENT.AUTHORIZATION.CREATED",
@@ -236,7 +235,7 @@ trait WebHooks
 
     private function mockWebHookEventsListResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "events": [
     {
       "id": "8PT597110X687430LKGECATA",
@@ -373,7 +372,7 @@ trait WebHooks
 
     private function mockGetWebHookEventResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "8PT597110X687430LKGECATA",
   "create_time": "2013-06-25T21:41:28Z",
   "resource_type": "authorization",
@@ -435,7 +434,7 @@ trait WebHooks
 
     private function mockResendWebHookEventNotificationResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "8PT597110X687430LKGECATA",
   "create_time": "2013-06-25T21:41:28Z",
   "resource_type": "authorization",
@@ -497,7 +496,7 @@ trait WebHooks
 
     private function mockVerifyWebHookSignatureResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "verification_status": "SUCCESS"
 }', true);
     }

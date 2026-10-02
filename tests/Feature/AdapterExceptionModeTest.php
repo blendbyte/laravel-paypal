@@ -161,7 +161,7 @@ it('returns error string for a decode=false endpoint on failure', function () {
 // ── JSON non-array/non-string primitive response ──────────────────────────
 
 it('returns an empty array when the API response is the JSON null literal', function () {
-    // Utils::jsonDecode('null', true) returns PHP null — neither array nor
+    // json_decode('null', true) returns PHP null — neither array nor
     // string — so doPayPalRequest() must fall through to the [] branch.
     $mock    = new MockHandler([new Response(200, [], 'null')]);
     $handler = HandlerStack::create($mock);

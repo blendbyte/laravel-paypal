@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Requests;
 
-use GuzzleHttp\Utils;
 
 trait Subscriptions
 {
     private function mockCreateSubscriptionParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "plan_id": "P-5ML4271244454362WXNWU5NQ",
   "start_time": "2018-11-01T00:00:00Z",
   "quantity": "20",
@@ -53,7 +52,7 @@ trait Subscriptions
 
     private function mockUpdateSubscriptionParams(): array
     {
-        return Utils::jsonDecode('[
+        return json_decode('[
   {
     "op": "replace",
     "path": "/billing_info/outstanding_balance",
@@ -70,7 +69,7 @@ trait Subscriptions
      */
     private function mockActivateSubscriptionParams()
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "reason": "Reactivating the subscription"
 }', true);
     }
@@ -80,7 +79,7 @@ trait Subscriptions
      */
     private function mockCancelSubscriptionParams()
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "reason": "Not satisfied with the service"
 }', true);
     }
@@ -90,7 +89,7 @@ trait Subscriptions
      */
     private function mockSuspendSubscriptionParams()
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "reason": "Item out of stock"
 }', true);
     }
@@ -100,7 +99,7 @@ trait Subscriptions
      */
     private function mockCaptureSubscriptionPaymentParams()
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "note": "Charging as the balance reached the limit",
   "capture_type": "OUTSTANDING_BALANCE",
   "amount": {
@@ -115,7 +114,7 @@ trait Subscriptions
      */
     private function mockUpdateSubscriptionItemsParams()
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "plan_id": "P-5ML4271244454362WXNWU5NQ",
   "shipping_amount": {
     "currency_code": "USD",

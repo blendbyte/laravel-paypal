@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait PaymentMethodsTokens
 {
     private function mockCreatePaymentMethodsTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
             "id": "8kk8451t",
             "customer": {
               "id": "customer_4029352050"
@@ -48,7 +47,7 @@ trait PaymentMethodsTokens
 
     private function mockListPaymentMethodsTokensResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "customer": {
             "id": "customer_4029352050"
           },
@@ -289,7 +288,7 @@ trait PaymentMethodsTokens
 
     private function mockCreatePaymentSetupTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "payment_source": {
             "card": {
               "number": "4111111111111111",
@@ -316,7 +315,7 @@ trait PaymentMethodsTokens
 
     private function mockListPaymentSetupTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "id": "5C991763VB2781612",
           "customer": {
             "id": "customer_4029352050"

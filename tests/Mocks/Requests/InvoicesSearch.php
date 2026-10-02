@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Requests;
 
-use GuzzleHttp\Utils;
 
 trait InvoicesSearch
 {
     private function invoiceSearchParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
             "total_amount_range": {
                 "lower_amount": {
                     "currency_code": "USD",

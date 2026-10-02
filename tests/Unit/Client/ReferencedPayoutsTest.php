@@ -1,7 +1,6 @@
 <?php
 
 use Srmklive\PayPal\Tests\MockRequestPayloads;
-use GuzzleHttp\Utils;
 
 uses(MockRequestPayloads::class);
 
@@ -20,9 +19,9 @@ it('can create referenced batch payout', function () {
         'json' => $this->mockCreateReferencedBatchPayoutParams(),
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });
 
 it('can list items referenced in batch payout', function () {
@@ -37,9 +36,9 @@ it('can list items referenced in batch payout', function () {
         ],
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });
 
 it('can create referenced batch payout item', function () {
@@ -57,9 +56,9 @@ it('can create referenced batch payout item', function () {
         'json' => $this->mockCreateReferencedBatchPayoutItemParams(),
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'post');
 
-    expect(Utils::jsonDecode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->post($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });
 
 it('can show referenced payout item details', function () {
@@ -77,7 +76,7 @@ it('can show referenced payout item details', function () {
         'json' => $this->mockCreateReferencedBatchPayoutItemParams(),
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });

@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait PaymentRefunds
 {
     private function mockGetRefundDetailsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "1JU08902781691411",
   "amount": {
     "value": "10.99",

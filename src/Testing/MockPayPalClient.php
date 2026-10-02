@@ -3,7 +3,6 @@
 namespace Srmklive\PayPal\Testing;
 
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Utils;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -29,7 +28,7 @@ class MockPayPalClient implements ClientInterface
         $this->responseQueue[] = new Response(
             $statusCode,
             ['Content-Type' => 'application/json'],
-            $body === false ? '' : Utils::jsonEncode($body),
+            $body === false ? '' : json_encode($body, JSON_THROW_ON_ERROR),
         );
 
         return $this;

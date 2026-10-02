@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait Disputes
 {
     private function mockListDisputesResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "items": [
     {
       "dispute_id": "PP-000-003-648-191",
@@ -65,7 +64,7 @@ trait Disputes
 
     private function mockGetDisputesResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "dispute_id": "PP-D-4012",
   "create_time": "2019-04-11T04:18:00.000Z",
   "update_time": "2019-04-21T04:19:08.000Z",

@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Requests;
 
-use GuzzleHttp\Utils;
 
 trait ReferencedPayouts
 {
     private function mockCreateReferencedBatchPayoutParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "referenced_payouts": [
     {
       "reference_id": "2KP03934U4415543C",
@@ -24,7 +23,7 @@ trait ReferencedPayouts
 
     private function mockCreateReferencedBatchPayoutItemParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "reference_id": "CAPTURETXNID",
   "reference_type": "TRANSACTION_ID"
 }', true);

@@ -9,7 +9,6 @@ use GuzzleHttp\HandlerStack as HttpHandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response as HttpResponse;
 use GuzzleHttp\Psr7\Stream as HttpStream;
-use GuzzleHttp\Utils;
 use Psr\Http\Message\ResponseInterface;
 
 trait MockClientClasses
@@ -20,7 +19,7 @@ trait MockClientClasses
             new HttpResponse(
                 200,
                 [],
-                ($response === false) ? '' : Utils::jsonEncode($response)
+                ($response === false) ? '' : json_encode($response)
             ),
         ]);
 
@@ -48,7 +47,7 @@ trait MockClientClasses
             new HttpResponse(
                 200,
                 [],
-                ($response === false) ? '' : Utils::jsonEncode($response)
+                ($response === false) ? '' : json_encode($response)
             ),
         ]);
 
@@ -88,8 +87,7 @@ trait MockClientClasses
         }
 
         if (isset($additionalMethod)) {
-            $mockClient->expects($this->any())
-                ->method($additionalMethod);
+            $mockClient->method($additionalMethod);
         }
 
         $mockClient->expects($this->exactly(1))

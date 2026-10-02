@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait BillingAgreements
 {
     private function mockCreateBillingAgreementTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "links": [
     {
       "href": "https://api-m.sandbox.paypal.com/agreements/approve?ba_token=BA-8A802366G0648845Y",
@@ -27,7 +26,7 @@ trait BillingAgreements
 
     private function mockGetBillingAgreementTokenResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "description": "Billing Agreement",
   "token_id": "BA-8A802366G0648845Y",
   "token_status": "PENDING",
@@ -53,7 +52,7 @@ trait BillingAgreements
 
     private function mockCreateBillingAgreementResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "B-50V812176H0783741",
   "state": "ACTIVE",
   "description": "Billing Agreement",
@@ -96,7 +95,7 @@ trait BillingAgreements
 
     private function mockShowBillingAgreementResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "B-50V812176H0783741",
   "state": "ACTIVE",
   "description": "Billing Agreement",

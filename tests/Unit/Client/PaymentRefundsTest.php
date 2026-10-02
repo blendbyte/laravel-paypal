@@ -1,6 +1,5 @@
 <?php
 
-use GuzzleHttp\Utils;
 
 it('can show details for a refund', function () {
     $expectedResponse = $this->mockGetRefundDetailsResponse();
@@ -14,7 +13,7 @@ it('can show details for a refund', function () {
         ],
     ];
 
-    $mockHttpClient = $this->mock_http_request(Utils::jsonEncode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
+    $mockHttpClient = $this->mock_http_request(json_encode($expectedResponse), $expectedEndpoint, $expectedParams, 'get');
 
-    expect(Utils::jsonDecode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
+    expect(json_decode($mockHttpClient->get($expectedEndpoint, $expectedParams)->getBody(), true))->toBe($expectedResponse);
 });

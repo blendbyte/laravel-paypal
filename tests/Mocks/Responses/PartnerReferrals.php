@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait PartnerReferrals
 {
     private function mockCreatePartnerReferralsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "links": [
     {
       "href": "https://uri.paypal.com/v2/customer/partner-referrals/ZjcyODU4ZWYtYTA1OC00ODIwLTk2M2EtOTZkZWQ4NmQwYzI3RU12cE5xa0xMRmk1NWxFSVJIT1JlTFdSbElCbFU1Q3lhdGhESzVQcU9iRT0=",
@@ -26,7 +25,7 @@ trait PartnerReferrals
 
     private function mockShowReferralDataResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "partner_referral_id": "ZjcyODU4ZWYtYTA1OC00ODIwLTk2M2EtOTZkZWQ4NmQwYzI3RU12cE5xa0xMRmk1NWxFSVJIT1JlTFdSbElCbFU1Q3lhdGhESzVQcU9iRT0=",
   "submitter_payer_id": "RFYUH2QQDGUQU",
   "referral_data": {
@@ -347,7 +346,7 @@ trait PartnerReferrals
 
     private function mockListSellerTrackingInformationResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "merchant_id": "8LQLM2ML4ZTYU",
           "tracking_id": "merchantref1",
           "links": [
@@ -363,7 +362,7 @@ trait PartnerReferrals
 
     private function mockShowSellerStatusResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "merchant_id": "8LQLM2ML4ZTYU",
           "products": [
             {
@@ -495,7 +494,7 @@ trait PartnerReferrals
 
     private function mockListMerchantCredentialsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
           "client_id": "Ab27r3fkrQezHdcPrn2b2SYzPEldXx2dWgv76btVfI-eYF8KRAd2WxXAZyb0ETygSNeHBthzlxjlQ_qw",
           "client_secret": "EAcTvpnDHZf4icl_2MPnt2gRpOxHVtaQJChWU3PrRbYR4uyvUXV6h4DWQjm7XOfdnk_OrEEWdxY2eUG3",
           "payer_id": "QVG98CUNMS2PY"

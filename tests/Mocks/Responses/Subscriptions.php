@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait Subscriptions
 {
     private function mockCreateSubscriptionResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "I-BW452GLLEP1G",
   "status": "APPROVAL_PENDING",
   "status_update_time": "2018-12-10T21:20:49Z",
@@ -63,7 +62,7 @@ trait Subscriptions
 
     private function mockGetSubscriptionDetailsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "I-BW452GLLEP1G",
   "plan_id": "P-5ML4271244454362WXNWU5NQ",
   "start_time": "2019-04-10T07:00:00Z",
@@ -167,7 +166,7 @@ trait Subscriptions
 
     private function mockUpdateSubscriptionItemsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "plan_id": "P-5ML4271244454362WXNWU5NQ",
   "effective_time": "2018-11-01T00:00:00Z",
   "shipping_amount": {
@@ -199,7 +198,7 @@ trait Subscriptions
 
     private function mockListSubscriptionTransactionsResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "transactions": [
     {
       "id": "TRFGHNJKOIIOJKL",

@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait Payouts
 {
     private function mockCreateBatchPayoutResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "batch_header": {
     "sender_batch_header": {
       "sender_batch_id": "Payouts_2018_100008",
@@ -23,7 +22,7 @@ trait Payouts
 
     private function showBatchPayoutResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "batch_header": {
     "payout_batch_id": "FYXMPQTX4JC9N",
     "batch_status": "PROCESSING",
@@ -203,7 +202,7 @@ trait Payouts
 
     private function showBatchPayoutItemResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "payout_item_id": "8AELMXH8UB2P8",
   "transaction_id": "0C413693MN970190K",
   "activity_id": "0E158638XS0329106",
@@ -241,7 +240,7 @@ trait Payouts
 
     private function mockCancelUnclaimedBatchItemResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "payout_item_id": "5KUDKLF8SDC7S",
   "transaction_id": "1DG93452WK758815H",
   "activity_id": "0E158638XS0329101",

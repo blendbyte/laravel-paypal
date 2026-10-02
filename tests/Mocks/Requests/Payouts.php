@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Requests;
 
-use GuzzleHttp\Utils;
 
 trait Payouts
 {
     private function mockCreateBatchPayoutParams(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "sender_batch_header": {
     "sender_batch_id": "Payouts_2018_100007",
     "email_subject": "You have a payout!",

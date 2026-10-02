@@ -19,8 +19,6 @@ class PayPalFacadeAccessor
      *
      *
      * @return PayPal|null
-     *
-     * @throws Exception
      */
     public static function getProvider(): ?PayPal
     {

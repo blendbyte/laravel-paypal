@@ -10,7 +10,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\MultipartStream;
-use GuzzleHttp\Utils;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
@@ -26,9 +25,9 @@ trait PayPalHttpClient
     private $client;
 
     /**
-     * Http Client configuration.
+     * Http Client configuration (Guzzle request options).
      *
-     * @var array<int, mixed>
+     * @var array<string, mixed>
      */
     private $httpClientConfig;
 
@@ -184,12 +183,11 @@ trait PayPalHttpClient
             ));
         }
 
-        $this->client = new Client([
+        $this->client = new Client(array_merge($this->httpClientConfig, [
             'handler' => $stack,
-            'curl' => $this->httpClientConfig,
             'timeout' => $timeout,
             'connect_timeout' => $connectTimeout,
-        ]);
+        ]));
     }
 
     /**
@@ -201,9 +199,11 @@ trait PayPalHttpClient
     {
         $this->setCurlConstants();
 
+        // Guzzle 8 rejects CURLOPT_SSLVERSION / CURLOPT_SSL_VERIFYPEER in the
+        // "curl" option, so use the equivalent Guzzle request options instead.
         $this->httpClientConfig = [
-            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
-            CURLOPT_SSL_VERIFYPEER => $this->validateSSL,
+            'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+            'verify' => $this->validateSSL ?? true,
         ];
 
         // Initialize Http Client
@@ -270,7 +270,7 @@ trait PayPalHttpClient
         }
 
         if (isset($this->options['json'])) {
-            $body = Utils::jsonEncode($this->options['json']);
+            $body = json_encode($this->options['json'], JSON_THROW_ON_ERROR);
             $request = $request
                 ->withBody($factory->createStream($body))
                 ->withHeader('Content-Type', 'application/json');
@@ -326,7 +326,7 @@ trait PayPalHttpClient
                 return $response->getContents();
             }
 
-            $decoded = Utils::jsonDecode($response, true);
+            $decoded = json_decode((string) $response, true, 512, JSON_THROW_ON_ERROR);
 
             return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
@@ -336,7 +336,7 @@ trait PayPalHttpClient
             // non-JSON responses (network timeouts, plain-text errors, etc.).
             $decoded = ($decode === false) || (Str::isJson($t->getMessage()) === false)
                 ? null
-                : Utils::jsonDecode($t->getMessage(), true);
+                : json_decode($t->getMessage(), true, 512, JSON_THROW_ON_ERROR);
 
             $error = is_array($decoded) ? $decoded : $t->getMessage();
 

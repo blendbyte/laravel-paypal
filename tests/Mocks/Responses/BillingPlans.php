@@ -2,13 +2,12 @@
 
 namespace Srmklive\PayPal\Tests\Mocks\Responses;
 
-use GuzzleHttp\Utils;
 
 trait BillingPlans
 {
     private function mockCreatePlansResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "P-5ML4271244454362WXNWU5NQ",
   "product_id": "PROD-XXCD1234QWER65782",
   "name": "Video Streaming Service Plan",
@@ -112,7 +111,7 @@ trait BillingPlans
 
     private function mockListPlansResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "total_items": 12,
   "total_pages": 6,
   "plans": [
@@ -174,7 +173,7 @@ trait BillingPlans
 
     private function mockGetPlansResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
   "id": "P-5ML4271244454362WXNWU5NQ",
   "product_id": "PROD-XXCD1234QWER65782",
   "name": "Basic Plan",
@@ -270,7 +269,7 @@ trait BillingPlans
 
     private function mockCreatePlansErrorResponse(): array
     {
-        return Utils::jsonDecode('{
+        return json_decode('{
     "error": {
         "name" : "UNPROCESSABLE_ENTITY",
         "message" : "The requested action could not be performed, semantically incorrect, or failed business validation.",
