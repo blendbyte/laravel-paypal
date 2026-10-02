@@ -10,22 +10,20 @@ use Throwable;
 trait PricingSchemes
 {
     /**
+     * Pending pricing updates: the new pricing scheme, whether it targets a
+     * trial cycle, and the explicit billing cycle sequence (if given).
+     *
      * @var list<array<string, mixed>>
      */
     protected $pricing_schemes = [];
 
     /**
-     * Number of trial pricing schemes added to the current batch.
-     */
-    private int $pricing_scheme_trials = 0;
-
-    /**
      * Add a new price for a billing cycle of an existing plan.
      *
-     * The billing cycle is identified by its sequence in the plan. When
-     * $sequence is omitted it is derived from the order of the calls: trial
-     * cycles first (1, 2), then the regular cycle (number of trials + 1).
-     * Pass $sequence explicitly if the plan's cycles are ordered differently.
+     * Without $sequence, the billing cycle is looked up in the plan when
+     * processBillingPlanPricingUpdates() runs: trial prices are applied to
+     * the plan's trial cycles in order, a regular price to its regular cycle.
+     * Pass $sequence to target a billing cycle explicitly.
      *
      * @param string   $interval_unit  Ignored: the billing frequency cannot be changed by a pricing update.
      * @param int      $interval_count Ignored: the billing frequency cannot be changed by a pricing update.
@@ -41,12 +39,9 @@ trait PricingSchemes
             throw new \InvalidArgumentException("Billing cycle sequence must be between 1 and 99, {$sequence} given.");
         }
 
-        if ($trial) {
-            $this->pricing_scheme_trials++;
-        }
-
         $this->pricing_schemes[] = [
-            'billing_cycle_sequence' => $sequence ?? ($trial ? $this->pricing_scheme_trials : $this->pricing_scheme_trials + 1),
+            'trial' => $trial,
+            'billing_cycle_sequence' => $sequence,
             'pricing_scheme' => [
                 'fixed_price' => [
                     'value' => Amount::format($price, $this->getCurrency()),
@@ -61,9 +56,13 @@ trait PricingSchemes
     /**
      * Process pricing updates for an existing billing plan.
      *
+     * If any price was added without an explicit sequence, the plan is
+     * fetched first to map trial/regular prices to the plan's billing cycles;
+     * an error from that lookup is returned as-is.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
+     * @throws \RuntimeException When no billing plan is set or a price cannot be mapped to a billing cycle.
      * @throws Throwable
      */
     public function processBillingPlanPricingUpdates()
@@ -72,12 +71,77 @@ trait PricingSchemes
             throw new \RuntimeException('No billing plan set. Call addBillingPlanById() first.');
         }
 
-        $response = $this->updatePlanPricing($this->billing_plan['id'], $this->pricing_schemes);
+        $schemes = $this->pricing_schemes;
 
         // Reset so accumulated schemes don't bleed into subsequent calls.
         $this->pricing_schemes = [];
-        $this->pricing_scheme_trials = 0;
 
-        return $response;
+        if (in_array(null, array_column($schemes, 'billing_cycle_sequence'), true)) {
+            $plan = $this->showPlanDetails($this->billing_plan['id']);
+
+            if (! is_array($plan) || isset($plan['error'])) {
+                return $plan;
+            }
+
+            $schemes = $this->resolvePricingSchemeSequences($schemes, $plan);
+        }
+
+        $pricing = array_values(array_map(fn ($scheme) => [
+            'billing_cycle_sequence' => $scheme['billing_cycle_sequence'],
+            'pricing_scheme' => $scheme['pricing_scheme'],
+        ], $schemes));
+
+        return $this->updatePlanPricing($this->billing_plan['id'], $pricing);
+    }
+
+    /**
+     * Fill in missing sequences from the plan's billing cycles: the n-th trial
+     * price goes to the n-th trial cycle, regular prices to the regular cycle.
+     *
+     * @param array<int, array<string, mixed>> $schemes
+     * @param array<string, mixed>             $plan
+     *
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws \RuntimeException
+     */
+    private function resolvePricingSchemeSequences(array $schemes, array $plan): array
+    {
+        $trial_sequences = [];
+        $regular_sequence = null;
+
+        foreach ((array) ($plan['billing_cycles'] ?? []) as $cycle) {
+            if (! is_array($cycle) || ! isset($cycle['sequence'])) {
+                continue;
+            }
+
+            if (($cycle['tenure_type'] ?? null) === 'TRIAL') {
+                $trial_sequences[] = (int) $cycle['sequence'];
+            } elseif (($cycle['tenure_type'] ?? null) === 'REGULAR') {
+                $regular_sequence = (int) $cycle['sequence'];
+            }
+        }
+
+        sort($trial_sequences);
+        $trial_index = 0;
+
+        foreach ($schemes as $i => $scheme) {
+            if ($scheme['billing_cycle_sequence'] !== null) {
+                continue;
+            }
+
+            $sequence = $scheme['trial'] ? ($trial_sequences[$trial_index++] ?? null) : $regular_sequence;
+
+            if ($sequence === null) {
+                throw new \RuntimeException(sprintf(
+                    'The plan has no matching %s billing cycle for this price. Pass the billing cycle sequence to addPricingScheme().',
+                    $scheme['trial'] ? 'trial' : 'regular'
+                ));
+            }
+
+            $schemes[$i]['billing_cycle_sequence'] = $sequence;
+        }
+
+        return $schemes;
     }
 }
