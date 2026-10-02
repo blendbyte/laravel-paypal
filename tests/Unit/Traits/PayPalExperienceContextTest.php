@@ -40,14 +40,33 @@ it('setReturnAndCancelUrl sets return_url and cancel_url', function () {
 // setShippingAddressChangeCallback
 // ---------------------------------------------------------------------------
 
-it('setShippingAddressChangeCallback sets the callback URL', function () {
+it('setShippingAddressChangeCallback sets order_update_callback_config', function () {
     $client = $this->createPartialMock(PayPalClient::class, []);
 
     $result = $client->setShippingAddressChangeCallback('https://example.com/shipping-callback');
 
     expect($result)->toBeInstanceOf(PayPalClient::class);
-    expect(getContext($client)['shipping_address_change_callback_url'])->toBe('https://example.com/shipping-callback');
+    expect(getContext($client)['order_update_callback_config'])->toBe([
+        'callback_url' => 'https://example.com/shipping-callback',
+        'callback_events' => ['SHIPPING_ADDRESS'],
+    ]);
 });
+
+it('setShippingAddressChangeCallback accepts SHIPPING_OPTIONS events', function () {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+
+    $client->setShippingAddressChangeCallback('https://example.com/cb', ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS']);
+
+    expect(getContext($client)['order_update_callback_config']['callback_events'])
+        ->toBe(['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS']);
+});
+
+it('setShippingAddressChangeCallback rejects empty or unknown events', function (array $events) {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+
+    expect(fn () => $client->setShippingAddressChangeCallback('https://example.com/cb', $events))
+        ->toThrow(InvalidArgumentException::class);
+})->with([[[]], [['SHIPPING_METHOD']]]);
 
 // ---------------------------------------------------------------------------
 // Fluent chaining — array_merge accumulates context across calls
@@ -66,7 +85,7 @@ it('chaining multiple setters accumulates context keys without overwriting', fun
     expect($ctx['brand_name'])->toBe('Acme Store');
     expect($ctx['return_url'])->toBe('https://example.com/success');
     expect($ctx['cancel_url'])->toBe('https://example.com/cancel');
-    expect($ctx['shipping_address_change_callback_url'])->toBe('https://example.com/shipping');
+    expect($ctx['order_update_callback_config']['callback_url'])->toBe('https://example.com/shipping');
 });
 
 it('calling setBrandName twice overwrites the previous brand name', function () {

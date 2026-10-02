@@ -37,18 +37,32 @@ trait PayPalExperienceContext
     }
 
     /**
-     * Set the server-side shipping address change callback URL.
+     * Set the server-side order update callback (shipping address/options).
      *
-     * When the buyer changes their shipping address during checkout, PayPal
-     * calls this URL so the merchant can recalculate shipping options/costs
-     * before the order is confirmed. Requires Orders v2 (Feb 2025+).
+     * When the buyer changes their shipping address or shipping option during
+     * checkout, PayPal calls this URL so the merchant can recalculate shipping
+     * options/costs before the order is confirmed. Only supported for the
+     * PayPal and Venmo payment sources.
      *
-     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-experience_context_base
+     * @param list<string> $events Callback events: SHIPPING_ADDRESS and/or SHIPPING_OPTIONS.
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-callback_configuration
      */
-    public function setShippingAddressChangeCallback(string $url): PayPal
+    public function setShippingAddressChangeCallback(string $url, array $events = ['SHIPPING_ADDRESS']): PayPal
     {
+        $invalid = array_diff($events, ['SHIPPING_ADDRESS', 'SHIPPING_OPTIONS']);
+
+        if ($events === [] || $invalid !== []) {
+            throw new \InvalidArgumentException('Callback events must be one or more of: SHIPPING_ADDRESS, SHIPPING_OPTIONS.');
+        }
+
         $this->experience_context = array_merge($this->experience_context, [
-            'shipping_address_change_callback_url' => $url,
+            'order_update_callback_config' => [
+                'callback_url' => $url,
+                'callback_events' => array_values(array_unique($events)),
+            ],
         ]);
 
         return $this;
