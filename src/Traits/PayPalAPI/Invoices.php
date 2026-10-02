@@ -237,25 +237,58 @@ trait Invoices
     /**
      * Generate QR code against an existing invoice.
      *
+     * On success, returns the base64-encoded PNG image (usable as
+     * "data:image/png;base64,..."). If the response is not in the expected
+     * multipart format, the raw response body is returned instead.
      *
+     * @param int    $width  Image width in pixels (150-500).
+     * @param int    $height Image height in pixels (150-500).
+     * @param string $action URL type encoded in the QR code: "pay" or "details".
      *
-     * @return array<string, mixed>|StreamInterface|string
+     * @return array<string, mixed>|string
      *
-     * @throws \Throwable
+     * @throws \InvalidArgumentException|\Throwable
      *
      * @see https://developer.paypal.com/docs/api/invoicing/v2/#invoices_generate-qr-code
      */
-    public function generateQRCodeInvoice(string $invoice_id, int $width = 100, int $height = 100)
+    public function generateQRCodeInvoice(string $invoice_id, int $width = 500, int $height = 500, string $action = 'pay')
     {
+        foreach (['width' => $width, 'height' => $height] as $name => $value) {
+            if ($value < 150 || $value > 500) {
+                throw new \InvalidArgumentException("QR code {$name} must be between 150 and 500 pixels, {$value} given.");
+            }
+        }
+
+        if (! in_array(strtolower($action), ['pay', 'details'], true)) {
+            throw new \InvalidArgumentException("QR code action must be 'pay' or 'details', '{$action}' given.");
+        }
+
         $this->apiEndPoint = "v2/invoicing/invoices/{$invoice_id}/generate-qr-code";
 
         $this->options['json'] = [
             'width' => $width,
             'height' => $height,
+            'action' => strtolower($action),
         ];
         $this->verb = 'post';
 
-        return $this->doPayPalRequest();
+        // The response is a multipart body with a base64 PNG, not JSON.
+        $response = $this->doPayPalRequest(false);
+
+        return is_string($response) ? $this->extractQRCodeImage($response) : $response;
+    }
+
+    /**
+     * Extract the base64 PNG from PayPal's multipart QR code response.
+     * Falls back to the raw body for any other format.
+     */
+    private function extractQRCodeImage(string $body): string
+    {
+        if (preg_match('#Content-Type:\s*application/octet-stream\s+([A-Za-z0-9+/=\s]+?)\s*(?:--|$)#i', $body, $matches) === 1) {
+            return preg_replace('/\s+/', '', $matches[1]) ?? $matches[1];
+        }
+
+        return $body;
     }
 
     /**

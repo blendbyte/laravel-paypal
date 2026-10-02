@@ -861,22 +861,8 @@ describe('Invoices', function () {
         expect($response)->toBeEmpty();
     });
 
-    it('can generate qr code for invoice', function () {
-        $this->client->setAccessToken([
-            'access_token' => $this->access_token,
-            'token_type' => 'Bearer',
-        ]);
-
-        $this->client->setClient(
-            $this->mock_http_client(
-                $this->mockGenerateInvoiceQRCodeResponse()
-            )
-        );
-
-        $response = $this->client->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
-
-        expect($response)->not->toBeEmpty();
-    });
+    // QR code generation is covered by AdapterInvoiceQRCodeTest (it needs a
+    // raw multipart response, which mock_http_client() would JSON-encode).
 
     it('can register payment for invoice', function () {
         $this->client->setAccessToken([

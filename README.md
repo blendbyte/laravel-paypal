@@ -737,8 +737,9 @@ $provider->updateInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $data);
 $invoice = $provider->showInvoiceDetails('INV2-Z56S-5LLA-Q52L-CPZ5');
 
 $provider->cancelInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
-$provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
-$provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 50, 50); // custom dimensions
+$qrCode = $provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5'); // base64 PNG, 500x500
+$qrCode = $provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 200, 200, 'details'); // 150-500 px; 'pay' or 'details'
+// <img src="data:image/png;base64,<?= $qrCode ?>">
 
 // Arguments: invoice ID, subject, note, notify recipient, notify merchant, additional recipients.
 // PayPal ignores custom subject/note values and always uses its own texts.
