@@ -84,14 +84,50 @@ describe('RetryPolicy::decider', function () {
         expect($decider(0, new Request($method, '/'), new Response(500), null))->toBeTrue();
     })->with(['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS']);
 
-    it('does not retry POST/PATCH without an idempotency key', function (string $method) {
+    it('does not retry POST/PATCH without an idempotency key on server errors', function (string $method) {
         $decider = RetryPolicy::decider(3);
         $request = new Request($method, '/v2/checkout/orders/O-1/capture');
 
         expect($decider(0, $request, new Response(500), null))->toBeFalse()
-            ->and($decider(0, $request, new Response(429), null))->toBeFalse()
-            ->and($decider(0, $request, null, new ConnectException('Timeout', $request)))->toBeFalse();
+            ->and($decider(0, $request, new Response(429), null))->toBeFalse();
     })->with(['POST', 'PATCH']);
+
+    it('does not retry POST after a Guzzle 7 transfer timeout (cURL error 28)', function () {
+        $decider = RetryPolicy::decider(3);
+        $request = new Request('POST', '/v2/checkout/orders/O-1/capture');
+
+        // Guzzle 7 reports timeouts after the request was sent as ConnectException with errno 28.
+        $timeout = new class('Operation timed out', $request) extends ConnectException
+        {
+            public function getHandlerContext(): array
+            {
+                return ['errno' => 28];
+            }
+        };
+
+        expect($decider(0, $request, null, $timeout))->toBeFalse();
+    });
+
+    it('retries POST when the connection failed before the request was sent', function () {
+        $decider = RetryPolicy::decider(3);
+        $request = new Request('POST', '/v2/checkout/orders/O-1/capture');
+
+        $refused = new class('Connection refused', $request) extends ConnectException
+        {
+            public function getHandlerContext(): array
+            {
+                return ['errno' => 7];
+            }
+        };
+
+        expect($decider(0, $request, null, $refused))->toBeTrue();
+    });
+
+    it('retries the OAuth token request on server errors', function () {
+        $decider = RetryPolicy::decider(3);
+
+        expect($decider(0, new Request('POST', 'https://api-m.paypal.com/v1/oauth2/token'), new Response(503), null))->toBeTrue();
+    });
 
     it('retries POST/PATCH that carry a PayPal-Request-Id', function (string $method) {
         $decider = RetryPolicy::decider(3);

@@ -21,7 +21,7 @@ final class RetryPolicy
     public static function decider(int $maxRetries): Closure
     {
         return static function (int $retries, mixed $request, mixed $response, mixed $exception) use ($maxRetries): bool {
-            if ($retries >= $maxRetries || ! self::isSafeToRetry($request)) {
+            if ($retries >= $maxRetries || ! self::isSafeToRetry($request, $exception)) {
                 return false;
             }
 
@@ -62,17 +62,40 @@ final class RetryPolicy
 
     /**
      * Idempotent methods are always safe to resend. POST/PATCH are only resent
-     * when they carry a PayPal-Request-Id, so PayPal can deduplicate them —
-     * otherwise a retry after a 5xx/timeout could double-capture or double-pay.
+     * when they carry a PayPal-Request-Id (so PayPal can deduplicate them),
+     * when they are the side-effect-free OAuth token request, or when the
+     * connection failed before the request was sent — otherwise a retry after
+     * a 5xx/timeout could double-capture or double-pay.
      */
-    private static function isSafeToRetry(mixed $request): bool
+    private static function isSafeToRetry(mixed $request, mixed $exception): bool
     {
         if (! $request instanceof RequestInterface) {
             return false;
         }
 
         return in_array(strtoupper($request->getMethod()), self::IDEMPOTENT_METHODS, true)
-            || $request->getHeaderLine('PayPal-Request-Id') !== '';
+            || $request->getHeaderLine('PayPal-Request-Id') !== ''
+            || str_ends_with($request->getUri()->getPath(), '/v1/oauth2/token')
+            || ($exception instanceof ConnectException && self::wasNotSent($exception));
+    }
+
+    /**
+     * Whether a connection error happened before the request was sent.
+     *
+     * Guzzle 8 only uses ConnectException when no connection was established.
+     * Guzzle 7 also reports transfer timeouts (cURL error 28) as
+     * ConnectException, when the request may already have reached PayPal.
+     */
+    private static function wasNotSent(object $exception): bool
+    {
+        // Typed as object: getHandlerContext() only exists on Guzzle 7.
+        if (! method_exists($exception, 'getHandlerContext')) {
+            return true;
+        }
+
+        $context = $exception->getHandlerContext();
+
+        return ! is_array($context) || ($context['errno'] ?? null) !== 28;
     }
 
     /**
