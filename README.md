@@ -887,6 +887,14 @@ $provider->provideDisputeEvidence('PP-D-27803', ['/path/to/proof-of-delivery.pdf
         'notes'         => 'Delivered on 2026-09-30.',
     ],
 ]);
+
+// Appeal a decision with new evidence (requires an "appeal" link on the dispute)
+$provider->appealDispute('PP-D-27803', ['/path/to/refund-receipt.pdf'], [
+    ['evidence_type' => 'PROOF_OF_REFUND', 'evidence_info' => ['refund_ids' => ['1CX12345AB678901C']]],
+]);
+
+// Supporting information during CHARGEBACK, PRE_ARBITRATION or ARBITRATION
+$provider->provideDisputeSupportingInfo('PP-D-27803', 'The item was delivered on time.', ['/path/to/tracking.pdf']);
 ```
 
 ---

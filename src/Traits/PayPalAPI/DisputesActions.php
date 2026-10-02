@@ -56,18 +56,91 @@ trait DisputesActions
      */
     public function provideDisputeEvidence(string $dispute_id, array $files, array $evidences = [])
     {
+        return $this->sendDisputeDocuments(
+            "v1/customer/disputes/{$dispute_id}/provide-evidence",
+            $files,
+            $evidences !== [] ? ['evidences' => array_values($evidences)] : null
+        );
+    }
+
+    /**
+     * Appeal a dispute with new evidence.
+     *
+     * Only possible when the dispute details contain an `appeal` HATEOAS link.
+     * Files and evidence details are sent like provideDisputeEvidence(); the
+     * details go in a JSON part named "input" ({"evidences": [...]}), following
+     * PayPal's published samples. Verify evidence metadata in the sandbox.
+     *
+     * @param list<string>                           $files     Paths to evidence documents (jpg, png, pdf).
+     * @param array<array-key, array<string, mixed>> $evidences Evidence details, e.g.
+     *                                                          [['evidence_type' => 'PROOF_OF_FULFILLMENT', 'notes' => '...']].
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_appeal
+     */
+    public function appealDispute(string $dispute_id, array $files = [], array $evidences = [])
+    {
+        return $this->sendDisputeDocuments(
+            "v1/customer/disputes/{$dispute_id}/appeal",
+            $files,
+            $evidences !== [] ? ['evidences' => array_values($evidences)] : null
+        );
+    }
+
+    /**
+     * Provide supporting information for a dispute.
+     *
+     * Only allowed in the CHARGEBACK, PRE_ARBITRATION and ARBITRATION life
+     * cycle stages, when the dispute contains a `provide-supporting-info`
+     * HATEOAS link. The notes are sent in a JSON part named "input"
+     * ({"notes": "..."}), following PayPal's published samples; verify in the
+     * sandbox.
+     *
+     * @param list<string> $files Optional supporting documents (jpg, png, pdf).
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     *
+     * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_provide-supporting-info
+     */
+    public function provideDisputeSupportingInfo(string $dispute_id, string $notes, array $files = [])
+    {
+        return $this->sendDisputeDocuments(
+            "v1/customer/disputes/{$dispute_id}/provide-supporting-info",
+            $files,
+            ['notes' => $notes]
+        );
+    }
+
+    /**
+     * Send a multipart dispute request: an optional JSON "input" part followed
+     * by one part per file (named after the file).
+     *
+     * @param list<string>              $files
+     * @param array<string, mixed>|null $input
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     */
+    private function sendDisputeDocuments(string $endpoint, array $files, ?array $input)
+    {
         if (VerifyDocuments::isValidEvidenceFile($files) === false) {
             $this->throwInvalidEvidenceFileException();
         }
 
-        $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/provide-evidence";
+        $this->apiEndPoint = $endpoint;
 
         $this->options['multipart'] = [];
 
-        if ($evidences !== []) {
+        if ($input !== null) {
             $this->options['multipart'][] = [
                 'name' => 'input',
-                'contents' => json_encode(['evidences' => array_values($evidences)], JSON_THROW_ON_ERROR),
+                'contents' => json_encode($input, JSON_THROW_ON_ERROR),
                 'headers' => ['Content-Type' => 'application/json'],
             ];
         }

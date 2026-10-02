@@ -57,3 +57,62 @@ it('sends only the files when no evidence details are given', function () {
 
     expect(array_keys(multipartParts($this->mock->lastRequest())))->toBe(['sample.pdf']);
 });
+
+it('appeals a dispute with evidence details and files', function () {
+    $this->mock->addResponse(['links' => []]);
+
+    $evidences = [['evidence_type' => 'PROOF_OF_REFUND', 'evidence_info' => ['refund_ids' => ['R-1']]]];
+    $this->client->appealDispute('PP-D-1', [$this->file], $evidences);
+
+    $request = $this->mock->lastRequest();
+    $parts = multipartParts($request);
+
+    expect((string) $request->getUri())->toEndWith('/v1/customer/disputes/PP-D-1/appeal')
+        ->and(array_keys($parts))->toBe(['input', 'sample.pdf'])
+        ->and(json_decode($parts['input']['body'], true))->toBe(['evidences' => $evidences]);
+});
+
+it('appeals a dispute with files only', function () {
+    $this->mock->addResponse(['links' => []]);
+
+    $this->client->appealDispute('PP-D-1', [$this->file]);
+
+    expect(array_keys(multipartParts($this->mock->lastRequest())))->toBe(['sample.pdf']);
+});
+
+it('provides supporting information with notes and documents', function () {
+    $this->mock->addResponse(['links' => []]);
+
+    $this->client->provideDisputeSupportingInfo('PP-D-1', 'Item was delivered on time.', [$this->file]);
+
+    $request = $this->mock->lastRequest();
+    $parts = multipartParts($request);
+
+    expect((string) $request->getUri())->toEndWith('/v1/customer/disputes/PP-D-1/provide-supporting-info')
+        ->and(array_keys($parts))->toBe(['input', 'sample.pdf'])
+        ->and($parts['input']['headers'])->toContain('Content-Type: application/json')
+        ->and(json_decode($parts['input']['body'], true))->toBe(['notes' => 'Item was delivered on time.']);
+});
+
+it('provides supporting information with notes only', function () {
+    $this->mock->addResponse(['links' => []]);
+
+    $this->client->provideDisputeSupportingInfo('PP-D-1', 'See attached tracking history.');
+
+    expect(array_keys(multipartParts($this->mock->lastRequest())))->toBe(['input']);
+});
+
+it('rejects invalid dispute document types', function (string $method, array $args) {
+    $invalid = [sys_get_temp_dir().'/paypal-invalid-'.uniqid().'.txt'];
+    file_put_contents($invalid[0], 'not allowed');
+
+    try {
+        expect(fn () => $this->client->{$method}(...[...$args, $invalid]))->toThrow(RuntimeException::class, 'Invalid evidence file type')
+            ->and($this->mock->requests())->toBe([]);
+    } finally {
+        unlink($invalid[0]);
+    }
+})->with([
+    'appeal' => ['appealDispute', ['PP-D-1']],
+    'supporting info' => ['provideDisputeSupportingInfo', ['PP-D-1', 'Notes']],
+]);
