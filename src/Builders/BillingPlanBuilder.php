@@ -10,7 +10,10 @@ final class BillingPlanBuilder
 {
     private const VALID_INTERVALS = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
 
-    private const VALID_FAILURE_ACTIONS = ['CONTINUE', 'CANCEL_SUBSCRIPTION'];
+    private const VALID_FAILURE_ACTIONS = ['CONTINUE', 'CANCEL'];
+
+    /** Deprecated alias kept for backward compatibility; sent as CANCEL. */
+    private const LEGACY_CANCEL_FAILURE_ACTION = 'CANCEL_SUBSCRIPTION';
 
     private string $productId = '';
 
@@ -68,8 +71,20 @@ final class BillingPlanBuilder
         return $this;
     }
 
+    /**
+     * Add a setup fee charged when the subscription starts.
+     *
+     * @param string $failureAction Action if the setup fee payment fails: CONTINUE or CANCEL.
+     *                              CANCEL_SUBSCRIPTION is accepted as a deprecated alias for CANCEL.
+     *
+     * @throws \InvalidArgumentException
+     */
     public function withSetupFee(float $amount, string $failureAction = 'CONTINUE'): static
     {
+        if ($failureAction === self::LEGACY_CANCEL_FAILURE_ACTION) {
+            $failureAction = 'CANCEL';
+        }
+
         if (! in_array($failureAction, self::VALID_FAILURE_ACTIONS, true)) {
             throw new \InvalidArgumentException('Failure action must be one of: '.implode(', ', self::VALID_FAILURE_ACTIONS));
         }

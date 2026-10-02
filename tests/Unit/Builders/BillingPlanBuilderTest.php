@@ -180,14 +180,26 @@ describe('BillingPlanBuilder', function () {
         expect($plan['payment_preferences']['setup_fee']['currency_code'])->toBe('EUR');
     });
 
-    it('withSetupFee accepts CANCEL_SUBSCRIPTION failure action', function () {
+    it('withSetupFee accepts the CANCEL failure action', function () {
         $plan = BillingPlanBuilder::make()
-            ->forProduct('X')->named('P')
+            ->forProduct('PROD-XXX')
+            ->named('Plan')
+            ->monthly(10.00)
+            ->withSetupFee(5.00, 'CANCEL')
+            ->build();
+
+        expect($plan['payment_preferences']['setup_fee_failure_action'])->toBe('CANCEL');
+    });
+
+    it('withSetupFee sends the deprecated CANCEL_SUBSCRIPTION alias as CANCEL', function () {
+        $plan = BillingPlanBuilder::make()
+            ->forProduct('PROD-XXX')
+            ->named('Plan')
             ->monthly(10.00)
             ->withSetupFee(5.00, 'CANCEL_SUBSCRIPTION')
             ->build();
 
-        expect($plan['payment_preferences']['setup_fee_failure_action'])->toBe('CANCEL_SUBSCRIPTION');
+        expect($plan['payment_preferences']['setup_fee_failure_action'])->toBe('CANCEL');
     });
 
     it('throws on invalid setup fee failure action', function () {
