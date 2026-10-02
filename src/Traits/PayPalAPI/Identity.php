@@ -33,9 +33,7 @@ trait Identity
     /**
      * List Users.
      *
-     * @param string   $filter      SCIM filter expression, e.g. 'userName eq "jdoe"'. A bare
-     *                              attribute name without an operator is not a valid filter and
-     *                              is ignored.
+     * @param string   $field       SCIM filter expression, e.g. 'userName eq "jdoe"'. Empty sends no filter.
      * @param int|null $start_index 1-based index of the first result (1-100000).
      * @param int|null $count       Results per page (0-100).
      *
@@ -45,12 +43,12 @@ trait Identity
      *
      * @see https://developer.paypal.com/docs/api/identity/v2/#users_list
      */
-    public function listUsers(string $filter = '', ?int $start_index = null, ?int $count = null)
+    public function listUsers(string $field = '', ?int $start_index = null, ?int $count = null)
     {
         $query = http_build_query(array_filter([
-            // A filter needs an operator (e.g. "userName eq ..."); the old default of a
-            // bare attribute name ("userName") was invalid, so it is not sent.
-            'filter' => str_contains(trim($filter), ' ') ? $filter : null,
+            // The old default of a bare attribute name ("userName") was not a valid
+            // SCIM filter, so the default now sends no filter at all.
+            'filter' => $field !== '' ? $field : null,
             'startIndex' => $start_index,
             'count' => $count,
         ], fn ($value) => $value !== null), '', '&', PHP_QUERY_RFC3986);

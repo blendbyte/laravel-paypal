@@ -45,7 +45,15 @@ it('builds the list users query', function (array $args, string $expectedSuffix)
     expect((string) $this->mock->lastRequest()->getUri())->toEndWith($expectedSuffix);
 })->with([
     'no filter' => [[], '/v2/scim/Users'],
-    'bare attribute (invalid, ignored)' => [['userName'], '/v2/scim/Users'],
+    'explicit value passed through' => [['userName'], '/v2/scim/Users?filter=userName'],
     'filter expression' => [['userName eq "jdoe"'], '/v2/scim/Users?filter=userName%20eq%20%22jdoe%22'],
     'paging' => [['', 11, 10], '/v2/scim/Users?startIndex=11&count=10'],
 ]);
+
+it('keeps the $field parameter name for named arguments', function () {
+    $this->mock->addResponse(['Resources' => []]);
+
+    $this->client->listUsers(field: 'userName eq "jdoe"');
+
+    expect((string) $this->mock->lastRequest()->getUri())->toEndWith('/v2/scim/Users?filter=userName%20eq%20%22jdoe%22');
+});
