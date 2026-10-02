@@ -856,6 +856,15 @@ $provider->provideDisputeEvidence('PP-D-27803', [
     '/path/to/invoice.pdf',
     '/path/to/screenshot.jpg',
 ]);
+
+// Optionally describe the evidence (sent as a JSON "input" part)
+$provider->provideDisputeEvidence('PP-D-27803', ['/path/to/proof-of-delivery.pdf'], [
+    [
+        'evidence_type' => 'PROOF_OF_FULFILLMENT',
+        'evidence_info' => ['tracking_info' => [['carrier_name' => 'UPS', 'tracking_number' => '1Z999AA10123456784']]],
+        'notes'         => 'Delivered on 2026-09-30.',
+    ],
+]);
 ```
 
 ---

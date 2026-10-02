@@ -341,17 +341,13 @@ trait PayPalHttpClient
      * (long-lived) provider instance: request bodies, Basic auth credentials,
      * the single-use idempotency key and any per-request Content-Type.
      * Persistent headers (Authorization, Accept, Accept-Language, ...) are kept.
+     *
+     * Multipart file handles are not closed here: the request's streams own
+     * them and close them when the request is released, which keeps the sent
+     * request readable (e.g. for logging or test assertions).
      */
     private function resetRequestOptions(): void
     {
-        if (isset($this->options['multipart']) && is_array($this->options['multipart'])) {
-            foreach ($this->options['multipart'] as $part) {
-                if (is_array($part) && isset($part['contents']) && is_resource($part['contents'])) {
-                    fclose($part['contents']);
-                }
-            }
-        }
-
         unset(
             $this->options['json'],
             $this->options['multipart'],

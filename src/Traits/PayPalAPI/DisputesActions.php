@@ -35,19 +35,26 @@ trait DisputesActions
     }
 
     /**
-     * Providence evidence in support of a dispute.
+     * Provide evidence in support of a dispute.
      *
+     * Files are uploaded as multipart parts. Optionally pass $evidences to
+     * describe them (evidence_type, notes, evidence_info such as tracking
+     * numbers or refund IDs); they are sent as a JSON part named "input"
+     * containing {"evidences": [...]}, following PayPal's published request
+     * samples. The part name is not specified in PayPal's OpenAPI spec, so
+     * verify evidence metadata in the sandbox.
      *
-     *
-     * @param list<string> $files
+     * @param list<string>                           $files     Paths to evidence documents (jpg, png, pdf).
+     * @param array<array-key, array<string, mixed>> $evidences Evidence details, e.g.
+     *                                                          [['evidence_type' => 'PROOF_OF_FULFILLMENT', 'notes' => '...']].
      *
      * @return array<string, mixed>|StreamInterface|string
      *
-     * https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_provide-evidence
+     * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_provide-evidence
      *
      * @throws \Throwable
      */
-    public function provideDisputeEvidence(string $dispute_id, array $files)
+    public function provideDisputeEvidence(string $dispute_id, array $files, array $evidences = [])
     {
         if (VerifyDocuments::isValidEvidenceFile($files) === false) {
             $this->throwInvalidEvidenceFileException();
@@ -56,6 +63,14 @@ trait DisputesActions
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/provide-evidence";
 
         $this->options['multipart'] = [];
+
+        if ($evidences !== []) {
+            $this->options['multipart'][] = [
+                'name' => 'input',
+                'contents' => json_encode(['evidences' => array_values($evidences)], JSON_THROW_ON_ERROR),
+                'headers' => ['Content-Type' => 'application/json'],
+            ];
+        }
 
         foreach ($files as $file) {
             $this->options['multipart'][] = [
