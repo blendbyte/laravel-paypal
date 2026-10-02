@@ -952,6 +952,12 @@ $provider->listEvents();
 $provider->showEventDetails('event-id');
 $provider->resendEventNotification('event-id', ['webhook-id']);
 
+// Simulate an event (PayPal posts a mock event to your webhook or URL)
+$provider->simulateWebHookEvent('PAYMENT.CAPTURE.COMPLETED', 'webhook-id');
+$provider->simulateWebHookEvent('PAYMENT.CAPTURE.COMPLETED', url: 'https://example.com/paypal/webhook');
+// Mock events can't be verified via verifyWebHook(); verify them locally with the
+// webhook ID 'WEBHOOK_ID': $provider->verifyWebHookLocally($headers, 'WEBHOOK_ID', $rawBody);
+
 // Verify incoming webhook signature (API roundtrip)
 $provider->verifyWebHook([
     'auth_algo'         => $request->header('PAYPAL-AUTH-ALGO'),
