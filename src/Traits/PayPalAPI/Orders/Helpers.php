@@ -81,9 +81,13 @@ trait Helpers
     }
 
     /**
-     * Confirm payment for an order.
+     * Confirm the payment source for an order.
      *
+     * Sends the payment source set via setPaymentSource*(), together with the
+     * experience context and stored credential (see createOrderWithPaymentSource()).
      *
+     * @param string $processing_instruction Deprecated and ignored: the confirm-payment-source
+     *                                       API has no processing_instruction field.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -93,12 +97,11 @@ trait Helpers
     {
         $payment_source = $this->buildOrderPaymentSource();
 
-        $body = [
-            'processing_instruction' => $processing_instruction,
-            'payment_source' => $payment_source,
-        ];
-
-        return $this->confirmOrder($order_id, $body);
+        // payment_source is a required object; send {} rather than [] when
+        // nothing is set so PayPal returns its regular validation error.
+        return $this->confirmOrder($order_id, [
+            'payment_source' => empty($payment_source) ? new \stdClass() : $payment_source,
+        ]);
     }
 
     /**
@@ -116,28 +119,28 @@ trait Helpers
     {
         $payment_source = $this->payment_source;
 
-        if (empty($this->experience_context) && empty($this->stored_credential)) {
-            return $payment_source;
+        if (! empty($this->experience_context) || ! empty($this->stored_credential)) {
+            $method = empty($payment_source) ? 'paypal' : (string) array_key_first($payment_source);
+            $details = $payment_source[$method] ?? [];
+
+            $experience_context = $this->experienceContextFor($method);
+
+            if (! empty($experience_context)) {
+                $details = array_merge($details, ['experience_context' => $experience_context]);
+            }
+
+            $stored_credential = $this->storedCredentialFor($method);
+
+            if ($stored_credential !== null) {
+                $details['stored_credential'] = $stored_credential;
+            }
+
+            $payment_source[$method] = $details;
         }
 
-        $method = empty($payment_source) ? 'paypal' : (string) array_key_first($payment_source);
-        $details = $payment_source[$method] ?? [];
-
-        $experience_context = $this->experienceContextFor($method);
-
-        if (! empty($experience_context)) {
-            $details = array_merge($details, ['experience_context' => $experience_context]);
-        }
-
-        $stored_credential = $this->storedCredentialFor($method);
-
-        if ($stored_credential !== null) {
-            $details['stored_credential'] = $stored_credential;
-        }
-
-        $payment_source[$method] = $details;
-
-        return $payment_source;
+        // An empty method (e.g. setPaymentSourcePayPal([])) must be sent as a
+        // JSON object, not an array.
+        return array_map(fn ($details) => $details === [] ? new \stdClass() : $details, $payment_source);
     }
 
     /**

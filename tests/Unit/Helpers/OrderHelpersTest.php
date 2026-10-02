@@ -104,7 +104,8 @@ it('createOrderWithPaymentSource nests experience_context inside payment source 
 // setupOrderConfirmation — delegates to confirmOrder
 // ---------------------------------------------------------------------------
 
-it('setupOrderConfirmation calls confirmOrder with payment source and instruction', function () {
+it('setupOrderConfirmation calls confirmOrder with the payment source only', function () {
+    // processing_instruction is not part of the confirm-payment-source API and is ignored.
     $client = $this->createPartialMock(PayPalClient::class, ['confirmOrder']);
 
     $client->setPaymentSourcePayPal(['description' => 'Test']);
@@ -112,8 +113,7 @@ it('setupOrderConfirmation calls confirmOrder with payment source and instructio
     $client->expects($this->once())
         ->method('confirmOrder')
         ->with('ORDER-123', [
-            'processing_instruction' => 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL',
-            'payment_source'         => ['paypal' => ['description' => 'Test']],
+            'payment_source' => ['paypal' => ['description' => 'Test']],
         ])
         ->willReturn(['id' => 'ORDER-123', 'status' => 'APPROVED']);
 

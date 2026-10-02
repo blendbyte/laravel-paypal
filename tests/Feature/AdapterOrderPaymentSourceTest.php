@@ -134,3 +134,29 @@ it('only sends supported application_context fields for subscriptions', function
         'cancel_url' => 'https://example.com/cancel',
     ]);
 });
+
+it('sends only payment_source when confirming an order', function () {
+    $this->mock->addResponse(['id' => 'O-1', 'status' => 'APPROVED']);
+
+    $this->client->setPaymentSourcePayPal(['vault_id' => 'V-1'])
+        ->setupOrderConfirmation('O-1', 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL');
+
+    expect(sentBody($this->mock))->toBe(['payment_source' => ['paypal' => ['vault_id' => 'V-1']]]);
+});
+
+it('sends an empty payment_source object when confirming without a payment source', function () {
+    $this->mock->addResponse(['name' => 'INVALID_REQUEST'], 400);
+
+    $response = $this->client->setupOrderConfirmation('O-1');
+
+    expect((string) $this->mock->lastRequest()->getBody())->toBe('{"payment_source":{}}')
+        ->and($response)->toBe(['error' => ['name' => 'INVALID_REQUEST']]);
+});
+
+it('sends an empty payment source method as a JSON object', function () {
+    $this->mock->addResponse(['id' => 'O-1', 'status' => 'APPROVED']);
+
+    $this->client->setPaymentSourcePayPal([])->setupOrderConfirmation('O-1');
+
+    expect((string) $this->mock->lastRequest()->getBody())->toBe('{"payment_source":{"paypal":{}}}');
+});
