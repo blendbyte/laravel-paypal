@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Srmklive\PayPal\Services\Amount;
 use Psr\Http\Message\StreamInterface;
 
 trait PaymentCaptures
@@ -43,7 +44,7 @@ trait PaymentCaptures
 
         $this->options['json'] = [
             'amount' => [
-                'value' => number_format($amount, 2, '.', ''),
+                'value' => Amount::format($amount, $this->currency),
                 'currency_code' => $this->currency,
             ],
             'invoice_id' => $invoice_id,

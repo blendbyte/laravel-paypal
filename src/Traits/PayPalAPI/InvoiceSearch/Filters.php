@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI\InvoiceSearch;
 
+use Srmklive\PayPal\Services\Amount;
 use Srmklive\PayPal\Services\PayPal;
 use Carbon\Carbon;
 
@@ -134,11 +135,11 @@ trait Filters
         $this->invoice_search_filters['total_amount_range'] = [
             'lower_amount' => [
                 'currency_code' => $currency,
-                'value' => number_format($start_amount, 2, '.', ''),
+                'value' => Amount::format($start_amount, $currency),
             ],
             'upper_amount' => [
                 'currency_code' => $currency,
-                'value' => number_format($end_amount, 2, '.', ''),
+                'value' => Amount::format($end_amount, $currency),
             ],
         ];
 

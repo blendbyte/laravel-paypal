@@ -263,6 +263,31 @@ describe('BillingPlanBuilder', function () {
 
     // ── make() factory ────────────────────────────────────────────────────────
 
+    it('formats prices and setup fee without decimals for zero-decimal currencies', function () {
+        $plan = BillingPlanBuilder::make()
+            ->forProduct('PROD-XXX')
+            ->named('Yen Plan')
+            ->withCurrency('JPY')
+            ->monthly(1000)
+            ->withSetupFee(500)
+            ->build();
+
+        expect($plan['billing_cycles'][0]['pricing_scheme']['fixed_price']['value'])->toBe('1000')
+            ->and($plan['payment_preferences']['setup_fee']['value'])->toBe('500');
+    });
+
+    it('rounds prices and tax percentage instead of truncating', function () {
+        $plan = BillingPlanBuilder::make()
+            ->forProduct('PROD-XXX')
+            ->named('Rounded Plan')
+            ->monthly(9.999)
+            ->withTax(19.999)
+            ->build();
+
+        expect($plan['billing_cycles'][0]['pricing_scheme']['fixed_price']['value'])->toBe('10.00')
+            ->and($plan['taxes']['percentage'])->toBe('20.00');
+    });
+
     it('make() returns a new builder instance', function () {
         $a = BillingPlanBuilder::make();
         $b = BillingPlanBuilder::make();

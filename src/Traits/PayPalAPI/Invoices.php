@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Srmklive\PayPal\Services\Amount;
 use Psr\Http\Message\StreamInterface;
 
 trait Invoices
@@ -148,7 +149,7 @@ trait Invoices
             'note' => $payment_note,
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => number_format($amount, 2, '.', ''),
+                'value' => Amount::format($amount, $this->currency),
             ],
         ];
 
@@ -199,7 +200,7 @@ trait Invoices
             'method' => $payment_method,
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => number_format($amount, 2, '.', ''),
+                'value' => Amount::format($amount, $this->currency),
             ],
         ];
 

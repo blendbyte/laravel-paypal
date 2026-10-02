@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Srmklive\PayPal\Services\Amount;
 use Srmklive\PayPal\Services\VerifyDocuments;
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\StreamInterface;
@@ -87,7 +88,7 @@ trait DisputesActions
         $data['offer_type'] = $refund_type;
         $data['offer_amount'] = [
             'currency_code' => $this->getCurrency(),
-            'value' => number_format($amount, 2, '.', ''),
+            'value' => Amount::format($amount, $this->getCurrency()),
         ];
 
         $this->options['json'] = $data;

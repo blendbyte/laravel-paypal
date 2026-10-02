@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
+use Srmklive\PayPal\Services\Amount;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Psr\Http\Message\StreamInterface;
@@ -194,7 +195,7 @@ trait Subscriptions
             'capture_type' => 'OUTSTANDING_BALANCE',
             'amount' => [
                 'currency_code' => $this->currency,
-                'value' => number_format($amount, 2, '.', ''),
+                'value' => Amount::format($amount, $this->currency),
             ],
         ];
 

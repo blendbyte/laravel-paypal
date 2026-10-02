@@ -2,6 +2,7 @@
 
 namespace Srmklive\PayPal\Traits\PayPalAPI\Subscriptions;
 
+use Srmklive\PayPal\Services\Amount;
 use Srmklive\PayPal\Services\PayPal;
 use Carbon\Carbon;
 use Psr\Http\Message\StreamInterface;
@@ -240,7 +241,7 @@ trait Helpers
     {
         $pricing_scheme = [
             'fixed_price' => [
-                'value' => bcdiv((string) $price, '1', 2),
+                'value' => Amount::format($price, $this->getCurrency()),
                 'currency_code' => $this->getCurrency(),
             ],
         ];
@@ -377,7 +378,7 @@ trait Helpers
         $this->payment_preferences = [
             'auto_bill_outstanding' => true,
             'setup_fee' => [
-                'value' => bcdiv((string) $price, '1', 2),
+                'value' => Amount::format($price, $this->getCurrency()),
                 'currency_code' => $this->getCurrency(),
             ],
             'setup_fee_failure_action' => 'CONTINUE',

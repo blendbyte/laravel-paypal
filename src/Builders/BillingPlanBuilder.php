@@ -3,6 +3,7 @@
 namespace Srmklive\PayPal\Builders;
 
 use Psr\Http\Message\StreamInterface;
+use Srmklive\PayPal\Services\Amount;
 use Srmklive\PayPal\Services\PayPal;
 
 final class BillingPlanBuilder
@@ -82,7 +83,7 @@ final class BillingPlanBuilder
     public function withTax(float $percentage, bool $inclusive = false): static
     {
         $this->taxes = [
-            'percentage' => bcdiv((string) $percentage, '1', 2),
+            'percentage' => number_format($percentage, 2, '.', ''),
             'inclusive' => $inclusive,
         ];
 
@@ -187,7 +188,7 @@ final class BillingPlanBuilder
                 'total_cycles' => $cycle['total_cycles'],
                 'pricing_scheme' => [
                     'fixed_price' => [
-                        'value' => bcdiv((string) $cycle['price'], '1', 2),
+                        'value' => Amount::format($cycle['price'], $this->currency),
                         'currency_code' => $this->currency,
                     ],
                 ],
@@ -202,7 +203,7 @@ final class BillingPlanBuilder
 
         if ($this->setupFeeAmount !== null) {
             $paymentPreferences['setup_fee'] = [
-                'value' => bcdiv((string) $this->setupFeeAmount, '1', 2),
+                'value' => Amount::format($this->setupFeeAmount, $this->currency),
                 'currency_code' => $this->currency,
             ];
         }
