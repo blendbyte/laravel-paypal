@@ -255,7 +255,8 @@ it('fetchCert reads a local file, caches it, and returns the contents', function
     // Write a fake PEM to a temp file so file_get_contents() succeeds locally,
     // exercising the cache-store + return path (lines 149–151 in WebHooksVerification).
     $tempFile = tempnam(sys_get_temp_dir(), 'paypal_cert_success_');
-    file_put_contents($tempFile, 'FAKE-PEM-CONTENT');
+    $fakePem = "-----BEGIN CERTIFICATE-----\nFAKE-PEM-CONTENT\n-----END CERTIFICATE-----\n";
+    file_put_contents($tempFile, $fakePem);
 
     $cacheProp = new ReflectionProperty(PayPalClient::class, 'certCache');
     $cacheProp->setValue(null, []);
@@ -264,11 +265,11 @@ it('fetchCert reads a local file, caches it, and returns the contents', function
     $method = new ReflectionMethod(PayPalClient::class, 'fetchCert');
     $result = $method->invoke($client, $tempFile);
 
-    expect($result)->toBe('FAKE-PEM-CONTENT');
+    expect($result)->toBe($fakePem);
 
     $cache = $cacheProp->getValue(null);
     expect($cache)->toHaveKey($tempFile);
-    expect($cache[$tempFile])->toBe('FAKE-PEM-CONTENT');
+    expect($cache[$tempFile])->toBe($fakePem);
 
     unlink($tempFile);
 });

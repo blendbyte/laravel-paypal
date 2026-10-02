@@ -103,13 +103,15 @@ trait WebHooksVerification
     }
 
     /**
-     * Return true only if $url's host is a trusted PayPal API domain.
+     * Return true only if $url is an https URL on a trusted PayPal API domain.
      */
     private function isValidPayPalCertUrl(string $url): bool
     {
+        $scheme = parse_url($url, PHP_URL_SCHEME);
         $host = parse_url($url, PHP_URL_HOST);
 
-        if (! is_string($host)) {
+        // Plain http would let an on-path attacker serve their own certificate.
+        if (! is_string($scheme) || strtolower($scheme) !== 'https' || ! is_string($host)) {
             return false;
         }
 
@@ -133,6 +135,11 @@ trait WebHooksVerification
         }
 
         $context = stream_context_create([
+            'http' => [
+                // Redirects would bypass the isValidPayPalCertUrl() allowlist.
+                'follow_location' => 0,
+                'timeout'         => 10,
+            ],
             'ssl' => [
                 'verify_peer'      => true,
                 'verify_peer_name' => true,
@@ -141,8 +148,9 @@ trait WebHooksVerification
 
         $pem = file_get_contents($url, false, $context);
 
-        if ($pem === false) {
-            // Do NOT cache failures — let the next request retry the fetch.
+        if ($pem === false || ! str_contains($pem, '-----BEGIN CERTIFICATE-----')) {
+            // Do NOT cache failures (or non-certificate bodies such as an
+            // unfollowed redirect) — let the next request retry the fetch.
             return '';
         }
 

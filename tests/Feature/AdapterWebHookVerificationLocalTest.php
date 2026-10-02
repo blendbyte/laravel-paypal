@@ -210,3 +210,56 @@ it('handles case-insensitive header names', function () {
 
     expect($this->client->verifyWebHookLocally($lowercase, TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeTrue();
 });
+
+it('rejects a plain http cert URL without fetching it', function () {
+    $client = new class ($this->getApiCredentials()) extends \Srmklive\PayPal\Services\PayPal {
+        public int $fetchCount = 0;
+
+        protected function fetchCert(string $url): string
+        {
+            $this->fetchCount++;
+
+            return '';
+        }
+    };
+
+    $httpCertUrl = str_replace('https://', 'http://', TEST_CERT_URL);
+
+    $headers = signedWebHookHeaders(
+        $this->test_key,
+        '69cd13f0-d67a-11e5-baa3-778b53f4ae55',
+        '2016-02-18T20:01:35Z',
+        TEST_WEBHOOK_ID,
+        TEST_RAW_BODY,
+        $httpCertUrl,
+    );
+
+    expect($client->verifyWebHookLocally($headers, TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeFalse()
+        ->and($client->fetchCount)->toBe(0);
+});
+
+it('accepts an uppercase HTTPS scheme in the cert URL', function () {
+    $upperCertUrl = str_replace('https://', 'HTTPS://', TEST_CERT_URL);
+    injectPayPalCert($this->client, $upperCertUrl, $this->test_cert);
+
+    $headers = signedWebHookHeaders(
+        $this->test_key,
+        '69cd13f0-d67a-11e5-baa3-778b53f4ae55',
+        '2016-02-18T20:01:35Z',
+        TEST_WEBHOOK_ID,
+        TEST_RAW_BODY,
+        $upperCertUrl,
+    );
+
+    expect($this->client->verifyWebHookLocally($headers, TEST_WEBHOOK_ID, TEST_RAW_BODY))->toBeTrue();
+});
+
+it('does not cache a fetched body that is not a PEM certificate', function () {
+    $fetchCert = (new ReflectionClass($this->client))->getMethod('fetchCert');
+    $url = 'data://text/plain,<html>Moved</html>';
+
+    expect($fetchCert->invoke($this->client, $url))->toBe('');
+
+    $cache = (new ReflectionClass($this->client))->getProperty('certCache')->getValue();
+    expect($cache)->not->toHaveKey($url);
+});
