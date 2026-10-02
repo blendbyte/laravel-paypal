@@ -4,7 +4,6 @@ namespace Srmklive\PayPal\Traits;
 
 use Srmklive\PayPal\Exceptions\PayPalApiException;
 use Srmklive\PayPal\Services\RetryPolicy;
-use Srmklive\PayPal\Services\Str;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -341,11 +340,14 @@ trait PayPalHttpClient
 
             return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
-            // Decode JSON error bodies; fall back to the raw message string for
+            // Decode JSON error bodies regardless of $decode (which only applies
+            // to success responses); fall back to the raw message string for
             // non-JSON responses (network timeouts, plain-text errors, etc.).
-            $decoded = ($decode === false) || (Str::isJson($t->getMessage()) === false)
-                ? null
-                : json_decode($t->getMessage(), true, 512, JSON_THROW_ON_ERROR);
+            try {
+                $decoded = json_decode($t->getMessage(), true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                $decoded = null;
+            }
 
             $error = is_array($decoded) ? $decoded : $t->getMessage();
 

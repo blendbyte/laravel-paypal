@@ -44,3 +44,30 @@ it('throws PayPalApiException for a malformed JSON success response in exception
     expect(fn () => $this->client->showOrderDetails('O-1'))
         ->toThrow(PayPalApiException::class, '<html>Bad Gateway</html>');
 });
+
+it('decodes JSON API errors for methods that do not decode success responses', function () {
+    $this->mock->addResponse(['name' => 'UNPROCESSABLE_ENTITY', 'details' => [['issue' => 'INVALID_PATCH_OPERATION']]], 422);
+
+    $response = $this->client->updateOrder('O-1', [['op' => 'replace', 'path' => '/intent', 'value' => 'CAPTURE']]);
+
+    expect($response['error'])->toBe(['name' => 'UNPROCESSABLE_ENTITY', 'details' => [['issue' => 'INVALID_PATCH_OPERATION']]]);
+});
+
+it('exposes decoded JSON API errors via PayPalApiException for methods that do not decode success responses', function () {
+    $this->client->withExceptions();
+    $this->mock->addResponse(['name' => 'RESOURCE_NOT_FOUND'], 404);
+
+    try {
+        $this->client->cancelSubscription('I-1', 'Not needed');
+        $this->fail('Expected PayPalApiException');
+    } catch (PayPalApiException $e) {
+        expect($e->getPayPalError())->toBe(['name' => 'RESOURCE_NOT_FOUND'])
+            ->and($e->getHttpStatus())->toBe(404);
+    }
+});
+
+it('keeps non-JSON errors as plain strings for methods that do not decode success responses', function () {
+    $this->client->setClient(rawBodyClient('Service Unavailable', 503));
+
+    expect($this->client->updateOrder('O-1', []))->toBe(['error' => 'Service Unavailable']);
+});
