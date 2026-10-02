@@ -58,9 +58,10 @@ trait Invoices
     /**
      * Send an existing invoice.
      *
+     * Note: PayPal ignores custom $subject and $note values and always uses
+     * system-defined texts; the parameters are kept for compatibility.
      *
-     *
-     * @param array<string, mixed> $recipients
+     * @param list<string> $recipients Additional recipient email addresses.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -76,15 +77,16 @@ trait Invoices
 
         $this->verb = 'post';
 
-        return $this->doPayPalRequest(false);
+        return $this->doPayPalRequest();
     }
 
     /**
      * Send reminder for an existing invoice.
      *
+     * Note: PayPal ignores custom $subject and $note values and always uses
+     * system-defined texts; the parameters are kept for compatibility.
      *
-     *
-     * @param array<string, mixed> $recipients
+     * @param list<string> $recipients Additional recipient email addresses.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -106,9 +108,10 @@ trait Invoices
     /**
      * Cancel an existing invoice which is already sent.
      *
+     * Note: PayPal ignores custom $subject and $note values and always uses
+     * system-defined texts; the parameters are kept for compatibility.
      *
-     *
-     * @param array<string, mixed> $recipients
+     * @param list<string> $recipients Additional recipient email addresses.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -343,20 +346,33 @@ trait Invoices
     /**
      * Get Invoice Message Payload.
      *
-     * @param array<string, mixed> $recipients
+     * The notification flags are always sent: send_to_recipient defaults to
+     * true on PayPal's side, so omitting a false value would still email the
+     * customer.
+     *
+     * @param array<array-key, string> $recipients Normalised to a JSON array.
      *
      * @return array<string, mixed>
      */
     protected function getInvoiceMessagePayload(string $subject, string $note, array $recipients, bool $send_recipient, bool $send_merchant): array
     {
         $data = [
-            'subject' => ! empty($subject) ? $subject : '',
-            'note' => ! empty($note) ? $note : '',
-            'additional_recipients' => count($recipients) > 0 ? $recipients : '',
-            'send_to_recipient' => $send_recipient,
             'send_to_invoicer' => $send_merchant,
+            'send_to_recipient' => $send_recipient,
         ];
 
-        return array_filter($data);
+        if ($subject !== '') {
+            $data['subject'] = $subject;
+        }
+
+        if ($note !== '') {
+            $data['note'] = $note;
+        }
+
+        if (count($recipients) > 0) {
+            $data['additional_recipients'] = array_values($recipients);
+        }
+
+        return $data;
     }
 }

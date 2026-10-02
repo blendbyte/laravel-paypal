@@ -736,15 +736,18 @@ $provider->deleteInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 $provider->updateInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $data);
 $invoice = $provider->showInvoiceDetails('INV2-Z56S-5LLA-Q52L-CPZ5');
 
-$provider->cancelInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', $data);
+$provider->cancelInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 $provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
 $provider->generateQRCodeInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 50, 50); // custom dimensions
 
-$provider->sendInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'Subject', 'Note');
-$provider->sendInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'Subject', 'Note', true, true, ['cc@example.com']);
+// Arguments: invoice ID, subject, note, notify recipient, notify merchant, additional recipients.
+// PayPal ignores custom subject/note values and always uses its own texts.
+$provider->sendInvoice('INV2-Z56S-5LLA-Q52L-CPZ5');
+$provider->sendInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', '', '', true, true, ['cc@example.com']);
+$provider->cancelInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', '', '', false); // cancel without emailing the customer
 
-$provider->sendInvoiceReminder('INV2-Z56S-5LLA-Q52L-CPZ5', 'Subject', 'Note');
-$provider->sendInvoiceReminder('INV2-Z56S-5LLA-Q52L-CPZ5', 'Subject', 'Note', true, true, ['cc@example.com']);
+$provider->sendInvoiceReminder('INV2-Z56S-5LLA-Q52L-CPZ5');
+$provider->sendInvoiceReminder('INV2-Z56S-5LLA-Q52L-CPZ5', '', '', true, true, ['cc@example.com']);
 
 $provider->registerPaymentInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', '2024-05-21', 'BANK_TRANSFER', 10.00);
 $provider->deleteExternalPaymentInvoice('INV2-Z56S-5LLA-Q52L-CPZ5', 'EXTR-86F38350LX4353815');
