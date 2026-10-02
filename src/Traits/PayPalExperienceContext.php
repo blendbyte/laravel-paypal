@@ -12,6 +12,13 @@ trait PayPalExperienceContext
     protected $experience_context = [];
 
     /**
+     * Stored credential data; sent as payment_source.<method>.stored_credential.
+     *
+     * @var array<string, mixed>
+     */
+    protected $stored_credential = [];
+
+    /**
      * Set Brand Name when setting experience context for payment.
      */
     public function setBrandName(string $brand): PayPal
@@ -69,25 +76,42 @@ trait PayPalExperienceContext
     }
 
     /**
-     * Set stored payment source.
+     * Set stored credential details for a merchant- or customer-initiated
+     * payment with a stored payment source.
      *
-     * @param  string  $initiator  Payment initiator: CUSTOMER or MERCHANT
-     * @param  string  $type       Payment type: ONE_TIME, RECURRING, or UNSCHEDULED
-     * @param  string  $usage_pattern  Usage pattern (Feb 2025+): IMMEDIATE, DEFERRED, RESUBMISSION,
-     *                                REAUTHORIZATION, NO_SHOW, DELAYED_CHARGE, or INCREMENTAL_AUTH
+     * Sent as payment_source.<method>.stored_credential by
+     * createOrderWithPaymentSource() and setupOrderConfirmation(), shaped for
+     * the payment source: card and Apple Pay use payment_type, usage and the
+     * previous network transaction reference; PayPal uses usage_pattern and
+     * usage. Other payment sources do not support stored credentials.
+     * Values are passed to PayPal as given; PayPal validates them.
+     *
+     * @param  string  $initiator      Payment initiator: CUSTOMER or MERCHANT
+     * @param  string  $type           Payment type (card/Apple Pay): ONE_TIME, RECURRING or UNSCHEDULED
+     * @param  string  $usage_pattern  Usage pattern (PayPal): IMMEDIATE, DEFERRED, or RECURRING_*,
+     *                                 THRESHOLD_*, SUBSCRIPTION_*, UNSCHEDULED_*, INSTALLMENT_*
+     *                                 with a _PREPAID or _POSTPAID suffix
+     * @param  bool    $previous_reference  Include the previous network transaction reference (card/Apple Pay).
+     *                                      Only sent when $previous_transaction_id is given (it is required by PayPal).
+     * @param  string|null  $usage     Usage: FIRST, SUBSEQUENT or DERIVED
+     *
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-card_stored_credential
      */
-    public function setStoredPaymentSource(string $initiator, string $type, string $usage_pattern, bool $previous_reference = false, ?string $previous_transaction_id = null, ?string $previous_transaction_date = null, ?string $previous_transaction_reference_number = null, ?string $previous_transaction_network = null): PayPal
+    public function setStoredPaymentSource(string $initiator, string $type, string $usage_pattern, bool $previous_reference = false, ?string $previous_transaction_id = null, ?string $previous_transaction_date = null, ?string $previous_transaction_reference_number = null, ?string $previous_transaction_network = null, ?string $usage = null): PayPal
     {
-        $this->experience_context = array_merge($this->experience_context, [
-            'stored_payment_source' => [
-                'payment_initiator' => $initiator,
-                'payment_type' => $type,
-                'usage_pattern' => $usage_pattern,
-            ],
-        ]);
+        $this->stored_credential = [
+            'payment_initiator' => $initiator,
+            'payment_type' => $type,
+            'usage_pattern' => $usage_pattern,
+        ];
 
-        if ($previous_reference === true) {
-            $this->experience_context['stored_payment_source']['previous_network_transaction_reference'] = array_filter([
+        if ($usage !== null) {
+            $this->stored_credential['usage'] = $usage;
+        }
+
+        // The reference requires an id; without one it would be rejected, so omit it.
+        if ($previous_reference === true && $previous_transaction_id !== null && $previous_transaction_id !== '') {
+            $this->stored_credential['previous_network_transaction_reference'] = array_filter([
                 'id' => $previous_transaction_id,
                 'date' => $previous_transaction_date,
                 'acquirer_reference_number' => $previous_transaction_reference_number,
