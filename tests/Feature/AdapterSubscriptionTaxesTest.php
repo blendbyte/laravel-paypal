@@ -48,3 +48,13 @@ it('omits the plan override when neither taxes nor setup fee are set', function 
     expect($body)->not->toHaveKey('plan')
         ->and($body)->not->toHaveKey('taxes');
 });
+
+it('sends the subscription quantity as a string', function () {
+    $this->mock->addResponse(['id' => 'I-1']);
+
+    $this->client->addProductById('PROD-1')
+        ->addBillingPlanById('P-1')
+        ->setupSubscription('John Doe', 'john@example.com');
+
+    expect((string) $this->mock->lastRequest()->getBody())->toContain('"quantity":"1"');
+});

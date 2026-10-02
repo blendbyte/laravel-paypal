@@ -61,7 +61,7 @@ trait Helpers
 
         $body = [
             'plan_id' => $this->billing_plan['id'],
-            'quantity' => 1,
+            'quantity' => '1', // The API defines quantity as a decimal string.
             'subscriber' => [
                 'name' => [
                     'given_name' => $customer_name,
