@@ -1253,11 +1253,11 @@ describe('Identity & Users', function () {
 
         expect($response)->toHaveKey('Resources');
 
-        // Regression: the default filter value must appear verbatim (no spaces to encode).
+        // The default sends no filter (a bare attribute name is not a valid SCIM filter).
         /** @var \Psr\Http\Message\RequestInterface $request */
         $request = $container[0]['request'];
         $url = (string) $request->getUri();
-        expect($url)->toContain('filter=userName');
+        expect($url)->toEndWith('/v2/scim/Users');
     });
 
     it('URL-encodes the SCIM filter when it contains spaces or special characters', function () {

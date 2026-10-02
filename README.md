@@ -67,7 +67,7 @@ A PayPal REST API package for Laravel, also usable as a standalone PHP client wi
 - **Configurable timeouts and retries** — `timeout`, `connect_timeout`, `max_retries` in config
 - **Exception-based error handling** — opt in with `withExceptions()` for `PayPalApiException`
 - **Local webhook verification** — `verifyWebHookLocally()` with in-memory cert caching, no API roundtrip
-- **PayPal Fastlane** — `generateClientToken()` for one-click guest checkout
+- **PayPal Fastlane** — `generateFastlaneClientToken()` for one-click guest checkout
 - **Payment Method Tokens** — full Vault v3 API (setup tokens, permanent tokens, Apple Pay, Google Pay)
 - **`getCaptureIdFromOrder()`** — extract capture/transaction ID from order responses
 - **Bug fixes** — float precision, URL encoding, null guards, invoice date normalization
@@ -361,22 +361,26 @@ Call `withoutExceptions()` to revert to silent mode. Both methods are fluent.
 ### 1. Generate a client token (server-side)
 
 ```php
-$provider->getAccessToken();
-
-$result = $provider->generateClientToken();
-// $result['client_token'] — pass this to your frontend
+// Browser-safe client token bound to your domain(s); your server access token is not replaced.
+$result = $provider->generateFastlaneClientToken(['example.com']);
+// $result['access_token'] — the client token, pass this to your frontend
+// $result['expires_in']   — lifetime in seconds, use it to cache the token
 ```
 
 ### 2. Initialise Fastlane (client-side)
 
 ```html
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&components=fastlane"></script>
 <script>
-const { Fastlane } = await paypal.Fastlane({ clientToken: '<?= $result["client_token"] ?>' });
-const { selectionChanged, selectedCard } = await Fastlane.identity.lookupCustomerByEmail(email);
-// render Fastlane.FastlaneWatermarkComponent(), Fastlane.FastlaneCardComponent(), etc.
+const sdkInstance = await window.paypal.createInstance({
+    clientToken: '<?= $result["access_token"] ?>',
+    components: ['fastlane'],
+    pageType: 'checkout',
+});
+// Continue with PayPal's Fastlane guide to render the Fastlane components.
 </script>
 ```
+
+See PayPal's [SDK setup](https://developer.paypal.com/sdk/js/set-up/) and [Fastlane](https://developer.paypal.com/docs/checkout/fastlane/) documentation for the client-side integration.
 
 ### 3. Create & capture the order (server-side)
 
@@ -1030,6 +1034,7 @@ $provider->listBalances('2024-01-01', 'EUR');
 ## Identity
 
 ```php
+// Requires the user's access token from Log in with PayPal, set via setAccessToken()
 $provider->showProfileInfo();
 
 $provider->createMerchantApplication(
@@ -1043,13 +1048,18 @@ $provider->createMerchantApplication(
 $provider->setAccountProperties($data);
 $provider->disableAccountProperties();
 
-$provider->listUsers(1, 10);
+$provider->listUsers();                          // all users
+$provider->listUsers('userName eq "jdoe"');      // SCIM filter expression
+$provider->listUsers('', 11, 10);                // startIndex 11, count 10
 $provider->showUserDetails('user-id');
 $provider->deleteUser('user-id');
 
-// Client token — used with PayPal Fastlane and Advanced Card Payments
-$provider->generateClientToken(); // preferred alias
-$provider->getClientToken();       // equivalent
+// Client token for JS SDK v5 hosted card fields (Advanced Card Payments)
+$provider->generateClientToken(); // alias of getClientToken()
+$provider->getClientToken();
+
+// Client token for PayPal Fastlane (see the Fastlane section)
+$provider->generateFastlaneClientToken(['example.com']);
 ```
 
 ---

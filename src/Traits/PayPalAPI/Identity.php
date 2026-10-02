@@ -9,6 +9,9 @@ trait Identity
     /**
      * Get user profile information.
      *
+     * Requires the user's access token from Log in with PayPal (authorization
+     * code flow), set via setAccessToken(); the app token from getAccessToken()
+     * is not sufficient.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -30,7 +33,11 @@ trait Identity
     /**
      * List Users.
      *
-     *
+     * @param string   $filter      SCIM filter expression, e.g. 'userName eq "jdoe"'. A bare
+     *                              attribute name without an operator is not a valid filter and
+     *                              is ignored.
+     * @param int|null $start_index 1-based index of the first result (1-100000).
+     * @param int|null $count       Results per page (0-100).
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -38,9 +45,17 @@ trait Identity
      *
      * @see https://developer.paypal.com/docs/api/identity/v2/#users_list
      */
-    public function listUsers(string $field = 'userName')
+    public function listUsers(string $filter = '', ?int $start_index = null, ?int $count = null)
     {
-        $this->apiEndPoint = 'v2/scim/Users?filter='.rawurlencode($field);
+        $query = http_build_query(array_filter([
+            // A filter needs an operator (e.g. "userName eq ..."); the old default of a
+            // bare attribute name ("userName") was invalid, so it is not sent.
+            'filter' => str_contains(trim($filter), ' ') ? $filter : null,
+            'startIndex' => $start_index,
+            'count' => $count,
+        ], fn ($value) => $value !== null), '', '&', PHP_QUERY_RFC3986);
+
+        $this->apiEndPoint = 'v2/scim/Users'.($query !== '' ? "?{$query}" : '');
 
         $this->setRequestHeader('Content-Type', 'application/scim+json');
 
@@ -178,8 +193,9 @@ trait Identity
     }
 
     /**
-     * Get a client token.
+     * Get a client token for JS SDK v5 hosted card fields (Advanced Card Payments).
      *
+     * For PayPal Fastlane use generateFastlaneClientToken() instead.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -197,19 +213,49 @@ trait Identity
     }
 
     /**
-     * Generate a client token for use with PayPal Fastlane or Advanced Card Payments.
+     * Generate a client token for JS SDK v5 hosted card fields (Advanced Card Payments).
      *
-     * Alias for getClientToken(). Pass the returned client_token to the
-     * PayPal JS SDK to initialise Fastlane on the client side.
+     * Alias for getClientToken(). For PayPal Fastlane use
+     * generateFastlaneClientToken() instead.
+     *
+     * @return array<string, mixed>|StreamInterface|string
+     *
+     * @throws \Throwable
+     */
+    public function generateClientToken()
+    {
+        return $this->getClientToken();
+    }
+
+    /**
+     * Generate a browser-safe client token for PayPal Fastlane.
+     *
+     * Requests a client token from the OAuth token endpoint
+     * (response_type=client_token) for the given domains. The token is
+     * returned in 'access_token' (with 'expires_in' for caching) and is NOT
+     * stored on the provider: the server-side access token is left unchanged.
+     *
+     * @param list<string> $domains Domains the token is used on, e.g. ['example.com'].
      *
      * @return array<string, mixed>|StreamInterface|string
      *
      * @throws \Throwable
      *
-     * @see https://developer.paypal.com/docs/checkout/fastlane/
+     * @see https://developer.paypal.com/sdk/js/set-up/#option-b-client-token-for-fastlane-only
      */
-    public function generateClientToken()
+    public function generateFastlaneClientToken(array $domains)
     {
-        return $this->getClientToken();
+        $this->apiEndPoint = 'v1/oauth2/token';
+
+        $this->verb = 'post';
+
+        $this->options['auth'] = [$this->config['client_id'], $this->config['client_secret']];
+        $this->options['form_params'] = array_filter([
+            'grant_type' => 'client_credentials',
+            'response_type' => 'client_token',
+            'domains[]' => implode(',', $domains),
+        ], fn ($value) => $value !== '');
+
+        return $this->doPayPalRequest();
     }
 }
