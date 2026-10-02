@@ -201,7 +201,8 @@ trait Subscriptions
 
         $this->verb = 'post';
 
-        return $this->doPayPalRequest(false);
+        // 200 returns the transaction as JSON; 202 has no body ([]).
+        return $this->doPayPalRequest();
     }
 
     /**

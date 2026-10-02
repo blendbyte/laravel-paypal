@@ -46,7 +46,8 @@ trait Disputes
 
         $this->verb = 'patch';
 
-        return $this->doPayPalRequest(false);
+        // 202 returns a subsequent_action link as JSON; 204 has no body ([]).
+        return $this->doPayPalRequest();
     }
 
     /**
