@@ -319,9 +319,6 @@ trait PayPalHttpClient
             // Perform PayPal HTTP API request.
             $response = $this->makeHttpRequest();
 
-            // Idempotency key is single-use — clear it after the request.
-            unset($this->options['headers']['PayPal-Request-Id']);
-
             if ($decode === false) {
                 return $response->getContents();
             }
@@ -330,8 +327,6 @@ trait PayPalHttpClient
 
             return is_array($decoded) ? $decoded : (is_string($decoded) ? $decoded : []);
         } catch (RuntimeException $t) {
-            unset($this->options['headers']['PayPal-Request-Id']);
-
             // Decode JSON error bodies; fall back to the raw message string for
             // non-JSON responses (network timeouts, plain-text errors, etc.).
             $decoded = ($decode === false) || (Str::isJson($t->getMessage()) === false)
@@ -345,6 +340,34 @@ trait PayPalHttpClient
             }
 
             return ['error' => $error];
+        } finally {
+            $this->resetRequestOptions();
         }
+    }
+
+    /**
+     * Clear per-request state so it cannot leak into the next call on this
+     * (long-lived) provider instance: request bodies, Basic auth credentials,
+     * the single-use idempotency key and any per-request Content-Type.
+     * Persistent headers (Authorization, Accept, Accept-Language, ...) are kept.
+     */
+    private function resetRequestOptions(): void
+    {
+        if (isset($this->options['multipart']) && is_array($this->options['multipart'])) {
+            foreach ($this->options['multipart'] as $part) {
+                if (is_array($part) && isset($part['contents']) && is_resource($part['contents'])) {
+                    fclose($part['contents']);
+                }
+            }
+        }
+
+        unset(
+            $this->options['json'],
+            $this->options['multipart'],
+            $this->options['form_params'],
+            $this->options['auth'],
+            $this->options['headers']['PayPal-Request-Id'],
+            $this->options['headers']['Content-Type'],
+        );
     }
 }

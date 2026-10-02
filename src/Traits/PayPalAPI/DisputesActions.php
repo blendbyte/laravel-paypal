@@ -54,8 +54,6 @@ trait DisputesActions
 
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/provide-evidence";
 
-        $this->setRequestHeader('Content-Type', 'multipart/form-data');
-
         $this->options['multipart'] = [];
 
         foreach ($files as $file) {
