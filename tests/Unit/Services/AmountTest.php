@@ -25,6 +25,13 @@ describe('Amount::format', function () {
             ->and(Amount::decimals('usd'))->toBe(2);
     });
 
+    it('formats percentages with two to six decimals', function () {
+        expect(Amount::percentage(10))->toBe('10.00')
+            ->and(Amount::percentage(7.5))->toBe('7.50')
+            ->and(Amount::percentage(8.875))->toBe('8.875')
+            ->and(Amount::percentage(0.123456789))->toBe('0.123457');
+    });
+
     it('handles floats PHP prints in scientific notation', function () {
         expect(Amount::format(1.0E-5, 'USD'))->toBe('0.00');
     });

@@ -437,7 +437,7 @@ trait Helpers
     public function addTaxes(float $percentage, bool $inclusive = false)
     {
         $this->taxes = [
-            'percentage' => number_format($percentage, 2, '.', ''),
+            'percentage' => Amount::percentage($percentage),
             'inclusive' => $inclusive,
         ];
 

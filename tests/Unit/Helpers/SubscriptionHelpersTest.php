@@ -66,6 +66,15 @@ it('addTaxes sets taxes state', function () {
     expect($taxes)->toBe(['percentage' => '7.50', 'inclusive' => false]);
 });
 
+it('addTaxes keeps the precision of the tax rate', function () {
+    $client = $this->createPartialMock(PayPalClient::class, []);
+
+    $client->addTaxes(8.875);
+
+    $taxes = (new ReflectionProperty(PayPalClient::class, 'taxes'))->getValue($client);
+    expect($taxes['percentage'])->toBe('8.875');
+});
+
 it('addTaxes supports the inclusive flag', function () {
     $client = $this->createPartialMock(PayPalClient::class, []);
 

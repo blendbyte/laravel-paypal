@@ -288,16 +288,26 @@ describe('BillingPlanBuilder', function () {
             ->and($plan['payment_preferences']['setup_fee']['value'])->toBe('500');
     });
 
-    it('rounds prices and tax percentage instead of truncating', function () {
+    it('rounds prices instead of truncating', function () {
         $plan = BillingPlanBuilder::make()
             ->forProduct('PROD-XXX')
             ->named('Rounded Plan')
             ->monthly(9.999)
-            ->withTax(19.999)
             ->build();
 
-        expect($plan['billing_cycles'][0]['pricing_scheme']['fixed_price']['value'])->toBe('10.00')
-            ->and($plan['taxes']['percentage'])->toBe('20.00');
+        expect($plan['billing_cycles'][0]['pricing_scheme']['fixed_price']['value'])->toBe('10.00');
+    });
+
+    it('keeps the precision of tax percentages', function () {
+        // Regression: tax rates such as 8.875 % (New York) were rounded/truncated to 2 decimals.
+        $plan = BillingPlanBuilder::make()
+            ->forProduct('PROD-XXX')
+            ->named('Taxed Plan')
+            ->monthly(10)
+            ->withTax(8.875)
+            ->build();
+
+        expect($plan['taxes']['percentage'])->toBe('8.875');
     });
 
     it('make() returns a new builder instance', function () {

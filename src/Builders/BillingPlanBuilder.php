@@ -98,7 +98,7 @@ final class BillingPlanBuilder
     public function withTax(float $percentage, bool $inclusive = false): static
     {
         $this->taxes = [
-            'percentage' => number_format($percentage, 2, '.', ''),
+            'percentage' => Amount::percentage($percentage),
             'inclusive' => $inclusive,
         ];
 
