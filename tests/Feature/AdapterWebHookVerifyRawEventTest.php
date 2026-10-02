@@ -70,3 +70,11 @@ it('verifyIPN sends the raw request body as webhook_event', function () {
 
     expect((string) $this->mock->lastRequest()->getBody())->toEndWith('"webhook_event":'.$this->rawEvent.'}');
 });
+
+it('throws PayPalApiException for an invalid raw webhook_event in exception mode', function () {
+    $this->client->withExceptions();
+
+    expect(fn () => $this->client->verifyWebHook($this->headers + ['webhook_event' => 'not json']))
+        ->toThrow(\Srmklive\PayPal\Exceptions\PayPalApiException::class, 'Invalid webhook_event')
+        ->and($this->mock->requests())->toBe([]);
+});

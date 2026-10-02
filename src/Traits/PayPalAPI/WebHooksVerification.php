@@ -3,6 +3,7 @@
 namespace Srmklive\PayPal\Traits\PayPalAPI;
 
 use Psr\Http\Message\StreamInterface;
+use Srmklive\PayPal\Exceptions\PayPalApiException;
 
 trait WebHooksVerification
 {
@@ -38,7 +39,13 @@ trait WebHooksVerification
             $event = $data['webhook_event'];
 
             if (! $this->isJsonObject($event)) {
-                return ['error' => 'Invalid webhook_event: expected the raw JSON request body'];
+                $error = 'Invalid webhook_event: expected the raw JSON request body';
+
+                if ($this->throwOnError) {
+                    throw new PayPalApiException($error);
+                }
+
+                return ['error' => $error];
             }
 
             unset($data['webhook_event']);
