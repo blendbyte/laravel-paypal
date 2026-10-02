@@ -849,6 +849,10 @@ $provider->acceptDisputeOfferResolution('PP-D-27803', 'Accepting discount offer'
 $provider->acknowledgeItemReturned('PP-D-27803', 'Items received', 'ITEM_RECEIVED');
 
 $provider->makeOfferToResolveDispute('PP-D-27803', 'Offering refund', 10.00, 'REFUND');
+$provider->makeOfferToResolveDispute('PP-D-27803', 'Please return the item', 10.00, 'REFUND_WITH_RETURN', [
+    'return_shipping_address' => ['address_line_1' => '1 Main St', 'admin_area_2' => 'San Jose', 'postal_code' => '95131', 'country_code' => 'US'],
+]);
+$provider->makeOfferToResolveDispute('PP-D-27803', 'Sending a replacement', 0, 'REPLACEMENT_WITHOUT_REFUND'); // amount ignored
 $provider->escalateDisputeToClaim('PP-D-27803', 'Escalating unresolved dispute');
 $provider->updateDisputeStatus('PP-D-27803', $data);
 

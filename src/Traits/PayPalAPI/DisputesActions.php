@@ -87,7 +87,16 @@ trait DisputesActions
     /**
      * Make offer to resolve dispute claim.
      *
+     * Offer types ($refund_type):
+     * - REFUND: refund $amount without return or replacement.
+     * - REFUND_WITH_RETURN: refund $amount after the item is returned; pass
+     *   'return_shipping_address' in $data.
+     * - REFUND_WITH_REPLACEMENT: refund $amount and send a replacement.
+     * - REPLACEMENT_WITHOUT_REFUND: send a replacement only; $amount is ignored
+     *   and no offer_amount is sent.
      *
+     * @param array<string, mixed> $data Additional fields merged into the request, e.g.
+     *                                   'return_shipping_address' or 'invoice_id'.
      *
      * @return array<string, mixed>|StreamInterface|string
      *
@@ -95,16 +104,20 @@ trait DisputesActions
      *
      * @see https://developer.paypal.com/docs/api/customer-disputes/v1/#disputes_make-offer
      */
-    public function makeOfferToResolveDispute(string $dispute_id, string $dispute_note, float $amount, string $refund_type)
+    public function makeOfferToResolveDispute(string $dispute_id, string $dispute_note, float $amount, string $refund_type, array $data = [])
     {
         $this->apiEndPoint = "v1/customer/disputes/{$dispute_id}/make-offer";
 
         $data['note'] = $dispute_note;
         $data['offer_type'] = $refund_type;
-        $data['offer_amount'] = [
-            'currency_code' => $this->getCurrency(),
-            'value' => Amount::format($amount, $this->getCurrency()),
-        ];
+
+        // PayPal requires offer_amount to be omitted for replacement-only offers.
+        if ($refund_type !== 'REPLACEMENT_WITHOUT_REFUND') {
+            $data['offer_amount'] = [
+                'currency_code' => $this->getCurrency(),
+                'value' => Amount::format($amount, $this->getCurrency()),
+            ];
+        }
 
         $this->options['json'] = $data;
 
