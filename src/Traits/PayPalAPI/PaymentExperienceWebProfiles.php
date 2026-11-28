@@ -89,7 +89,7 @@ trait PaymentExperienceWebProfiles
      *
      * @deprecated Use Orders v2 with experience_context instead.
      *
-     * @param array<string, mixed> $data
+     * @param list<array<string, mixed>> $data
      *
      * @return array<string, mixed>|StreamInterface|string
      *

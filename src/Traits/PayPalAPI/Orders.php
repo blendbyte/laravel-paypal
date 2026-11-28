@@ -57,7 +57,7 @@ trait Orders
      *
      *
      *
-     * @param array<string, mixed> $data
+     * @param list<array<string, mixed>> $data
      *
      * @return array<string, mixed>|StreamInterface|string
      *
